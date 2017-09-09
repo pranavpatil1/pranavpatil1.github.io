@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Explosion Test - Gaming Genius</title>
+		
+		<link href="https://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet" type="text/css">
+
+		<style>
+			p {
+				font-family: Inconsolata, sans-serif;
+				font-size: 14px;
+			}
+			body {
+				background-color:black;
+				text-align: center;
+			}
+			canvas:focus {
+				outline:0;
+			}
+			#content {
+				text-align: center;
+				width: 400px;
+				margin: auto;
+			}
+		</style>
+	</head>
+	<body>
+		
+		<div id="content">
+			<p> 
+				<!--This draws the Canvas on the webpage -->
+				<canvas id="mycanvas"></canvas> 
+			</p>
+		</div>
+		
+		<img src="/photos/gravity/explode/tiny.png" style="display:none" id="1">
+		<img src="/photos/gravity/explode/tiny2.png" style="display:none" id="2">
+		<img src="/photos/gravity/explode/explode.png" style="display:none" id="3">
+		<img src="/photos/gravity/explode/explode2.png" style="display:none" id="4">
+		<img src="/photos/gravity/explode/explode3.png" style="display:none" id="5">
+		<img src="/photos/gravity/explode/disappear.png" style="display:none" id="6">
+		<img src="/photos/gravity/explode/disappear2.png" style="display:none" id="7">
+		<img src="/photos/gravity/explode/disappear3.png" style="display:none" id="8">
+		<img src="/photos/gravity/explode/disappear4.png" style="display:none" id="9">
+		
+	</body>
+	<script src="https://cdn.jsdelivr.net/processing.js/1.4.8/processing.min.js"></script> 
+ 
+ <script>
+    var sketchProc = function(processingInstance) {
+        
+        with (processingInstance) {
+            
+            size(500, 500);
+{
+
+frameRate(60);
+var amt = 20;
+
+draw = function() {
+	
+	background(255);
+	
+	for (var i = 1; i <= 9; i ++) {
+		
+		if ((frameCount) < amt*i/9 & (frameCount) >= amt*(i - 1)/9) {
+			
+			document.getElementById("mycanvas").getContext("2d").drawImage(document.getElementById(i.toString()), 0, 0, 500, 500);
+			
+		}
+		
+	}
+	
+};
+
+}
+}}
+    // Get the canvas that Processing-js will use
+    var canvas = document.getElementById("mycanvas"); 
+    // Pass the function sketchProc (defined in myCode.js) to Processing's constructor.
+    var processingInstance = new Processing(canvas, sketchProc); 
+ </script>
+</html>

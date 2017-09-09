@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>About Gaming Genius</title>
+		
+		<link href="https://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet" type="text/css">
+		
+		<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+		<script> 
+			$(function(){
+				$("#header").load("/header.html");
+				$("#footer").load("/footer.html");
+			});
+		</script>
+		<style>
+			p {
+				font-size: 16px;
+			}
+			body {
+				background-color:black;
+				text-align: center;
+			}
+			canvas:focus {
+				outline:0;
+			}
+			#content {
+				text-align: center;
+				width: 400px;
+				margin: auto;
+			}
+			.loader {
+				position: fixed;
+				left: 0px;
+				top: 0px;
+				width: 100%;
+				height: 100%;
+				z-index: 9998;
+				background: 50% 50% no-repeat rgb(1, 1, 1);
+			}
+			.dude {
+				position: fixed;
+				left: 0px;
+				top: 30%;
+				width: 100%;
+				height: 100%;
+				z-index: 9999;
+				background: url(photos/G-gif.gif) 50% 50% no-repeat;
+			}
+		</style>
+		<script>
+			setInterval(document.getElementById("desc").style.width="200px", 1000);
+		</script>
+	</head>
+	<body>
+		<script type="text/javascript">
+			$(window).load(function() {
+				$(".loader").fadeOut("slow");
+				$(".dude").fadeOut("slow");
+			})
+		</script>
+		<div class="loader"></div>
+		
+		<div id="header"></div>
+		
+		<h2>ABOUT GAMING GENIUS</h2>
+		
+		<div id="desc" style="width:400px;margin-left:auto;margin-right:auto;">
+
+			<p>Gaming Genius was founded in 2016 by Pranav Patil at the age of 13. His goal is to bring knowledge to the world through the fun of gaming. GENIUS!</p>
+
+			<p>Pranav Patil is fascinated by coding and cybersecurity, and strives to learn more.</p>
+
+		</div>
+		<br>
+		<div id="content">
+			<p> 
+				<!--This draws the Canvas on the webpage -->
+				<canvas id="mycanvas"></canvas> 
+			</p>
+		</div>
+		<br>
+		
+		<div id="footer"></div>
+		
+		<img src="/photos/animation/1.png" style="display:none" id="run1">
+		<img src="/photos/animation/1.5.png" style="display:none" id="run2">
+		<img src="/photos/animation/2.png" style="display:none" id="run3">
+		<img src="/photos/animation/3.png" style="display:none" id="run4">
+		<img src="/photos/animation/3.5.png" style="display:none" id="run5">
+		<img src="/photos/animation/4.png" style="display:none" id="run6">
+		
+	</body>
+	<script src="https://cdn.jsdelivr.net/processing.js/1.4.8/processing.min.js"></script> 
+ 
+ <script>
+    var sketchProc = function(processingInstance) {
+        
+        with (processingInstance) {
+            
+            size(200, 160);
+{
+
+frameRate(60);
+var amt = 40;
+
+draw = function() {
+	pushMatrix();
+	translate(-100,0);
+	background(0);
+	
+	if (frameCount % amt < amt/6) {
+		document.getElementById("mycanvas").getContext("2d").drawImage(document.getElementById("run1"), 10, -20, 400, 300);
+	} else if (frameCount % amt < amt/3) {
+		document.getElementById("mycanvas").getContext("2d").drawImage(document.getElementById("run2"), 10, -20, 400, 300);
+	} else if (frameCount % amt < amt/2) {
+		document.getElementById("mycanvas").getContext("2d").drawImage(document.getElementById("run3"), 10, -20, 400, 300);
+	} else if (frameCount % amt < 2*amt/3) {
+		document.getElementById("mycanvas").getContext("2d").drawImage(document.getElementById("run4"), 10, -20, 400, 300);
+	} else if (frameCount % amt < 5*amt/6) {
+		document.getElementById("mycanvas").getContext("2d").drawImage(document.getElementById("run5"), 10, -20, 400, 300);
+	} else {
+		document.getElementById("mycanvas").getContext("2d").drawImage(document.getElementById("run6"), 10, -20, 400, 300);
+	}
+	popMatrix();
+};
+
+}
+}}
+    // Get the canvas that Processing-js will use
+    var canvas = document.getElementById("mycanvas"); 
+    // Pass the function sketchProc (defined in myCode.js) to Processing's constructor.
+    var processingInstance = new Processing(canvas, sketchProc); 
+ </script>
+</html>
