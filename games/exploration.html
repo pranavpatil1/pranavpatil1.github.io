@@ -1,2518 +1,3010 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="utf-8">
-		<title>Exploration: Play on Gaming Genius</title>
-		
-		<link href="https://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet" type="text/css">
-		
-		<script src="//code.jquery.com/jquery-1.10.2.js"></script>
-		<script> 
-			$(function(){
-				$("#header").load("/header.html");
-				$("#footer").load("/footer.html");
-			});
-		</script>
-		<style>
-			p {
-				font-family: Inconsolata, sans-serif;
-				font-size: 14px;
-			}
-			body {
-				background-color:black;
-			}
-			.loader {
-				position: fixed;
-				left: 0px;
-				top: 0px;
-				width: 100%;
-				height: 100%;
-				z-index: 9999;
-				background: 50% 50% no-repeat rgb(1, 1, 1);
-			}
-		</style>
-	</head>
-	<body>
-		<script type="text/javascript">
-			$(window).load(function() {
-				$(".loader").fadeOut("slow");
-			})
-		</script>
-		<div class="loader"></div>
-		<div id="header"></div>
-		
-		<p align="center"> 
-			<!--This draws the Canvas on the webpage -->
-			<canvas id="mycanvas"></canvas> 
-		</p>
-		
-		<div id="footer"></div>
-	</body>
-	<script src="https://cdn.jsdelivr.net/processing.js/1.4.8/processing.min.js"></script> 
- 
- <script>
-    var sketchProc = function(processingInstance) {
-        
-        with (processingInstance) {
-            
-            size(780, 520); 
-            frameRate(60);
-{
-angleMode = "radians";
 
-//takes all of the degrees inputs and converts them into radians
-var sine = function(input) {
-    
-    return sin((input) * (Math.PI / 180));
-    
-};
+<head>
+	<meta charset="utf-8">
+	<title>Exploration Engineer: Play on Gaming Genius</title>
 
-var cosine = function(input) {
-    
-    return cos((input) * (Math.PI / 180));
-    
-};
+	<link href="https://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet" type="text/css">
 
-var rot = function(input) {
-    
-    return rotate((input) * (Math.PI / 180));
-    
-};
-
-/**             ALL THE VARIABLES                 */
-
-var page = "menu"; //game, end, menu, settings, achievements, pause?
-
-var player = [240, 280, 16, 40, 0, random(-2, -0.5), false, false, false, false, false]; //0x, 1y, 2w, 3h, 4xvel, 5yvel, 6up 7down 8left 9right (open), 10is jumping
-
-//whether or not the player is being controlled by the user and the game is going
-var playing = true;
-
-//yvel of the player 1 frame back
-var delayYvel = 0;
-
-//if the player can't jump
-var noJump = false;
-
-//actually where the aim should be
-var aim = [0, 0];
-
-//where the camera is pointed, there is a delay
-var cameraAim = [0, 0];
-
-//if player graphics are flipped
-var flip = false;
-
-//if the replicas graphics are flipped
-var fakeFlip = [];
-
-//how much everything shakes after the player falls
-var shakeAmt = 0;
-
-//replica storage
-var flow = [];
-
-//the blocks which the player interacts with
-var blocks = [];
-
-//for each block, if it's at the top, bottom, left, or right
-var position = [];
-
-//stores the recorded minions
-var storage = [];
-
-//how far into the running motion the player has gone
-var amt = 0;
-
-//how far up the player arms have gone
-var amt1 = 0;
-
-//if he ran so far
-var ran = false;
-
-//if a block is at the top
-var top = false;
-//if a block is at the bottom
-var bottom = false;
-//if a block is at the left
-var left = false;
-//if a block is at the right
-var right = false;
-
-//is it the first frame, for loading a level?
-var first = true;
-
-//is the player on some door?
-var onDoor = false;
-
-//when a level started
-var startTime = 0;
-
-var levelTransition = 255;
-
-//player original spot in a level (x, y)
-var orig = [0, 0];
-
-var door = [0, 0];
-
-//which level the player is at
-var levelNum = 0;
-
-//which world the player is at
-var worldNum = 0;
-
-//records player values
-var record = [];
-
-//where the farthest block in the map is
-var far = 0;
-
-//if the player goes to the next level
-var next = true;
-
-var clouds = [[parseFloat(random(0, 600).toFixed(2)), parseFloat(random(150, 350).toFixed(2)), parseFloat((random(0,2) < 1 ? -1 : 1) * random(0.5, 1).toFixed(2)), parseFloat(random(4, 6).toFixed(2))], [parseFloat(random(0, 600).toFixed(2)), parseFloat(random(150, 350).toFixed(2)), parseFloat((random(0,2) < 1 ? -1 : 1) * random(0.5, 1).toFixed(2)), parseFloat(random(4, 6).toFixed(2))]];
-
-/**
-
-KEY for the maps array
-
-- = empty
-0 = start spot
-* = platform
-D = door
-F = falling platform
-L = left amt for moving platform
-R = right amt for moving platform
-S = big spike
-s = small spike
-t = two small spikes
-c = star
-
-*/
-
-//an array representing ALL THE LEVELS!
-var maps = [
-    [
-		[
-			"                                          *********",
-			"                                       *",
-			"    0                     S            ttttttttttttt              D",
-			"*****************  **************************************************",
-
-		],
-		[
-			"0           D",
-			"*************"
-		],
-		[
-			"0           D",
-			"*************"
-		]
-    ],
-	[
-		[
-			"                                            *************************************",
-			"                                                                                *",
-			"                                                             c                  *",
-			"                                                  *********                     *",
-			"                                               ****        *                    *",
-			"                                    ****   **               *                   *",
-			"                             c                               *                  *",
-			"                             *****                            *                 *",
-			"   0  tS   c   S                                               *             D  *",
-			"************ ***********  **                                    *****************",
-			""
-
-		],
-		[
-			"0           D",
-			"*************"
-		],
-		[
-			"0           D",
-			"*************"
-		],
-		[
-			"0           D",
-			"*************"
-		],
-		[
-			"0           D",
-			"*************"
-		],
-		[
-			"0           D",
-			"*************"
-		],
-		[
-			"0           D",
-			"*************"
-		],
-		[
-			"0           D",
-			"*************"
-		],
-		[
-			"0           D",
-			"*************"
-		],
-		[
-			"0           D",
-			"*************"
-		]
-	],
-	[
-		[
-			"0           D",
-			"*************"
-		],
-		[
-			"0           D",
-			"*************"
-		],
-		[
-			"0           D",
-			"*************"
-		],
-		[
-			"0           D",
-			"*************"
-		],
-		[
-			"0           D",
-			"*************"
-		],
-		[
-			"0           D",
-			"*************"
-		],
-		[
-			"0           D",
-			"*************"
-		],
-		[
-			"0           D",
-			"*************"
-		],
-		[
-			"0           D",
-			"*************"
-		],
-		[
-			"0           D",
-			"*************"
-		]
-	],
-	[
-		[
-			"0           D",
-			"*************"
-		],
-		[
-			"0           D",
-			"*************"
-		],
-		[
-			"0           D",
-			"*************"
-		],
-		[
-			"0           D",
-			"*************"
-		],
-		[
-			"0           D",
-			"*************"
-		],
-		[
-			"0           D",
-			"*************"
-		],
-		[
-			"0           D",
-			"*************"
-		],
-		[
-			"0           D",
-			"*************"
-		],
-		[
-			"0           D",
-			"*************"
-		],
-		[
-			"0           D",
-			"*************"
-		]
-	]
-]; //and so 1300+ lines of level maps were created
-
-var unlocked = [];
-
-for (var i in maps) {
-	
-	unlocked.push([]);
-	for (var j = 0; j < maps[i].length; j ++) {
-		
-		unlocked[unlocked.length - 1].push(j === 0 ? true : false)
-		
-	}
-	
-}
-
-var starRecord = [];
-
-for (var i in maps) {
-	
-	starRecord.push([]);
-	for (var j in maps[i]) {
-		
-		starRecord[starRecord.length - 1].push(0);
-		
-	}
-	
-}
-
-//level count for number of stars
-var levelStar = 0;
-
-//how big each star is
-var starDisplay = [0, 0, 0];
-
-//array filled with location of stars
-var stars = [];
-
-//what comes out when the star is collected
-//[x, y, xvel, yvel]
-var starRemains = [];
-
-var levelDeaths = 0; //number of deaths in the current level
-
-var pmillis = 0;
-var t = 0;
-
-//scaling for mouse clicks
-var sc = width/600;
-mouseReleased = function() {
-    
-    if (page === "menu") { //main menu
-        
-        //middle button
-        if (dist(mouseX, mouseY, width/2, height*0.675) < 110) {
-            
-            ///game page
-            page = "worlds";
-            levelNum = 0;
-            first = true;
-            
-            levelTransition = 255;
-            
-        }
-        
-    } else if (page === "worlds") {
-		
-		if (mouseX > 20*sc & mouseY > 90*sc & mouseX < 580*sc & mouseY < 170*sc) {
-			
-			worldNum = 0;
-			page = "levels";
-			
-            levelTransition = 255;
-            
-		} else if (mouseX > 20*sc & mouseY > 190*sc & mouseX < 193*sc & mouseY < 380*sc) {
-			
-			worldNum = 1;
-			page = "levels";
-			
-            levelTransition = 255;
-            
-		} else if (mouseX > 213*sc & mouseY > 190*sc & mouseX < 386*sc & mouseY < 380*sc) {
-			
-			worldNum = 2;
-			page = "levels";
-			
-            levelTransition = 255;
-            
-		} else if (mouseX > 406*sc & mouseY > 190*sc & mouseX < 579*sc & mouseY < 380*sc) {
-			
-			worldNum = 3;
-			page = "levels";
-			
-            levelTransition = 255;
-            
-		} else if (mouseX > 20*sc && mouseX < 53*sc && mouseY > 20*sc & mouseY < 53*sc) {
-			
-			page = "menu";
-			levelTransition = 255;
-			
+	<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+	<script>
+		$(function() {
+			$("#header").load("/header.html");
+			$("#footer").load("/footer.html");
+		});
+	</script>
+	<style>
+		p {
+			font-family: Inconsolata, sans-serif;
+			font-size: 14px;
 		}
-		
-	} else if (page === "levels") {
-		
-		if (mouseX > 20*sc && mouseX < 53*sc && mouseY > 20*sc & mouseY < 53*sc) {
-			
-			page = "worlds";
-			levelTransition = 255;
-			
+
+		body {
+			background-color: black;
 		}
-		
-		if (worldNum === 0) {
-			
-			if (mouseX < 193*sc & mouseX > 20*sc & mouseY > 90*sc & mouseY < 380*sc) {
-				
-				page = "game";
-				levelNum = 0;
-				
-				levelTransition = 255;
-				while (clouds.length > 0) {
-					
-					clouds.pop();
-					
-				}
-				
-			} else if (mouseX < 386*sc & mouseX > 213*sc & mouseY > 90*sc & mouseY < 380*sc) {
-				
-				page = "game";
-				levelNum = 1;
-				
-				levelTransition = 255;
-				while (clouds.length > 0) {
-					
-					clouds.pop();
-					
-				}
-				
-			} else if (mouseX < 479*sc & mouseX > 406*sc & mouseY > 90*sc & mouseY < 380*sc) {
-				
-				page = "game";
-				levelNum = 2;
-				
-				levelTransition = 255;
-				while (clouds.length > 0) {
-					
-					clouds.pop();
-					
-				}
-				
-			}
-			
-		} else {
-			
-			for (var i = 0; i < 5; i ++) {
-				
-				for (var j = 0; j < 2; j ++) {
-					
-					if (mouseX > (20 + 116*i)*sc & mouseX < (116 + 116*i)*sc & mouseY > (90 + j*155)*sc & mouseY < (225 + j*155)*sc & unlocked[worldNum][i + 5*j]) {
-						
-						levelNum = i + 5*j;
-						page = "game";
 
-						levelTransition = 255;
-						while (clouds.length > 0) {
-
-							clouds.pop();
-
-						}
-						
-					}
-					
-				}
-				
-			}
-
+		.loader {
+			position: fixed;
+			left: 0px;
+			top: 0px;
+			width: 100%;
+			height: 100%;
+			z-index: 9999;
+			background: 50% 50% no-repeat rgb(1, 1, 1);
 		}
-		
-	} else if (page === "game") {
-        
-		//560, 10, 30, 30
-        if (mouseX > (560*sc) & mouseX < (590*sc) & mouseY > (10*sc) & mouseY < (40*sc)) {
-            
-            playing = !playing;
-            
-        }
-        
-    } else if (page === "settings" | page === "achievements") {
-        
-        //back button for both of them
-        if (mouseX > 20 & mouseX < 60 & mouseY > 20 & mouseY < 60) {
-            
-            page = "menu";
-            levelTransition = 255;
-			
-			clouds = [[parseFloat(random(0, 600).toFixed(2)), parseFloat(random(150, 350).toFixed(2)), parseFloat((random(0,2) < 1 ? -1 : 1) * random(0.5, 1).toFixed(2)), parseFloat(random(4, 6).toFixed(2))], [parseFloat(random(0, 600).toFixed(2)), parseFloat(random(150, 350).toFixed(2)), parseFloat((random(0,2) < 1 ? -1 : 1) * random(0.5, 1).toFixed(2)), parseFloat(random(4, 6).toFixed(2))]];
-            
-        }
-        
-    }
-    
-};
+	</style>
+</head>
 
-//imagize
+<body>
+	<script type="text/javascript">
+		$(window).load(function() {
+			$(".loader").fadeOut("slow");
+		})
+	</script>
+	<div class="loader"></div>
+	<div id="header"></div>
 
-{
+	<p align="center">
+		<!--This draws the Canvas on the webpage -->
+		<canvas id="mycanvas"></canvas>
+	</p>
 
-var grass = createGraphics(40, 20, P2D);
+	<div id="footer"></div>
+</body>
+<script src="https://cdn.jsdelivr.net/processing.js/1.4.8/processing.min.js"></script>
 
-grass.beginDraw();
+<script>
+	var sketchProc = function(processingInstance) {
 
-grass.background(97, 63, 16);
+		with(processingInstance) {
 
-grass.noStroke();
+			size(780, 520);
+			frameRate(60); {
+				angleMode = "radians";
 
-grass.fill(90, 57, 10);
-grass.rect(0, 0, 20, 20);
+				//takes all of the degrees inputs and converts them into radians
+				var sine = function(input) {
 
-grass.fill(27, 125, 0);
-grass.beginShape();
+					return sin((input) * (Math.PI / 180));
 
-grass.vertex(40, 0);
-grass.vertex(40, 10);
-grass.vertex(35, 5);
-grass.vertex(20, 20);
-grass.vertex(20, 0);
-grass.endShape();
+				};
 
-grass.fill(20, 115, 0);
-grass.beginShape();
-grass.vertex(20, 0);
-grass.vertex(20, 20);
-grass.vertex(5, 5);
+				var cosine = function(input) {
 
-grass.vertex(0, 10);
-grass.vertex(0, 0);
+					return cos((input) * (Math.PI / 180));
 
-grass.endShape();
+				};
 
-grass.endDraw();
-grass = grass.get();
+				var rot = function(input) {
 
-var dirt_bl = createGraphics(20, 21, P2D);
+					return rotate((input) * (Math.PI / 180));
 
-dirt_bl.beginDraw();
+				};
 
-dirt_bl.background(0, 0, 0, 0);
-dirt_bl.noStroke();
-dirt_bl.fill(90, 57, 10);
-dirt_bl.beginShape();
+				/**             ALL THE VARIABLES                 */
 
-dirt_bl.vertex(0, 0);
+				var page = "menu"; //game, end, menu, settings, achievements, pause?
 
-dirt_bl.vertex(0, 10);
-dirt_bl.vertex(10, 20);
-dirt_bl.vertex(20, 20);
-dirt_bl.vertex(20, 0);
+				var player = [240, 280, 16, 40, 0, random(-2, -0.5), false, false, false, false, false]; //0x, 1y, 2w, 3h, 4xvel, 5yvel, 6up 7down 8left 9right (open), 10is jumping
 
-dirt_bl.endShape(CLOSE);
+				//whether or not the player is being controlled by the user and the game is going
+				var playing = true;
 
-dirt_bl.endDraw();
-dirt_bl = dirt_bl.get();
+				//yvel of the player 1 frame back
+				var delayYvel = 0;
 
-var dirt_br = createGraphics(20, 21, P2D);
+				//if the player can't jump
+				var noJump = false;
 
-dirt_br.beginDraw();
+				//actually where the aim should be
+				var aim = [0, 0];
 
-dirt_br.background(0, 0, 0, 0);
-dirt_br.noStroke();
-dirt_br.fill(97, 63, 16);
-dirt_br.beginShape();
+				//where the camera is pointed, there is a delay
+				var cameraAim = [0, 0];
 
-dirt_br.vertex(0, 0);
-dirt_br.vertex(0, 20);
-dirt_br.vertex(10, 20);
-dirt_br.vertex(20, 10);
+				//if player graphics are flipped
+				var flip = false;
 
-dirt_br.vertex(20, 0);
+				//how much everything shakes after the player falls
+				var shakeAmt = 0;
 
-dirt_br.endShape(CLOSE);
+				//the blocks which the player interacts with
+				var blocks = [];
 
-dirt_br.endDraw();
-dirt_br = dirt_br.get()
+				//for each block, if it's at the top, bottom, left, or right
+				var position = [];
 
-var dirt_bml = createGraphics(20, 21, P2D);
+				//how far into the running motion the player has gone
+				var amt = 0;
 
-dirt_bml.beginDraw();
+				//how far up the player arms have gone
+				var amt1 = 0;
 
-dirt_bml.background(0, 0, 0, 0);
-dirt_bml.noStroke();
-dirt_bml.fill(90, 57, 10);
-dirt_bml.beginShape();
+				//if he ran so far
+				var ran = false;
 
-dirt_bml.vertex(0, 0);
-dirt_bml.vertex(0, 20);
+				//if a block is at the top
+				var top = false;
+				//if a block is at the bottom
+				var bottom = false;
+				//if a block is at the left
+				var left = false;
+				//if a block is at the right
+				var right = false;
 
-dirt_bml.vertex(20, 20);
-dirt_bml.vertex(20, 0);
+				//is it the first frame, for loading a level?
+				var first = true;
 
-dirt_bml.endShape(CLOSE);
+				//is the player on some door?
+				var onDoor = false;
 
-dirt_bml.endDraw();
-dirt_bml = dirt_bml.get();
+				//when a level started
+				var startTime = 0;
 
-var dirt_bmr = createGraphics(20, 21, P2D);
+				// the fade transition (set to 255 to begin)
+				var levelTransition = 255;
 
-dirt_bmr.beginDraw();
+				// set when making levelTransition 255, but it is reset
+				var transitionColor = color(0, 0, 0);
 
-dirt_bmr.background(0, 0, 0, 0);
-dirt_bmr.noStroke();
-dirt_bmr.fill(97, 63, 16);
-dirt_bmr.beginShape();
+				//player original spot in a level (x, y)
+				var orig = [0, 0];
 
-dirt_bmr.vertex(0, 0);
-dirt_bmr.vertex(0, 20);
+				var door = [0, 0];
 
-dirt_bmr.vertex(20, 20);
-dirt_bmr.vertex(20, 0);
+				//which level the player is at
+				var levelNum = 0;
 
-dirt_bmr.endShape(CLOSE);
+				//which world the player is at
+				var worldNum = 0;
 
-dirt_bmr.endDraw();
-dirt_bmr = dirt_bmr.get();
+				//records player values
+				var record = [];
 
-var dirt = createGraphics(20, 20, P2D);
+				//where the farthest block in the map is
+				var far = 0;
 
-dirt.beginDraw();
+				// optimal golden star color
+				var starColor = color(163, 135, 23);
+				var bkgrdColor = color(85, 179, 214);
 
-dirt.background(97, 63, 16);
+				// how long the user has held the down key
+				var upTime = 0;
 
-dirt.endDraw();
-dirt = dirt.get();
+				// after hitting an obstacle how much longer until death!!
+				var deathCount = 0;
 
-var dark_dirt = createGraphics(20, 20, P2D);
+				var maxHealth = 50;
+				var health = maxHealth;
 
-dark_dirt.beginDraw();
+				var clouds = [
+					[parseFloat(random(0, 600).toFixed(2)), parseFloat(random(150, 350).toFixed(2)), parseFloat((random(0, 2) < 1 ? -1 : 1) * random(0.5, 1).toFixed(2)), parseFloat(random(4, 6).toFixed(2))],
+					[parseFloat(random(0, 600).toFixed(2)), parseFloat(random(150, 350).toFixed(2)), parseFloat((random(0, 2) < 1 ? -1 : 1) * random(0.5, 1).toFixed(2)), parseFloat(random(4, 6).toFixed(2))]
+				];
 
-dark_dirt.background(90, 57, 10);
+				var deathMessage = [
+					["You can use the down arrow to slam down", "One of the most important part of engineering is teamwork", "Engineers design and build things that make a difference and solve real world problems", "Engineers have saved lives through inventions like the pacemaker and Omnipod", "Engineers protect our planet by combating issues like global warming", "Chemical engineers use chemistry, physics, and math to solve problems with chemicals", "Biomedical engineers", "Computer engineers", "Environmental engineers", "Mechanical engineers", "Electrical engineers", "Software engineers"],
+					[],
+					[],
+					[]
+				];
+				var message; // message storage for death message
+				var rand = -1; // random storage for death message
 
-dark_dirt.endDraw();
-dark_dirt = dark_dirt.get();
-
-var middle = createGraphics(40, 40, P2D);
-
-middle.beginDraw();
-
-middle.background(0, 0, 0, 0);
-
-middle.image(dark_dirt, 0, 0);
-middle.image(dirt, 20, 0);
-middle.image(dark_dirt, 0, 20);
-middle.image(dirt, 20, 20);
-
-middle.endDraw();
-middle = middle.get();
-
-var top_image = createGraphics(40, 40, P2D);
-
-top_image.beginDraw();
-
-top_image.background(0, 0, 0, 0);
-
-top_image.image(grass, 0, 0);
-top_image.image(dark_dirt, 0, 20);
-top_image.image(dirt, 20, 20);
-
-top_image.endDraw();
-top_image = top_image.get();
-
-var bottom_image = createGraphics(40, 40, P2D);
-
-bottom_image.beginDraw();
-
-bottom_image.background(0, 0, 0, 0);
-
-bottom_image.image(dark_dirt, 0, 0);
-bottom_image.image(dirt, 20, 0);
-bottom_image.image(dirt_bml, 0, 20);
-bottom_image.image(dirt_bmr, 20, 20);
-
-bottom_image.endDraw();
-bottom_image = bottom_image.get();
-
-var bottom_left = createGraphics(40, 40, P2D);
-
-bottom_left.beginDraw();
-
-bottom_left.background(0, 0, 0, 0);
-
-bottom_left.image(dark_dirt, 0, 0);
-bottom_left.image(dirt, 20, 0);
-bottom_left.image(dirt_bl, 0, 20);
-bottom_left.image(dirt_bmr, 20, 20);
-
-bottom_left.endDraw();
-bottom_left = bottom_left.get();
-
-var bottom_right = createGraphics(40, 40, P2D);
-
-bottom_right.beginDraw();
-
-bottom_right.background(0, 0, 0, 0);
-
-bottom_right.image(dark_dirt, 0, 0);
-bottom_right.image(dirt, 20, 0);
-bottom_right.image(dirt_bml, 0, 20);
-bottom_right.image(dirt_br, 20, 20);
-
-bottom_right.endDraw();
-bottom_right = bottom_right.get();
-
-var Xleft = createGraphics(40, 40, P2D);
-
-Xleft.beginDraw();
-
-Xleft.background(0, 0, 0, 0);
-
-Xleft.image(grass, 0, 0);
-Xleft.image(dirt_bl, 0, 20);
-Xleft.image(dirt_bmr, 20, 20);
-
-Xleft.endDraw();
-Xleft = Xleft.get();
-
-var Xright = createGraphics(40, 40, P2D);
-
-Xright.beginDraw();
-
-Xright.background(0, 0, 0, 0);
-
-Xright.image(grass, 0, 0);
-Xright.image(dirt_bml, 0, 20);
-Xright.image(dirt_br, 20, 20);
-
-Xright.endDraw();
-Xright = Xright.get();
-
-var Xmiddle = createGraphics(40, 40, P2D);
-
-Xmiddle.beginDraw();
-
-Xmiddle.background(0, 0, 0, 0);
-
-Xmiddle.image(grass, 0, 0);
-Xmiddle.image(dirt_bml, 0, 20);
-Xmiddle.image(dirt_bmr, 20, 20);
-
-Xmiddle.endDraw();
-Xmiddle = Xmiddle.get();
-
-var alone = createGraphics(40, 40, P2D);
-
-alone.beginDraw();
-
-alone.background(0, 0, 0, 0);
-
-alone.image(grass, 0, 0);
-alone.image(dirt_bl, 0, 20);
-alone.image(dirt_br, 20, 20);
-
-alone.endDraw();
-alone = alone.get();
-
-var alone_bottom = createGraphics(40, 40, P2D);
-
-alone_bottom.beginDraw();
-
-alone_bottom.background(0, 0, 0, 0);
-
-alone_bottom.image(dark_dirt, 0, 0);
-alone_bottom.image(dirt, 20, 0);
-alone_bottom.image(dirt_bl, 0, 20);
-alone_bottom.image(dirt_br, 20, 20);
-
-alone_bottom.endDraw();
-alone_bottom = alone_bottom.get();
-
-var cloud = createGraphics(300, 180, P2D);
-
-cloud.beginDraw();
-
-cloud.background(0, 0, 0, 0);
-
-cloud.noStroke();
-cloud.fill(200, 209, 209);
-cloud.rect(50, 106, 200, 74);
-
-cloud.ellipse(50, 130, 100, 100);
-cloud.ellipse(250, 130, 100, 100);
-cloud.ellipse(150, 90, 180, 180);
-
-cloud.endDraw();
-cloud = cloud.get();
-
-}
-
-//function for drawing the player, given the x and y coordinates
-var drawPlayer = function(x, y, w, h, item, replica, i) {
-    /*
-    noFill();
-    strokeWeight(1);
-    stroke(255, 0, 0);
-    rect(x, y, w, h);
-    */
-    
-    var face = (!replica ? color(196, 170, 92) : color(196, 170, 92, 200));
-    var shirt = (!replica ? color(0, 130, 20) : color(0, 89, 13, 200));
-    var sleeve = (!replica ? color(0, 102, 15) : color(0, 54, 7, 200));
-    var pants = (!replica ? color(0, 5, 102) : color(0, 3, 59, 200));
-    
-    var loop = 0;
-    
-    pushMatrix();
-    if (replica) {
-		translate(x + (fakeFlip[i] ? w : 0), y);
-		scale((fakeFlip[i] ? -1 : 1)*0.12, 0.12);
-	} else {
-		translate(x + (flip ? w : 0), y);
-		scale((flip ? -1 : 1)*0.12, 0.12);
-	}
-	translate(-48, -15);
-    
-    noFill();
-    noStroke();
-    
-    //left arm
-    
-    stroke(sleeve);
-    noFill();
-    strokeWeight(25);
-    strokeCap(SQUARE);
-    beginShape();
-    
-    vertex(165, 179);
-    
-    loop = 40;
-    
-    if (item[7]) {
-        
-        vertex(191, 162);
-        vertex(227, 136);
-        
-    } else if (abs(item[4]) < 1) {
-        
-        vertex(177, 204);
-        vertex(189, 256);
-        
-    } else if (frameCount % loop < loop/6) {
-        
-        vertex(184, 204);
-        vertex(227, 211);
-        
-    } else if (frameCount % loop < loop/3 | frameCount % loop > loop*5/6) {
-        
-        vertex(173, 209);
-        vertex(214, 232);
-        
-    } else if (frameCount % loop < loop/2 | frameCount % loop > 2*loop/3 & frameCount % loop < 5*loop/6) {
-        
-        vertex(155, 215);
-        vertex(205, 240);
-        
-    } else {
-        
-        vertex(130, 204);
-        vertex(190, 250);
-        
-    }
-    
-    endShape();
-    
-    loop = 40;
-    
-    //legs
-    {
-    stroke(pants);
-    noFill();
-    strokeWeight(36);
-    strokeCap(SQUARE);
-    beginShape();
-    
-    if (frameCount % loop < loop/6 | abs(item[4]) < 1 | item[7]) {
-        
-        vertex(78, 352);
-        vertex(78, 304);
-        vertex(78, 280);
-        
-    } else if (frameCount % loop < loop/3 | frameCount % loop > loop*5/6) {
-        
-        vertex(93, 352);
-        vertex(93, 304);
-        vertex(93, 280);
-        
-    } else if (frameCount % loop < loop/2 | frameCount % loop > 2*loop/3 & frameCount % loop < 5*loop/6) {
-        
-        vertex(92, 352);
-        vertex(92, 304);
-        vertex(92, 280);
-        
-    } else {
-        
-        vertex(79, 352);
-        vertex(79, 304);
-        vertex(79, 280);
-        
-    }
-    
-    if (frameCount % loop < loop/6 | abs(item[4]) < 1 | item[7]) {
-        
-        vertex(158, 280);
-        vertex(158, 319);
-        vertex(158, 351);
-        
-    } else if (frameCount % loop < loop/3 | frameCount % loop > loop*5/6) {
-        
-        vertex(143, 280);
-        vertex(143, 319);
-        vertex(143, 351);
-        
-    } else if (frameCount % loop < loop/2 | frameCount % loop > 2*loop/3 & frameCount % loop < 5*loop/6) {
-        
-        vertex(143, 280);
-        vertex(143, 319);
-        vertex(143, 351);
-        
-    } else {
-        
-        vertex(155, 280);
-        vertex(155, 319);
-        vertex(155, 351);
-        
-    }
-    
-    endShape();
-    
-    }
-    
-    //shirt
-    fill(shirt);
-    noStroke();
-    beginShape();
-    
-    vertex(175, 152);
-    vertex(178, 176);
-    vertex(180, 213);
-    vertex(178, 258);
-    vertex(176, 266);
-    vertex(170, 270);
-    vertex(60, 270);
-    vertex(59, 264);
-    vertex(58, 211);
-    vertex(59, 161);
-    vertex(65, 152);
-    vertex(86, 152);
-    
-    endShape();
-    
-    //right arm
-    
-    stroke(sleeve);
-    noFill();
-    strokeWeight(25);
-    strokeCap(SQUARE);
-    beginShape();
-    
-    loop = 40;
-    
-    vertex(78, 170);
-    
-    if (item[7]) {
-        
-        vertex(45, 162);
-        vertex(10, 120);
-        
-    } else if (abs(item[4]) < 1) {
-        
-        vertex(70, 210);
-        vertex(80, 254);
-        
-    } else if (frameCount % loop < loop/6) {
-        
-        vertex(45, 210);
-        vertex(73, 250);
-        
-    } else if (frameCount % loop < loop/3 | frameCount % loop > loop*5/6) {
-        
-        vertex(65, 210);
-        vertex(113, 240);
-        
-    } else if (frameCount % loop < loop/2 | frameCount % loop > 2*loop/3 & frameCount % loop < 5*loop/6) {
-        
-        vertex(95, 213);
-        vertex(146, 224);
-        
-    } else {
-        
-        vertex(123, 200);
-        vertex(163, 190);
-        
-    }
-    
-    endShape();
-    
-    //head
-    
-    pushMatrix();
-    
-    stroke(255, 255, 255);
-    strokeWeight(5);
-    noFill();
-    
-    noStroke();
-    
-    loop = 20;
-    
-    translate(-24, (frameCount % loop < loop/2 & !item[7] & abs(item[4]) > 1 ? 10 : 0));
-    
-    loop = 40;
-    
-    fill(face);
-    beginShape();
-    
-    vertex(145, 2);
-    vertex(182, 7);
-    vertex(213, 50);
-    vertex(225, 89);
-    vertex(222, 110);
-    vertex(211, 135);
-    vertex(187, 152);
-    vertex(163, 152);
-    vertex(98, 152);
-    vertex(83, 134);
-    vertex(74, 98);
-    vertex(73, 76);
-    vertex(75, 49);
-    vertex(84, 21);
-    vertex(105, 7);
-    vertex(118, 5);
-    
-    endShape();
-    
-    //eyes
-    
-    fill(0, 0, 0);
-    ellipse(150, 57, 20, 20);
-    ellipse(180, 57, 20, 20);
-    
-    //mouth
-    rect(144, 101, 38, (item[7] ? 40 : 6), 4);
-    
-    //hair
-    
-    fill(46, 37, 22);
-    beginShape();
-    
-    vertex(73, 75);
-    vertex(79, 10);
-    vertex(150, 1);
-    vertex(205, 2);
-    vertex(188, 15);
-    vertex(139, 17);
-    vertex(96, 29);
-    
-    endShape();
-    
-    popMatrix();
-    
-    popMatrix();
-    
-};
-
-var drawDoor = function(x, y, dark) {
-    
-    pushMatrix();
-    
-    translate(x, y);
-    fill(255, 255, 255);
-    
-    //cosine, sine represents curve of door
-    noStroke();
-    beginShape();
-    //top curve of door, not wanted in low graphics mode
-    vertex(20 + 20*cosine(180), 20*sine(180));
-    vertex(20 + 20*cosine(200), 20*sine(200));
-    vertex(20 + 20*cosine(220), 20*sine(220));
-    vertex(20 + 20*cosine(240), 20*sine(240));
-    vertex(20 + 20*cosine(260), 20*sine(260));
-    vertex(20 + 20*cosine(280), 20*sine(280));
-    vertex(20 + 20*cosine(300), 20*sine(300));
-    vertex(20 + 20*cosine(320), 20*sine(320));
-    vertex(20 + 20*cosine(340), 20*sine(340));
-    vertex(20 + 20*cosine(360), 20*sine(360));
-    vertex(40, 40);
-    vertex(0, 40); //bottom of door
-    
-    endShape();
-    popMatrix();
-    
-};
-
-var drawBlock = function(x, y, i) {
-    
-    if (top & bottom & left & right) {
-        
-        image(alone, x, y);
-        
-    } else if (top & !bottom) {
-        
-        image(top_image, x, y);
-        
-    } else if (bottom & !top) {
-        
-        if (left & right) {
-            
-            image(alone_bottom, x, y);
-            
-        } else if (left) {
-            
-            image(bottom_left, x, y);
-            
-        } else if (right) {
-            
-            image(bottom_right, x, y);
-            
-        } else {
-            
-            image(bottom_image, x, y);
-            
-        }
-        
-    } else if (!bottom & !top) {
-        
-        image(middle, x, y);
-        
-    } else {
-        
-        if (left) {
-            
-            image(Xleft, x, y);
-            
-        } else if (right) {
-            
-            image(Xright, x, y);
-            
-        } else {
-            
-            image(Xmiddle, x, y);
-            
-        }
-        
-    }
-    
-};
-
-var drawCloud = function(x, y, big) {
-	
-	pushMatrix();
-	translate(x, y);
-	scale(big/10);
-	translate(-200, -246);
-	image(cloud, 0, 0);
-	popMatrix();
-	
-}
-
-//163, 135, 23 < optimal gold star coloring
-var drawStar = function(x, y, size, clr) {
-	
-	fill(clr);
-	beginShape();
-	for (var i = 0; i < 5; i ++) {
-		
-		vertex(x + size/2.46276957*cos(i*0.4*PI - 0.3*PI), y + size/2.46276957*sin(i*0.4*PI - 0.3*PI));
-		vertex(x + size*cos(i*0.4*PI - PI/10), y + size*sin(i*0.4*PI - PI/10));
-		
-	}
-	endShape();
-
-};
-	
-//function to draw a lock (rectangular shape)
-var drawLock = function(x, y, size) {
-	
-	var dark_gray = color(120, 120, 120);
-	var light_gray = color(219, 229, 246);
-	
-    pushMatrix();
-	
-    translate(x, y); //moves it to the proper spot
-    scale(size/500);
-	
-    fill(dark_gray);
-    rect(0, 0, 500, 500); //a big rectangle providing background for the lock
-    fill(light_gray);
-    ellipse(250, 215, 200, 222);//the outside lock circle part
-    fill(dark_gray);
-    ellipse(250, 215, 140, 154);//the inside circle negative space
-    fill(light_gray);
-    rect(125, 227, 250, 168);//rectangle at the bottom, main lock 
-    
-	popMatrix();
-	
-};
-	
-	//function to draw a lock (rectangular shape)
-var drawArrow = function(x, y, size) {
-	
-    pushMatrix();
-	
-    translate(x, y); //moves it to the proper spot
-    scale(size/500);
-	
-    fill(219, 229, 246);
-    rect(0, 0, 500, 500); //a big rectangle providing background for the arrow
-	
-    translate(-1, 5);
-    fill(86, 135, 212);
-    rect(302, 121, 100, 275);//the vertical line
-    rect(155, 121, 200, 100);//the horizontal line
-	
-    translate(27, 0);//arrow shift right
-    triangle(47, 170, 157, 70, 157, 270);//arrow
-	
-    popMatrix();
-	
-};
-
-//store the current records functions
-var storeRecords = function() {
-    
-    var thing = [];
-    for (var i in record) {
-        
-        thing.push(record[i]);
-        
-    }
-	
-    if (record.length > 0) {
-        
-        storage.push([0, 0, 3, thing, 2]);
-        
-    }
-    
-    if (storage.length > 1) {
-        
-        storage.shift();
-        
-    }
-    
-    while (record.length > 0) {
-        
-        record.pop();
-        
-    }
-    
-};
-
-//triggers a death, no args needed
-var death = function() {
-    
-    //adds to deaths
-    levelDeaths ++;
-    
-    //resets player position and values
-    player = [orig[0], orig[1], player[2], player[3], 0, random(-2, -0.5), false, false, false, false, false];
-    
-    first = true;
-	
-	while (record.length > 0) {
-		
-		record.pop();
-		
-	}
-    
-};
-
-//deals with pressing and releasing keys
-
-//becomes true when key is pressed, false when released
-var keys = [];
-
-keyPressed = function() {
-    
-    //remapping WASD to arrow key keyCodes
-    if (keyCode === 65) { //A
-        
-        keys[37] = true; //left
-        
-    } else if (keyCode === 68) { //D
-        
-        keys[39] = true; //RIGHT
-        
-    } else if (keyCode === 87) { //W
-        
-        keys[38] = true; //UP
-        
-    } else if (keyCode === 83) { //S
-        
-        keys[40] = true; //DOWN
-        
-    } else {
-        
-        keys[keyCode] = true; //if not just WASD, then normal
-        
-    }
-	
-};
-
-keyReleased = function() {
-    
-    if (keys[90] & keyCode === 90) {
-        
-		var thing = [player[0], player[1], player[2], player[3], 0, 0, player[6], player[7], player[8], player[9], player[10]];
-
-		record.push(thing);
-
-        storeRecords();
-        
-        //resets player position and values
-        player = [orig[0], orig[1], player[2], player[3], 0, random(-2, -0.5), false, false, false, false, false];
-        
-        first = true;
-        
-    }
-    
-    //same thing but false on release
-    if (keyCode === 65) {
-        
-        keys[37] = false;
-        
-    } else if (keyCode === 68) {
-        
-        keys[39] = false;
-        
-    } else if (keyCode === 87) {
-        
-        keys[38] = false;
-        
-    } else if (keyCode === 83) {
-        
-        keys[40] = false;
-        
-    } else {
-        
-        keys[keyCode] = false;
-        
-    }
-    
-};
-
-noStroke();
-
-draw = function() {
-    
-    textFont(createFont("Century Gothic"));
-    if (page === "menu") { //main menu page
-        
-		pushMatrix();
-		
-		scale(sc);
-		
-        background(86, 135, 212);
-		
-        var m = 0;
-        
-        for (var i = m - 400; i <= m + 600 + 450; i += 400) {
-            
-			fill(87, 104, 145);
-			noStroke();
-
-			beginShape();
-			
-            vertex(i, 300);
-			vertex(i + 150, 100);
-			vertex(i + 150, 800);
-			vertex(i, 800);
-			
-			endShape();
-
-			fill(102, 119, 160);
-			beginShape();
-			
-			vertex(i + 150, 100);
-            vertex(i + 300, 300);
-			vertex(i + 300, 800);
-			vertex(i + 150, 800);
-			
-			endShape();
-
-        }
-        
-        for (var i = m - 400; i <= m + 600 + 450; i += 400) {
-            
-			fill(87, 104, 145);
-			beginShape();
-			
-			vertex(i + 350, 180 + 50);
-			vertex(i + 350, 800);
-			vertex(i - 100, 800);
-			
-			endShape();
-
-			fill(102, 119, 160);
-			beginShape();
-			
-			vertex(i + 350, 180 + 50);
-			vertex(i + 800, 800);
-			vertex(i + 350, 800);
-            
-			endShape();
-
-        }
-		
-		for (var i in clouds) {
-			
-			drawCloud(clouds[i][0], clouds[i][1], clouds[i][3]);
-			
-			clouds[i][0] += clouds[i][2];
-			
-			if (clouds[i][0] < -150 & clouds[i][2] < 0) {
-				
-				clouds[i][2] *= -1;
-				clouds[i][1] = parseFloat(random(150, 350).toFixed(2));
-				
-			}
-			if (clouds[i][0] > 600 + 150) {
-				
-				clouds[i][2] *= -1;
-				clouds[i][1] = parseFloat(random(150, 350).toFixed(2));
-				
-			}
-			
-		}
-        
-		popMatrix();
-		
-		noStroke();
-		
-        //document.body.style.backgroundColor = "black";
-        
-    	textFont(createFont("Century Gothic Bold"));
-        textAlign(CENTER, CENTER);
-        
-        fill(255, 255, 255);
-        textSize(height/7);
-        text("instant replay".toUpperCase(), width/2, height*0.3); //main title
-        
-        fill(255, 255, 255, 130);
-		beginShape();
-		
-		for (var i = 0; i <= 2*PI; i += PI/3) {
-			
-			vertex(width/2 + 100*cos(i), height*0.675 + 100*sin(i));
-			
-		}
-		
-		vertex(width/2 + 50*cosine(0), height*0.675 + 50*sine(0));
-		vertex(width/2 + 50*cosine(240), height*0.675 + 50*sine(240));
-		vertex(width/2 + 50*cosine(120), height*0.675 + 50*sine(120));
-		vertex(width/2 + 50*cosine(0), height*0.675 + 50*sine(0));
-		
-		endShape();
-        
-	} else if (page === "worlds") {
-		
-		pushMatrix();
-		
-		scale(sc);
-		
-        background(86, 135, 212);
-		
-        var m = 0;
-        
-        for (var i = m - 400; i <= m + 600 + 450; i += 400) {
-            
-			fill(87, 104, 145);
-			noStroke();
-
-			beginShape();
-			
-            vertex(i, 300);
-			vertex(i + 150, 100);
-			vertex(i + 150, 800);
-			vertex(i, 800);
-			
-			endShape();
-
-			fill(102, 119, 160);
-			beginShape();
-			
-			vertex(i + 150, 100);
-            vertex(i + 300, 300);
-			vertex(i + 300, 800);
-			vertex(i + 150, 800);
-			
-			endShape();
-
-        }
-        
-        for (var i = m - 400; i <= m + 600 + 450; i += 400) {
-            
-			fill(87, 104, 145);
-			beginShape();
-			
-			vertex(i + 350, 180 + 50);
-			vertex(i + 350, 800);
-			vertex(i - 100, 800);
-			
-			endShape();
-
-			fill(102, 119, 160);
-			beginShape();
-			
-			vertex(i + 350, 180 + 50);
-			vertex(i + 800, 800);
-			vertex(i + 350, 800);
-            
-			endShape();
-
-        }
-		
-		for (var i in clouds) {
-			
-			drawCloud(clouds[i][0], clouds[i][1], clouds[i][3]);
-			
-			clouds[i][0] += clouds[i][2];
-			
-			if (clouds[i][0] < -150 & clouds[i][2] < 0) {
-				
-				clouds[i][2] *= -1;
-				clouds[i][1] = parseFloat(random(150, 350).toFixed(2));
-				
-			}
-			if (clouds[i][0] > 600 + 150) {
-				
-				clouds[i][2] *= -1;
-				clouds[i][1] = parseFloat(random(150, 350).toFixed(2));
-				
-			}
-			
-		}
-        
-		noStroke();
-		
-        textAlign(CENTER, CENTER);
-    	textFont(createFont("Century Gothic Bold"));
-        
-        fill(255, 255, 255);
-        textSize(400/10);
-        text("WORLDS", 600/2, 400*0.115); //main title
-		
-		fill(255, 255, 255, 200);
-		rect(20, 90, 560, 80);
-		rect(20, 190, 173, 190);
-		rect(213, 190, 173, 190);
-		rect(406, 190, 173, 190);
-		
-		textSize(29);
-		fill(0, 0, 0, 200);
-		text("T U T O R I A L", 300, 130);
-		
-		textSize(40);
-		text("1", 20 + 173/2, 190*1.5);
-		text("2", 213 + 173/2, 190*1.5);
-		text("3", 406 + 173/2, 190*1.5);
-		
-		drawArrow(20, 20, 33);
-		
-		popMatrix();
-		
-	} else if (page === "levels") {
-		
-		pushMatrix();
-		
-		scale(sc);
-		
-        background(86, 135, 212);
-		
-        var m = 0;
-        
-        for (var i = m - 400; i <= m + 600 + 450; i += 400) {
-            
-			fill(87, 104, 145);
-			noStroke();
-
-			beginShape();
-			
-            vertex(i, 300);
-			vertex(i + 150, 100);
-			vertex(i + 150, 800);
-			vertex(i, 800);
-			
-			endShape();
-
-			fill(102, 119, 160);
-			beginShape();
-			
-			vertex(i + 150, 100);
-            vertex(i + 300, 300);
-			vertex(i + 300, 800);
-			vertex(i + 150, 800);
-			
-			endShape();
-
-        }
-        
-        for (var i = m - 400; i <= m + 600 + 450; i += 400) {
-            
-			fill(87, 104, 145);
-			beginShape();
-			
-			vertex(i + 350, 180 + 50);
-			vertex(i + 350, 800);
-			vertex(i - 100, 800);
-			
-			endShape();
-
-			fill(102, 119, 160);
-			beginShape();
-			
-			vertex(i + 350, 180 + 50);
-			vertex(i + 800, 800);
-			vertex(i + 350, 800);
-            
-			endShape();
-
-        }
-		
-		for (var i in clouds) {
-			
-			drawCloud(clouds[i][0], clouds[i][1], clouds[i][3]);
-			
-			clouds[i][0] += clouds[i][2];
-			
-			if (clouds[i][0] < -150 & clouds[i][2] < 0) {
-				
-				clouds[i][2] *= -1;
-				clouds[i][1] = parseFloat(random(150, 350).toFixed(2));
-				
-			}
-			if (clouds[i][0] > 600 + 150) {
-				
-				clouds[i][2] *= -1;
-				clouds[i][1] = parseFloat(random(150, 350).toFixed(2));
-				
-			}
-			
-		}
-        
-		noStroke();
-		
-        textAlign(CENTER, CENTER);
-    	textFont(createFont("Century Gothic Bold"));
-
-		if (worldNum === 0) {
-			
-			fill(255, 255, 255);
-			textSize(400/10);
-			text("TUTORIAL", 600/2, 400*0.12); //main title
-			
-			fill(255, 255, 255, 200);
-			for (var i = 0; i < 3; i ++) {
-				fill(255, 255, 255, 200);
-				rect(20 + 193*i, 90, 173, 290);
-				fill(0, 0, 0, 200);
-				textSize(40);
-				text((i + 1).toString(), 20 + 193*i + 173/2, 90 + 290/2);
-			}
-			
-		} else {
-			
-			fill(255, 255, 255);
-			textSize(400/10);
-			text("WORLD " + worldNum, 600/2, 400*0.12); //main title
-			
-			for (var i = 0; i < 5; i ++) {
-				
-				for (var j = 0; j < 2; j ++) {
-					
-					fill(255, 255, 255, 200);
-					rect(20 + 116*i, 90 + j*155, 96, 135);
-					if (unlocked[worldNum][5*j + i]) {
-						fill(0, 0, 0, 200);
-						textSize(40);
-						text((i + 1 + 5*j).toString(), 20 + 116*i + 96/2, 90 + j*155 + 37);
-						for (var k = 0; k < 3; k ++) {
-							drawStar(20 + 116*i + 96/2 + 20*cos(k*2*PI/3 - PI/6 + 4*PI/3), 90 + j*155 + 2*135/3 + 15*sin(k*2*PI/3 - PI/6 + 4*PI/3), 15, (k < starRecord[worldNum][5*j + i] ? color(163, 135, 23) : color(0, 0, 0, 100)));
-						}
-					} else {
-						drawLock(20 + 116*i + 96/2 - 20, 90 + j*155 + 135/2 - 20, 40);
-					}
-					
-				}
-				
-			}
-
-		}
-		
-		drawArrow(20, 20, 33);
-		
-		popMatrix();
-		
-	} else if (first) {
-        
-        while (blocks.length > 0) {
-            
-            blocks.pop();
-            
-        }
-        
-		delayYvel = 0;
-		
-		far = 0;
-		
-        while (stars.length > 0) {
-            
-            stars.pop();
-            
-        }
-		
-        //go through maps array
-        for (var i = 0; i < maps[worldNum][levelNum].length; i ++) {
-            
-            for (var j = 0; j < maps[worldNum][levelNum][i].length; j ++) {
-                
-                var item = maps[worldNum][levelNum][i][j]; //takes value
-                var x = j*40;
-                var y = 400 - (maps[worldNum][levelNum].length - i)*40; //reverse y value because of vertically scrolling UP
-                
-                if (item === "*") { //normal block
-                    
-                    blocks.push([x, y, 1]);
-                    
-                    if (x > far) {
-                        
-                        far = x;
-                        
-                    }
-                    
-                } else if (item === "S") {
-                    
-                    blocks.push([x, y + 10, 2, 40, 30]);
-					
-				} else if (item === "t") {
-                    
-                    blocks.push([x, y + 25, 2, 20, 15]);
-                    blocks.push([x + 20, y + 25, 2, 20, 15]);
-                    
-                } else if (item === "0") { //player start
-                    
-                    player = [x, y, player[2], player[3], 0, random(-2, -0.5), false, false, false, false, false];
-                    orig = [x, y]; //can reset to this
-                    
-                    amt = 0; //RESETS VALUES
-                    amt1 = 50;
-                    
-                } else if (item === "D") { //player start
-                    
-                    door = [x, y];
-                    if (next) {
-                        cameraAim = [-x + 300, -y + 200];
-                    }
-                    next = false;
-					
-                } else if (item === "c") { //stars
-                    
-                    stars.push([x, y, 0]);
-					
-                } else if (item !== "-") { //not empty space
-                    
-                    //ADD SOMETHING HERE!!!
-                    
-                }
-                
-            }
-            
-        }
-		
-		if (clouds.length === 0) {
-			
-			for (var i = 0; i < far/600; i ++) {
-
-				clouds.push([parseFloat(random(0, far).toFixed(2)), parseFloat(random(-200, 200).toFixed(2)), parseFloat((random(0,2) < 1 ? -1 : 1) * random(0.5, 1).toFixed(2)), parseFloat(random(4, 6).toFixed(2))]);
-				
-			}
-
-		}
-		
-		var thing = [];
-		
-		while (thing.length > 0) {
-			
-			thing.pop();
-			
-		}
-		
-		for (var i in storage) {
-			
-            storage[i][4] = 0;
-			thing.push(storage[i]);
-			
-		}
-		
-        for (var i in thing) {
-            
-			blocks.push(thing[i]);
-            
-        }
-        
-        while (record.length > 0) {
-            
-            record.pop();
-            
-        }
-        
-        while (position.length > 0) {
-            
-            position.pop();
-            
-        }
-        
-		while (fakeFlip.length > 0) {
-			
-			fakeFlip.pop();
-			
-		}
-		
-		for (var i in blocks) {
-			
-			fakeFlip.push(false);
-			
-		}
-		
-        levelDeaths = 0;
-        
-        first = false;
-		
-		levelStar = 0;
-		starDisplay = [0, 0, 0];
-        
-        //resets values
-        startTime = frameCount;
-        
-        //draws blocks
-        for (var i in blocks) {
-            
-            top = true;
-            
-            //goes through blocks to see if anything is directly above it
-            for (var j in blocks) {
-                
-                if (i !== j & blocks[i][0] === blocks[j][0] & blocks[i][1] === (blocks[j][1] + 40) & blocks[i][2] === blocks[j][2]) {
-                    
-                    top = false;
-                    
-                }
-                
-            }
-            
-            bottom = true;
-            
-            //goes through blocks to see if anything is directly below it
-            for (var j in blocks) {
-                
-                if (i !== j & blocks[i][0] === blocks[j][0] & blocks[i][1] === (blocks[j][1] - 40) & blocks[i][2] === blocks[j][2]) {
-                    
-                    bottom = false;
-                    
-                }
-                
-            }
-            
-            left = true;
-            
-            //goes through blocks to see if anything is directly below it
-            for (var j in blocks) {
-                
-                if (i !== j & blocks[i][1] === blocks[j][1] & blocks[i][0] === (blocks[j][0] + 40) & blocks[i][2] === blocks[j][2]) {
-                    
-                    left = false;
-                    
-                }
-                
-            }
-            
-            right = true;
-            
-            //goes through blocks to see if anything is directly below it
-            for (var j in blocks) {
-                
-                if (i !== j & blocks[i][1] === blocks[j][1] & blocks[i][0] === (blocks[j][0] - 40) & blocks[i][2] === blocks[j][2]) {
-                    
-                    right = false;
-                    
-                }
-                
-            }
-            
-            position.push([top, bottom, left, right]);
-            
-        }
-        
-    } else 
-    
-    //game page is separate from all the rest so that it goes in the same frame as first
-    if (page === "game" & !first) {
-        
-		pushMatrix();
-		
-		scale(width/600);
-		
-        background(86, 135, 212);
-		
-        noStroke();
-        
-        pushMatrix();
-        
-        aim = [-constrain(player[0] - 200, 0, far + 40 - 600), -constrain(player[1] - 200, -10000, -50) - 50];
-        
-        if (levelTransition < 10) {
-            
-            cameraAim[0] -= (cameraAim[0] - aim[0])/40;
-            cameraAim[1] -= (cameraAim[1] - aim[1])/40;
-            
-            if (player[0] < -cameraAim[0] + 100 | player[0] > -cameraAim[0] + 500 | player[1] < -cameraAim[1] + 100 | player[1] > -cameraAim[1] + 300) {
-                
-                cameraAim[0] -= (cameraAim[0] - aim[0])/80;
-                cameraAim[1] -= (cameraAim[1] - aim[1])/80;
-                
-            }
-            
-        }
-		
-		if (shakeAmt > 2) {
-			
-			shakeAmt -= 0.5;
-			
-		} else {
-			
-			shakeAmt = 0;
-			
-		}
-		
-        translate(cameraAim[0] + random(-shakeAmt, shakeAmt), cameraAim[1] + random(-shakeAmt, shakeAmt));
-        
-        var m = -cameraAim[0] + cameraAim[0]%400;
-        
-        for (var i = m - 400; i <= m + 600 + 450; i += 400) {
-            
-			fill(87, 104, 145);
-			noStroke();
-
-			beginShape();
-			
-            vertex(i, 300);
-			vertex(i + 150, 100);
-			vertex(i + 150, 800);
-			vertex(i, 800);
-			
-			endShape();
-
-			fill(102, 119, 160);
-			beginShape();
-			
-			vertex(i + 150, 100);
-            vertex(i + 300, 300);
-			vertex(i + 300, 800);
-			vertex(i + 150, 800);
-			
-			endShape();
-
-        }
-        
-        for (var i = m - 400; i <= m + 600 + 450; i += 400) {
-            
-			fill(87, 104, 145);
-			beginShape();
-			
-			vertex(i + 350, 180 + 50);
-			vertex(i + 350, 800);
-			vertex(i - 100, 800);
-			
-			endShape();
-
-			fill(102, 119, 160);
-			beginShape();
-			
-			vertex(i + 350, 180 + 50);
-			vertex(i + 800, 800);
-			vertex(i + 350, 800);
-            
-			endShape();
-
-        }
-		
-		for (var i in clouds) {
-			
-			drawCloud(clouds[i][0], clouds[i][1], clouds[i][3]);
-			
-			clouds[i][0] += clouds[i][2];
-			
-			if (clouds[i][0] < -250 & clouds[i][2] < 0) {
-				
-				clouds[i][2] *= -1;
-				clouds[i][1] = parseFloat(random(150, 350).toFixed(2));
-				
-			}
-			if (clouds[i][0] > far + 250 & clouds[i][2] > 0) {
-				
-				clouds[i][2] *= -1;
-				clouds[i][1] = parseFloat(random(150, 350).toFixed(2));
-				
-			}
-			
-		}
-        
-        player[6] = true; //up is open
-        player[7] = true; //down is open
-        player[8] = true; //left is open
-        player[9] = true; //right is open
-        
-        noJump = false;
-        
-        //collision
-        for (var i in blocks) {
-            
-			if (blocks[i][2] === 3) {
-
-				flow = blocks[i][3][blocks[i][4]];
-
-				if (flow !== undefined) {
-					
-					blocks[i][0] = flow[0];
-					blocks[i][1] = flow[1];
-					
-					if (flow[4] > 0) {
-
-						fakeFlip[i] = false;
-
-					}
-					if (flow[4] < 0) {
-
-						fakeFlip[i] = true;
-
-					}
-
-					drawPlayer(blocks[i][0], blocks[i][1], flow[2], flow[3], flow, true, i);
-					
-					if (playing) {
-						if (blocks[i][4] < (blocks[i][3].length - 2)) {
-
-							blocks[i][4] ++;
-
-						} else {
-
-							//blocks.splice(i, 1);
-							//continue;
-
-							flow[4] = 0;
-							flow[5] = 0;
-
-						}
-					}
-
-				} else {
-					
-					//blocks.splice(i, 1);
-					//continue;
-					
-				}
-
-			}
-
-			if (blocks[i][1] > -aim[1] - 50 & blocks[i][1] < -aim[1] + 450 & blocks[i][0] > -aim[0] - 25 & blocks[i][0] < -aim[0] + 625) {
+				var inventions = ["food", "more food", "other food"];
+				for (var i in inventions)
+					deathMessage[1].push("Mechanical engineers invented " + inventions[i]);
 
 				/**
 
-				REMEMBER!
+				KEY for the maps array
 
-				0 - x
-				1 - y
-				2 - w
-				3 - h
+				0 = start spot
+				* = platform
+				D = door
+				S = big spike
+				t = two small spikes (use sparingly)
+				c = star
+				_ = lower death zone
+				1-9 = person to talk to
 
-				4 to 7 = if sides are open up down left right
 				*/
-				
 
-				if (blocks[i][2] === 1) {
+				//an array representing ALL THE LEVELS!
+				var maps = [
+					[
+						[
+							"                                                               c",
+							"",
+							"c            0                                                    *                                       *********                ",
+							"*                                           *                     *                        c            *                          ",
+							"*                   1               *       *         2           *         3         ss   S     s      ____________               D",
+							"******************************  *******  ******  ***************************************************************************************",
 
-					if (player[1] > (blocks[i][1] - player[3] + 0.5) & player[1] < (blocks[i][1] + 40 - 0.5) & player[0] < (blocks[i][0] + 40) & player[0] > (blocks[i][0] + 40 - 4)) {
+						],
+						[
+							"  0           D",
+							"****************"
+						],
+						[
+							"  0           D",
+							"****************"
+						],
+						[
+							"                                         c",
+							"                                                                S                           *",
+							"                                                                *                            *",
+							"                                                                *                             *",
+							"                                             tt                 *                          *c         S   S   S",
+							"                                    ****   *****                                           **         *   *   *",
+							"                  tt     *********                                                                    *   *   *",
+							"             1 *********                             2          *                                         *",
+							"  0      *****                                     *****        *                               *",
+							"********                                      *        *****____*                        *      *     *       **  3",
+							"                                            Sc*            ********  * S      tt         *      *S    *   *   ******             ttt       D",
+							"                                           ****                        **** ******   *****  **  ****  *   *   **********  ****  *****   ******"
+						],
+						[
+							"                                                                             *",
+							"                                                                             *",
+							"                                                                   c         *",
+							"                                                            ******************",
+							"                    *  *                                                                                                            ",
+							"                    *  *                                                                                                            ",
+							"   c                *  *                                          *********                                                         ",
+							"   *                *  *                               *       ****       ***                                   ****                ",
+							"                       *                            ****   **               ***                                                     ",
+							"                    *                                                         ****                           ***  c                 ",
+							" *               *  *  *                     *****                               ****                    *        *   **  **        ",
+							"    0  tS           *__*     S                                                     *****                ____________________      D",
+							"  ************************   ***********  **                                           ************************************************",
 
-						player[8] = false; //left is closed
-						player[0] = blocks[i][0] + 40;
-						player[4] = 0;
+						],
+						[
+							"  0           D",
+							"****************"
+						]
+					],
+					[
+						[
+							"  0           D",
+							"****************"
+						],
+						[
+							"  0           D",
+							"****************"
+						],
+						[
+							"  0           D",
+							"****************"
+						],
+						[
+							"  0           D",
+							"****************"
+						],
+						[
+							"  0           D",
+							"****************"
+						],
+						[
+							"  0           D",
+							"****************"
+						],
+					],
+					[
+						[
+							"0           D",
+							"*************"
+						],
+						[
+							"0           D",
+							"*************"
+						],
+						[
+							"0           D",
+							"*************"
+						],
+						[
+							"0           D",
+							"*************"
+						],
+						[
+							"0           D",
+							"*************"
+						],
+						[
+							"0           D",
+							"*************"
+						],
+					]
+				]; //and so 1300+ lines of level maps were created
+
+				// unlocked levels
+				var unlocked = [];
+
+				var peopleSpeech = [
+					[
+						[
+							["Welcome to the world of engineering. Engineers are people who solve problems through their creativity.\n\n[ENTER]", "To move around, you can use arrow keys or WASD. Hold UP to jump higher."],
+							["In this world, you've been given the power to be an engineer! You can use your new power to overcome obstacles.", "Hit SPACE to create a block - blocks are fragile!", "You'll meet many types of engineers, hear their stories, and learn about engineering."],
+							["The goal of an engineer's work is to make the world a better place.", "Engineers have created fuel-efficient cars to help the environment and artificial retinas to help the blind.", "They've even created more advanced smartphones to make people's everyday lives easier."]
+						], // 1-1
+						[
+							["", "", ""],
+							["", "", ""],
+							["An engineer's salary can range from 30K to 100K, it ranges a lot based on what type of engineer.", "Being an engineer is a great job, but money isn't the most important thing.", "I love working as part of a team and solving problems."]
+						], // 1-2
+						[
+							["", "", ""],
+							["", "", ""],
+							["", "", ""]
+						], // 1-3
+						[
+							["", "", ""],
+							["", "", ""],
+							["", "", ""]
+						], // 1-4
+						[
+							["", "", ""],
+							["", "", ""],
+							["", "", ""]
+						], // 1-5
+						[
+							["", "", ""],
+							["", "", ""],
+							["", "", ""]
+						], // 1-6
+					], // world 1
+				];
+
+				for (var i in maps) {
+
+					unlocked.push([]);
+					for (var j = 0; j < maps[i].length; j++) {
+
+						// CHANGE THIS TO === 0 TO >= TO 0
+						unlocked[unlocked.length - 1].push(j >= 0 ? true : false)
 
 					}
-					if (player[1] > (blocks[i][1] - player[3] + 0.5) & player[1] < (blocks[i][1] + 40 - 0.5) & player[0] < (blocks[i][0] - player[2] + 4) & player[0] > (blocks[i][0] - player[2])) {
 
-						player[9] = false; //right is closed
-						player[0] = blocks[i][0] - player[2];
-						player[4] = 0;
+				}
+
+				var starRecord = [];
+
+				for (var i in maps) {
+
+					starRecord.push([]);
+					for (var j in maps[i]) {
+
+						starRecord[starRecord.length - 1].push(0);
 
 					}
-					if (player[0] > (blocks[i][0] - player[2] + 0.5) & player[0] < (blocks[i][0] + 40 - 0.5) & player[1] <= (blocks[i][1] + 40) & player[1] > (blocks[i][1] + 40 - 10)) {
 
-						player[6] = false; //up is closed
-						player[5] = 0;
-						player[1] = blocks[i][1] + 40;
+				}
 
-					}
-					if (player[0] > (blocks[i][0] - player[2] + 0.5) & player[0] < (blocks[i][0] + 40 - 0.5) & player[1] <= (blocks[i][1]) & player[1] >= (blocks[i][1] - player[3])) {
-						
-						if (shakeAmt === 0 & abs(player[5]) > 10) {
+				//level count for number of stars
+				var levelStar = 0;
 
-							shakeAmt = abs(player[5])/4;
+				//how big each star is
+				var starDisplay = [0, 0, 0];
+
+				//array filled with location of stars
+				var stars = [];
+
+				// confetti-like explosion
+				// [x, y, xvel, yvel, angle, color]
+				var explosion = [];
+
+				var pmillis = 0;
+				var t = 0;
+
+				//scaling for mouse clicks
+				var sc = width / 600;
+				mouseReleased = function() {
+
+					if (page === "menu") { //main menu
+
+						//middle button
+						if (dist(mouseX, mouseY, width / 2, height * 0.675) < 110) {
+
+							///game page
+							page = "worlds";
+							levelNum = 0;
+							first = true;
+
+							levelTransition = 255;
 
 						}
-						player[7] = false; //down is closed
-						player[1] = blocks[i][1] - player[3];
-						player[5] = 0;
-						player[10] = false;
-						
-					}
-					
-					//if under a block, you cant jump
-					if (player[0] > (blocks[i][0] - player[2] + 0.5) & player[0] < (blocks[i][0] + 40 - 0.5) & player[1] >= (blocks[i][1] + 39.7) & player[1] < (blocks[i][1] + 40.3)) {
-					    
-					    noJump = true;
-					    
+
+					} else if (page === "worlds") {
+
+						if (mouseX > 20 * sc & mouseY > 300 * sc & mouseX < 580 * sc & mouseY < 380 * sc) {
+
+							worldNum = 3;
+							page = "levels";
+
+							levelTransition = 255;
+
+						} else if (mouseX > 20 * sc & mouseY > 90 * sc & mouseX < 193 * sc & mouseY < 280 * sc) {
+
+							worldNum = 0;
+							page = "levels";
+
+							levelTransition = 255;
+
+						} else if (mouseX > 213 * sc & mouseY > 90 * sc & mouseX < 386 * sc & mouseY < 280 * sc) {
+
+							worldNum = 1;
+							page = "levels";
+
+							levelTransition = 255;
+
+						} else if (mouseX > 406 * sc & mouseY > 90 * sc & mouseX < 579 * sc & mouseY < 280 * sc) {
+
+							worldNum = 2;
+							page = "levels";
+
+							levelTransition = 255;
+
+						} else if (mouseX > 20 * sc && mouseX < 53 * sc && mouseY > 20 * sc & mouseY < 53 * sc) {
+
+							page = "menu";
+							levelTransition = 255;
+
+						}
+
+					} else if (page === "levels") {
+
+						if (mouseX > 20 * sc && mouseX < 53 * sc && mouseY > 20 * sc & mouseY < 53 * sc) {
+
+							page = "worlds";
+							levelTransition = 255;
+
+						}
+
+						if (worldNum === 3 && 1==3) {
+
+							if (mouseX < 193 * sc & mouseX > 20 * sc & mouseY > 90 * sc & mouseY < 380 * sc) {
+
+								page = "game";
+								levelNum = 0;
+
+								levelTransition = 255;
+								while (clouds.length > 0) {
+
+									clouds.pop();
+
+								}
+
+							} else if (mouseX < 386 * sc & mouseX > 213 * sc & mouseY > 90 * sc & mouseY < 380 * sc) {
+
+								page = "game";
+								levelNum = 1;
+
+								levelTransition = 255;
+								while (clouds.length > 0) {
+
+									clouds.pop();
+
+								}
+
+							} else if (mouseX < 479 * sc & mouseX > 406 * sc & mouseY > 90 * sc & mouseY < 380 * sc) {
+
+								page = "game";
+								levelNum = 2;
+
+								levelTransition = 255;
+								while (clouds.length > 0) {
+
+									clouds.pop();
+
+								}
+
+							}
+
+						} else {
+
+							for (var i = 0; i < 3; i++) {
+
+								for (var j = 0; j < 2; j++) {
+
+									if (mouseX > (20 + 193.3 * i) * sc & mouseX < (193.3 + 193.3 * i) * sc & mouseY > (90 + j * 155) * sc & mouseY < (225 + j * 155) * sc & unlocked[worldNum][i + 3 * j]) {
+
+										levelNum = i + 3 * j;
+										page = "game";
+										first = true;
+
+										levelTransition = 255;
+										clouds = [];
+
+									}
+
+								}
+
+							}
+
+						}
+
+					} else if (page === "game") {
+
+						if (mouseY > (10 * sc) & mouseY < (40 * sc)) {
+
+							if (mouseX > (560 * sc) & mouseX < (590 * sc)) {
+								page = "menu";
+								levelTransition = 255;
+							} else if (mouseX > (520 * sc) & mouseX < (550 * sc)) {
+								page = "levels"
+								levelTransition = 255;
+							} else if (mouseX > (480 * sc) & mouseX < (510 * sc)) {
+								first = true;
+							}
+						}
+
+					} else if (page === "death") {
+
+						// 270, 310, 60, 60
+						if (mouseY > 310 * sc & mouseY < 390 * sc) {
+
+							if (mouseX > 180 * sc & mouseX < 240 * sc) {
+								// reset level and go back
+								page = "game";
+								first = true;
+								levelTransition = 255;
+							} else if (mouseX > 270 * sc & mouseX < 330 * sc) {
+								page = "levels";
+								levelTransition = 255;
+							} else if (mouseX > 360 * sc & mouseX < 420 * sc) {
+								page = "menu";
+								levelTransition = 255;
+							}
+
+						}
+
 					}
 
-				} else if (blocks[i][2] === 2) {
-				    
-				    if ((player[0] + player[2]) > blocks[i][0] + blocks[i][3]/2 - (player[1] + player[3] - blocks[i][1])*(blocks[i][3]/2)/blocks[i][4] & player[1] < blocks[i][1] + blocks[i][4] & player[0] < blocks[i][0] + blocks[i][3]/2 + (player[1] + player[3] - blocks[i][1])*(blocks[i][3]/2)/blocks[i][4]) {
-				        
-				        death();
-				        
-				    }
-					
-				} else if (blocks[i][2] === 3 & playing) {
-					
-					if (player[0] > (blocks[i][0] - player[2]) & player[0] < (blocks[i][0] + flow[2]) & player[1] < (blocks[i][1] - player[3] + abs(player[5]) + abs(flow[5]) + 15) & player[1] > (blocks[i][1] - player[3] - abs(flow[5]) - abs(player[5]) - 15) & player[5] >= 0) {
-						
-						player[7] = false; //down is closed
-						player[1] = blocks[i][1] - player[3] - flow[5];
-						
-						player[0] += flow[4];
-						player[1] += delayYvel;
-						
-						delayYvel = blocks[i][3][blocks[i][4] + 1][5];
-						player[5] = 0;
-						player[10] = false;
-						
-					}
+				};
+
+				//imagize
+
+				{
+
+					var grass = createGraphics(40, 20, P2D);
+
+					grass.beginDraw();
+
+					grass.background(97, 63, 16);
+
+					grass.noStroke();
+
+					grass.fill(90, 57, 10);
+					grass.rect(0, 0, 20, 20);
+
+					grass.fill(27, 125, 0);
+					grass.beginShape();
+
+					grass.vertex(40, 0);
+					grass.vertex(40, 10);
+					grass.vertex(35, 5);
+					grass.vertex(20, 20);
+					grass.vertex(20, 0);
+					grass.endShape();
+
+					grass.fill(20, 115, 0);
+					grass.beginShape();
+					grass.vertex(20, 0);
+					grass.vertex(20, 20);
+					grass.vertex(5, 5);
+
+					grass.vertex(0, 10);
+					grass.vertex(0, 0);
+
+					grass.endShape();
+
+					grass.endDraw();
+					grass = grass.get();
+
+					var dirt_bl = createGraphics(20, 21, P2D);
+
+					dirt_bl.beginDraw();
+
+					dirt_bl.background(0, 0, 0, 0);
+					dirt_bl.noStroke();
+					dirt_bl.fill(90, 57, 10);
+					dirt_bl.beginShape();
+
+					dirt_bl.vertex(0, 0);
+
+					dirt_bl.vertex(0, 10);
+					dirt_bl.vertex(10, 20);
+					dirt_bl.vertex(20, 20);
+					dirt_bl.vertex(20, 0);
+
+					dirt_bl.endShape(CLOSE);
+
+					dirt_bl.endDraw();
+					dirt_bl = dirt_bl.get();
+
+					var dirt_br = createGraphics(20, 21, P2D);
+
+					dirt_br.beginDraw();
+
+					dirt_br.background(0, 0, 0, 0);
+					dirt_br.noStroke();
+					dirt_br.fill(97, 63, 16);
+					dirt_br.beginShape();
+
+					dirt_br.vertex(0, 0);
+					dirt_br.vertex(0, 20);
+					dirt_br.vertex(10, 20);
+					dirt_br.vertex(20, 10);
+
+					dirt_br.vertex(20, 0);
+
+					dirt_br.endShape(CLOSE);
+
+					dirt_br.endDraw();
+					dirt_br = dirt_br.get()
+
+					var dirt_bml = createGraphics(20, 21, P2D);
+
+					dirt_bml.beginDraw();
+
+					dirt_bml.background(0, 0, 0, 0);
+					dirt_bml.noStroke();
+					dirt_bml.fill(90, 57, 10);
+					dirt_bml.beginShape();
+
+					dirt_bml.vertex(0, 0);
+					dirt_bml.vertex(0, 20);
+
+					dirt_bml.vertex(20, 20);
+					dirt_bml.vertex(20, 0);
+
+					dirt_bml.endShape(CLOSE);
+
+					dirt_bml.endDraw();
+					dirt_bml = dirt_bml.get();
+
+					var dirt_bmr = createGraphics(20, 21, P2D);
+
+					dirt_bmr.beginDraw();
+
+					dirt_bmr.background(0, 0, 0, 0);
+					dirt_bmr.noStroke();
+					dirt_bmr.fill(97, 63, 16);
+					dirt_bmr.beginShape();
+
+					dirt_bmr.vertex(0, 0);
+					dirt_bmr.vertex(0, 20);
+
+					dirt_bmr.vertex(20, 20);
+					dirt_bmr.vertex(20, 0);
+
+					dirt_bmr.endShape(CLOSE);
+
+					dirt_bmr.endDraw();
+					dirt_bmr = dirt_bmr.get();
+
+					var dirt = createGraphics(20, 20, P2D);
+
+					dirt.beginDraw();
+
+					dirt.background(97, 63, 16);
+
+					dirt.endDraw();
+					dirt = dirt.get();
+
+					var dark_dirt = createGraphics(20, 20, P2D);
+
+					dark_dirt.beginDraw();
+
+					dark_dirt.background(90, 57, 10);
+
+					dark_dirt.endDraw();
+					dark_dirt = dark_dirt.get();
+
+					var middle = createGraphics(40, 40, P2D);
+
+					middle.beginDraw();
+
+					middle.background(0, 0, 0, 0);
+
+					middle.image(dark_dirt, 0, 0);
+					middle.image(dirt, 20, 0);
+					middle.image(dark_dirt, 0, 20);
+					middle.image(dirt, 20, 20);
+
+					middle.endDraw();
+					middle = middle.get();
+
+					var top_image = createGraphics(40, 40, P2D);
+
+					top_image.beginDraw();
+
+					top_image.background(0, 0, 0, 0);
+
+					top_image.image(grass, 0, 0);
+					top_image.image(dark_dirt, 0, 20);
+					top_image.image(dirt, 20, 20);
+
+					top_image.endDraw();
+					top_image = top_image.get();
+
+					var bottom_image = createGraphics(40, 40, P2D);
+
+					bottom_image.beginDraw();
+
+					bottom_image.background(0, 0, 0, 0);
+
+					bottom_image.image(dark_dirt, 0, 0);
+					bottom_image.image(dirt, 20, 0);
+					bottom_image.image(dirt_bml, 0, 20);
+					bottom_image.image(dirt_bmr, 20, 20);
+
+					bottom_image.endDraw();
+					bottom_image = bottom_image.get();
+
+					var bottom_left = createGraphics(40, 40, P2D);
+
+					bottom_left.beginDraw();
+
+					bottom_left.background(0, 0, 0, 0);
+
+					bottom_left.image(dark_dirt, 0, 0);
+					bottom_left.image(dirt, 20, 0);
+					bottom_left.image(dirt_bl, 0, 20);
+					bottom_left.image(dirt_bmr, 20, 20);
+
+					bottom_left.endDraw();
+					bottom_left = bottom_left.get();
+
+					var bottom_right = createGraphics(40, 40, P2D);
+
+					bottom_right.beginDraw();
+
+					bottom_right.background(0, 0, 0, 0);
+
+					bottom_right.image(dark_dirt, 0, 0);
+					bottom_right.image(dirt, 20, 0);
+					bottom_right.image(dirt_bml, 0, 20);
+					bottom_right.image(dirt_br, 20, 20);
+
+					bottom_right.endDraw();
+					bottom_right = bottom_right.get();
+
+					var Xleft = createGraphics(40, 40, P2D);
+
+					Xleft.beginDraw();
+
+					Xleft.background(0, 0, 0, 0);
+
+					Xleft.image(grass, 0, 0);
+					Xleft.image(dirt_bl, 0, 20);
+					Xleft.image(dirt_bmr, 20, 20);
+
+					Xleft.endDraw();
+					Xleft = Xleft.get();
+
+					var Xright = createGraphics(40, 40, P2D);
+
+					Xright.beginDraw();
+
+					Xright.background(0, 0, 0, 0);
+
+					Xright.image(grass, 0, 0);
+					Xright.image(dirt_bml, 0, 20);
+					Xright.image(dirt_br, 20, 20);
+
+					Xright.endDraw();
+					Xright = Xright.get();
+
+					var Xmiddle = createGraphics(40, 40, P2D);
+
+					Xmiddle.beginDraw();
+
+					Xmiddle.background(0, 0, 0, 0);
+
+					Xmiddle.image(grass, 0, 0);
+					Xmiddle.image(dirt_bml, 0, 20);
+					Xmiddle.image(dirt_bmr, 20, 20);
+
+					Xmiddle.endDraw();
+					Xmiddle = Xmiddle.get();
+
+					var alone = createGraphics(40, 40, P2D);
+
+					alone.beginDraw();
+
+					alone.background(0, 0, 0, 0);
+
+					alone.image(grass, 0, 0);
+					alone.image(dirt_bl, 0, 20);
+					alone.image(dirt_br, 20, 20);
+
+					alone.endDraw();
+					alone = alone.get();
+
+					var alone_bottom = createGraphics(40, 40, P2D);
+
+					alone_bottom.beginDraw();
+
+					alone_bottom.background(0, 0, 0, 0);
+
+					alone_bottom.image(dark_dirt, 0, 0);
+					alone_bottom.image(dirt, 20, 0);
+					alone_bottom.image(dirt_bl, 0, 20);
+					alone_bottom.image(dirt_br, 20, 20);
+
+					alone_bottom.endDraw();
+					alone_bottom = alone_bottom.get();
+
+					var cloud = createGraphics(300, 180, P2D);
+
+					cloud.beginDraw();
+
+					cloud.background(0, 0, 0, 0);
+
+					cloud.noStroke();
+					cloud.fill(200, 209, 209);
+					cloud.rect(50, 106, 200, 74);
+
+					cloud.ellipse(50, 130, 100, 100);
+					cloud.ellipse(250, 130, 100, 100);
+					cloud.ellipse(150, 90, 180, 180);
+
+					cloud.endDraw();
+					cloud = cloud.get();
+
+					var lowSpike = createGraphics(40, 10, P2D);
+
+					lowSpike.beginDraw();
+
+					lowSpike.background(0,0,0,0);
+					lowSpike.noStroke();
+
+					lowSpike.fill(92, 0, 58);
+                    lowSpike.triangle(0, 10, 10, 10, 5, 4);
+                    lowSpike.triangle(30, 10, 40, 10, 35, 4);
+                    lowSpike.triangle(15, 10, 25, 10, 20, 1);
+
+                    lowSpike.fill(110, 14, 14);
+                    lowSpike.triangle(10, 10, 15, 10, 12.5, 5);
+                    lowSpike.triangle(25, 10, 30, 10, 27.5, 5);
+
+					lowSpike.endDraw();
+
+					lowSpike = lowSpike.get();
+
+					var fragileBlock = createGraphics(40, 40, P2D);
+					fragileBlock.beginDraw();
+
+					fragileBlock.noStroke();
+					fragileBlock.background(130, 99, 55);
+
+					fragileBlock.fill(160, 122, 69);
+					fragileBlock.beginShape();
+					fragileBlock.vertex(3, 8);
+					fragileBlock.vertex(3, 3);
+					fragileBlock.vertex(8, 3);
+					fragileBlock.vertex(20, 15);
+					fragileBlock.vertex(32, 3);
+					fragileBlock.vertex(37, 3);
+					fragileBlock.vertex(37, 8);
+					fragileBlock.vertex(25, 20);
+					fragileBlock.vertex(37, 32);
+					fragileBlock.vertex(37, 37);
+					fragileBlock.vertex(32, 37);
+					fragileBlock.vertex(20, 25);
+					fragileBlock.vertex(8, 37);
+					fragileBlock.vertex(3, 37);
+					fragileBlock.vertex(3, 32);
+					fragileBlock.vertex(15, 20);
+					fragileBlock.endShape();
+
+					fragileBlock.beginShape();
+					fragileBlock.vertex(3, 12);
+					fragileBlock.vertex(11, 20);
+					fragileBlock.vertex(3, 28);
+					fragileBlock.endShape();
+
+					fragileBlock.beginShape();
+					fragileBlock.vertex(12, 3);
+					fragileBlock.vertex(20, 11);
+					fragileBlock.vertex(28, 3);
+					fragileBlock.endShape();
+
+					fragileBlock.beginShape();
+					fragileBlock.vertex(37, 12);
+					fragileBlock.vertex(29, 20);
+					fragileBlock.vertex(37, 28);
+					fragileBlock.endShape();
+
+					fragileBlock.beginShape();
+					fragileBlock.vertex(12, 37);
+					fragileBlock.vertex(20, 29);
+					fragileBlock.vertex(28, 37);
+					fragileBlock.endShape();
+
+					fragileBlock.endDraw();
+
+					fragileBlock = fragileBlock.get();
 
 				}
-			}
-            
-	    }
-        
-		for (var i in stars) {
-			
-			pushMatrix();
-			translate(stars[i][0] + 20, stars[i][1] + 20);
-			rot(frameCount*2);
-			drawStar(0, 0, stars[i][2], color(165, 135, 23));
-			popMatrix();
-			
-			var x = stars[i][0] + 20;
-			var y = stars[i][1] + 20;
-			
-			if (stars[i][2] <= 13) {
-				
-				stars[i][2] += (13.15 - stars[i][2])/10;
-				
-			}
-			
-			if (player[0] >= (x - player[2] - 13) & player[0] <= (x + 13) & player[1] >= (y - player[3] - 13) & player[1] <= (y + 13)) {
-				
-				levelStar ++;
-				
-				if (levelStar > starRecord[worldNum][levelNum]) {
-					starRecord[worldNum][levelNum] = levelStar;
+
+				//function for drawing the player, given the x and y coordinates
+				var drawPlayer = function(x, y, w, h, item) {
+					/*
+					noFill();
+					strokeWeight(1);
+					stroke(255, 0, 0);
+					rect(x, y, w, h);
+					*/
+
+					var face = color(196, 151, 67);
+					var shirt = color(17, 24, 120);
+					var sleeve = color(5, 6, 60);
+					var pants = color(17, 24, 20);
+
+					var loop = 0;
+
+					pushMatrix();
+					translate(x + (flip ? w : 0), y);
+					scale((flip ? -1 : 1) * 0.12, 0.12);
+
+					translate(-48, -15);
+
+					noFill();
+					noStroke();
+
+					//left arm
+
+					stroke(sleeve);
+					noFill();
+					strokeWeight(25);
+					strokeCap(SQUARE);
+					beginShape();
+
+					vertex(165, 179);
+
+					loop = 40;
+
+					if (item[7]) {
+
+						vertex(191, 162);
+						vertex(227, 136);
+
+					} else if (abs(item[4]) < 1) {
+
+						vertex(177, 204);
+						vertex(189, 256);
+
+					} else if (frameCount % loop < loop / 6) {
+
+						vertex(184, 204);
+						vertex(227, 211);
+
+					} else if (frameCount % loop < loop / 3 | frameCount % loop > loop * 5 / 6) {
+
+						vertex(173, 209);
+						vertex(214, 232);
+
+					} else if (frameCount % loop < loop / 2 | frameCount % loop > 2 * loop / 3 & frameCount % loop < 5 * loop / 6) {
+
+						vertex(155, 215);
+						vertex(205, 240);
+
+					} else {
+
+						vertex(130, 204);
+						vertex(190, 250);
+
+					}
+
+					endShape();
+
+					loop = 40;
+
+					//legs
+					{
+						stroke(pants);
+						noFill();
+						strokeWeight(36);
+						strokeCap(SQUARE);
+						beginShape();
+
+						if (frameCount % loop < loop / 6 | abs(item[4]) < 1 | item[7]) {
+
+							vertex(78, 352);
+							vertex(78, 304);
+							vertex(78, 280);
+
+						} else if (frameCount % loop < loop / 3 | frameCount % loop > loop * 5 / 6) {
+
+							vertex(93, 352);
+							vertex(93, 304);
+							vertex(93, 280);
+
+						} else if (frameCount % loop < loop / 2 | frameCount % loop > 2 * loop / 3 & frameCount % loop < 5 * loop / 6) {
+
+							vertex(92, 352);
+							vertex(92, 304);
+							vertex(92, 280);
+
+						} else {
+
+							vertex(79, 352);
+							vertex(79, 304);
+							vertex(79, 280);
+
+						}
+
+						if (frameCount % loop < loop / 6 | abs(item[4]) < 1 | item[7]) {
+
+							vertex(158, 280);
+							vertex(158, 319);
+							vertex(158, 351);
+
+						} else if (frameCount % loop < loop / 3 | frameCount % loop > loop * 5 / 6) {
+
+							vertex(143, 280);
+							vertex(143, 319);
+							vertex(143, 351);
+
+						} else if (frameCount % loop < loop / 2 | frameCount % loop > 2 * loop / 3 & frameCount % loop < 5 * loop / 6) {
+
+							vertex(143, 280);
+							vertex(143, 319);
+							vertex(143, 351);
+
+						} else {
+
+							vertex(155, 280);
+							vertex(155, 319);
+							vertex(155, 351);
+
+						}
+
+						endShape();
+
+					}
+
+					//shirt
+					fill(shirt);
+					noStroke();
+					beginShape();
+
+					vertex(175, 152);
+					vertex(178, 176);
+					vertex(180, 213);
+					vertex(178, 258);
+					vertex(176, 266);
+					vertex(170, 270);
+					vertex(60, 270);
+					vertex(59, 264);
+					vertex(58, 211);
+					vertex(59, 161);
+					vertex(65, 152);
+					vertex(86, 152);
+
+					endShape();
+
+					//right arm
+
+					stroke(sleeve);
+					noFill();
+					strokeWeight(25);
+					strokeCap(SQUARE);
+					beginShape();
+
+					loop = 40;
+
+					vertex(78, 170);
+
+					if (item[7]) {
+
+						vertex(45, 162);
+						vertex(10, 120);
+
+					} else if (abs(item[4]) < 1) {
+
+						vertex(70, 210);
+						vertex(80, 254);
+
+					} else if (frameCount % loop < loop / 6) {
+
+						vertex(45, 210);
+						vertex(73, 250);
+
+					} else if (frameCount % loop < loop / 3 | frameCount % loop > loop * 5 / 6) {
+
+						vertex(65, 210);
+						vertex(113, 240);
+
+					} else if (frameCount % loop < loop / 2 | frameCount % loop > 2 * loop / 3 & frameCount % loop < 5 * loop / 6) {
+
+						vertex(95, 213);
+						vertex(146, 224);
+
+					} else {
+
+						vertex(123, 200);
+						vertex(163, 190);
+
+					}
+
+					endShape();
+
+					//head
+
+					pushMatrix();
+
+					stroke(255, 255, 255);
+					strokeWeight(5);
+					noFill();
+
+					noStroke();
+
+					loop = 20;
+
+					translate(-24, (frameCount % loop < loop / 2 & !item[7] & abs(item[4]) > 1 ? 10 : 0));
+
+					loop = 40;
+
+					fill(face);
+					beginShape();
+
+					vertex(145, 2);
+					vertex(182, 7);
+					vertex(213, 50);
+					vertex(225, 89);
+					vertex(222, 110);
+					vertex(211, 135);
+					vertex(187, 152);
+					vertex(163, 152);
+					vertex(98, 152);
+					vertex(83, 134);
+					vertex(74, 98);
+					vertex(73, 76);
+					vertex(75, 49);
+					vertex(84, 21);
+					vertex(105, 7);
+					vertex(118, 5);
+
+					endShape();
+
+					//eyes
+
+					fill(0, 0, 0);
+					ellipse(140, 65, 22, 22);
+					ellipse(180, 65, 22, 22);
+
+					//mouth
+					rect(144, 101, 38, (item[7] ? 30 : 10), 10);
+
+					//hair
+
+					fill(46, 37, 22);
+					beginShape();
+
+					vertex(73, 75);
+					vertex(79, 10);
+					vertex(150, 1);
+					vertex(205, 2);
+					vertex(188, 15);
+					vertex(139, 17);
+					vertex(96, 29);
+
+					endShape();
+
+					popMatrix();
+
+					popMatrix();
+
+				};
+
+				var drawDoor = function(x, y, dark) {
+
+					pushMatrix();
+
+					translate(x, y);
+					fill(255, 255, 255);
+
+					//cosine, sine represents curve of door
+					noStroke();
+					beginShape();
+					//top curve of door, not wanted in low graphics mode
+					vertex(20 + 20 * cosine(180), 20 * sine(180));
+					vertex(20 + 20 * cosine(200), 20 * sine(200));
+					vertex(20 + 20 * cosine(220), 20 * sine(220));
+					vertex(20 + 20 * cosine(240), 20 * sine(240));
+					vertex(20 + 20 * cosine(260), 20 * sine(260));
+					vertex(20 + 20 * cosine(280), 20 * sine(280));
+					vertex(20 + 20 * cosine(300), 20 * sine(300));
+					vertex(20 + 20 * cosine(320), 20 * sine(320));
+					vertex(20 + 20 * cosine(340), 20 * sine(340));
+					vertex(20 + 20 * cosine(360), 20 * sine(360));
+					vertex(40, 40);
+					vertex(0, 40); //bottom of door
+
+					endShape();
+					popMatrix();
+
+				};
+
+				var drawBlock = function(x, y, i) {
+
+					if (top & bottom & left & right) {
+
+						image(alone, x, y);
+
+					} else if (top & !bottom) {
+
+						image(top_image, x, y);
+
+					} else if (bottom & !top) {
+
+						if (left & right) {
+
+							image(alone_bottom, x, y);
+
+						} else if (left) {
+
+							image(bottom_left, x, y);
+
+						} else if (right) {
+
+							image(bottom_right, x, y);
+
+						} else {
+
+							image(bottom_image, x, y);
+
+						}
+
+					} else if (!bottom & !top) {
+
+						image(middle, x, y);
+
+					} else {
+
+						if (left) {
+
+							image(Xleft, x, y);
+
+						} else if (right) {
+
+							image(Xright, x, y);
+
+						} else {
+
+							image(Xmiddle, x, y);
+
+						}
+
+					}
+
+				};
+
+				var drawCloud = function(x, y, big) {
+
+					pushMatrix();
+					translate(x, y);
+					scale(big / 10);
+					translate(-200, -246);
+					image(cloud, 0, 0);
+					popMatrix();
+
 				}
-				
-				for (var j = 0; j < 8; j ++) {
-					starRemains.push([x, y, random(-2, 2), random(-5, -1), random(0, 2*PI)]);
-				}
-				
-				stars.splice(i, 1);
-				
-			}
-			
-		}
-		
-		for (var i in starRemains) {
-			
-			pushMatrix();
-			
-			translate(starRemains[i][0], starRemains[i][1]);
-			rotate(starRemains[i][4]);
-			fill(220, 150, 40, 200);
-			rect(-1.5, -3.5, 3, 7);
-			
-			popMatrix();
-			
-			starRemains[i][4] += 0.2;
-			
-			starRemains[i][3] += 0.31;
-			
-			starRemains[i][0] += starRemains[i][2];
-			starRemains[i][1] += starRemains[i][3];
-			
-			if (starRemains[i][1] > 420) {
-				starRemains.splice(i, 1);
-			}
-		}
-		
-		if (playing) {
-			
-			//controls
-			if (keys[UP] & !player[7] & player[6] & !noJump) {
 
-				player[5] = -7.5;
-				player[10] = true;
-				ran = false;
+				//163, 135, 23 < optimal gold star coloring
+				var drawStar = function(x, y, size, clr) {
 
-			} else if (keys[DOWN] & player[7]) {
+					fill(clr);
+					beginShape();
+					for (var i = 0; i < 5; i++) {
 
-				player[5] = 12;
+						vertex(x + size / 2.46276957 * cos(i * 0.4 * PI - 0.3 * PI), y + size / 2.46276957 * sin(i * 0.4 * PI - 0.3 * PI));
+						vertex(x + size * cos(i * 0.4 * PI - PI / 10), y + size * sin(i * 0.4 * PI - PI / 10));
 
-			}
+					}
+					endShape();
 
-			//movements are not sudden!
-			if (keys[LEFT] & !keys[RIGHT]) {
+				};
 
-				player[4] -= 0.3;
-
-			} else if (keys[RIGHT] & !keys[LEFT]) {
-
-				player[4] += 0.3;
-
-			} else if (abs(player[4]) > 0.01) {//doesnt slice for inf
-
-				player[4] /= 1.1;
-
-			} else {
-
-				player[4] = 0; //resets
-
-			}
-			
-		}
-        
-        //constraint on horizontal movement
-        player[4] = constrain(player[4], -3, 3);
-        
-		if (playing) {
-
-			//applies gravity!!!
-			player[5] += 0.31;
-
-		}
-		
-        if (player[1] > -cameraAim[1] - 50 & player[1] < -cameraAim[1] + 450 & player[0] > -cameraAim[0] - 50 & player[0] < -cameraAim[0] + 650 & playing) {
-            
-            //moves player
-            player[0] += player[4];
-            player[1] += player[5];
-            
-        }
-        
-        //constrains player to be on the screen
-        player[0] = constrain(player[0], 0, 40 - player[2] + far);
-        
-        //if player fell off
-        if (player[1] > 400) {
-            
-            death();
-            
-        }
-        
-        //if he's on the edge
-        if (player[0] === 0 | player[0] === (600 - player[2])) {
-            
-            player[4] = 0; //no x movement
-            
-        }
-        
-        if (player[0] > (door[0]) & player[0] < (door[0] + 40 - player[2]) & player[1] > (door[1] - 10) & player[1] < (door[1] + 45 - player[3])) {
-            
-            while (storage.length > 0) {
-                
-                storage.pop();
-                
-            }
-            
-            first = true;
-            levelNum = (levelNum + 1) % maps[worldNum].length;
-			unlocked[worldNum][levelNum] = true;
-			
-			starDisplay = [0, 0, 0];
-			
-			if (levelNum === 0) {
-				
-				page = "levels";
-				
-			}
-            page = "levels";
-			
-			while (clouds.length > 0) {
-				
-				clouds.pop();
-				
-			}
-			
-            levelTransition = 255;
-            next = true;
-            
-            while (storage.length > 0) {
-                
-                storage.pop();
-                
-            }
-            
-        }
-        
-        //draws the door
-        drawDoor(door[0], door[1]);
-        
-        if (player[4] > 0) {
-            
-            flip = false;
-            
-        }
-        if (player[4] < 0) {
-            
-            flip = true;
-            
-        }
-        
-        if (levelTransition < 230) {
-            
-            var thing = [player[0], player[1], player[2], player[3], player[4], player[5], player[6], player[7], player[8], player[9], player[10]];
-            
-            record.push(thing);
-            
-        }
-        
-        //draws the player
-        drawPlayer(player[0], player[1], player[2], player[3], player, false);
-        
-        //draws blocks
-        for (var i in blocks) {
-            
-            top = position[i][0];
-            bottom = position[i][1];
-            left = position[i][2];
-            right = position[i][3];
-            
-            //if the block is within the y translate
-            if (blocks[i][1] > -cameraAim[1] - 50 & blocks[i][1] < -cameraAim[1] + 450 & blocks[i][0] > -cameraAim[0] - 50 & blocks[i][0] < -cameraAim[0] + 650) {
-                
-                if (blocks[i][2] === 1) {
-                    
-                    //draws a more complex block
-                    drawBlock(blocks[i][0], blocks[i][1], i);
-                    
-                } else if (blocks[i][2] === 2) {
-                    
-				    fill(61, 61, 61);
+				var drawGear = function (x, y, size, fillColor) {
 				    noStroke();
-				    triangle(blocks[i][0], blocks[i][1] + blocks[i][4], blocks[i][0] + blocks[i][3]/2, blocks[i][1], blocks[i][0] + blocks[i][3], blocks[i][1] + blocks[i][4]);
-					
-				    fill(56, 56, 56);
-					triangle(blocks[i][0], blocks[i][1] + blocks[i][4], blocks[i][0] + blocks[i][3]/2, blocks[i][1], blocks[i][0] + blocks[i][3]/2, blocks[i][1] + blocks[i][4]);
-                    
-                }
-                
-            }
-            
-        }
-        
-        onDoor = false;
-        
-        popMatrix();
-        
-        //pause button
-        fill(255, 255, 255, 200);
-        rect(560, 10, 30, 30);
-        rect(520, 10, 30, 30);
-        rect(480, 10, 30, 30);
-        rect(440, 10, 30, 30);
-        
-		for (var i = 0; i < 3; i ++) {
-			
-			if (i < levelStar) {
-				
-				if (starDisplay[i] < 10) {
+				    fill(fillColor);
+				    beginShape();
+				    for (var i = 0; i < 360; i += 11.25) {
+				        vertex(x + (i % 45 < 22.5 ? size*25/32 : size)*cosine(i), y + (i % 45 < 22.5 ? size*25/32 : size)*sine(i));
+				    }
+				    endShape(CLOSE);
+				};
 
-					starDisplay[i] += (10.15 - starDisplay[i])/15;
-					
-				} else {
-					
-					starDisplay[i] = 10;
-					
-				}
-				
-			} else {
-				
-				if (starDisplay[i] > 0) {
+				//function to draw a lock (rectangular shape)
+				var drawLock = function(x, y, size) {
 
-					starDisplay[i] -= (starDisplay[i] + 0.15)/15;
-					
-				} else {
-					
-					starDisplay[i] = 0;
-					
-				}
-				
-			}
-			
-			pushMatrix();
-			
-			translate(25 + 25*i, 25);
-			rotate(starDisplay[i]*PI/5);//0.566370617);
-			drawStar(0, 0, 11, color(222-starDisplay[i]*2.5,226-starDisplay[i]*6.5,235-starDisplay[i]*20.6, 200 + starDisplay[i]*5.5));
-			//207,181,59
-			//163,135,23
-			//222,226,235
-			
-			popMatrix();
-			
+					var dark_gray = color(120, 120, 120);
+					var light_gray = color(219, 229, 246);
+
+					pushMatrix();
+
+					translate(x, y); //moves it to the proper spot
+					scale(size / 500);
+
+					drawGear(250, 250, 400, dark_gray); //a big rectangle providing background for the lock
+					fill(light_gray);
+					ellipse(250, 250, 400, 400);
+					fill(dark_gray);
+					ellipse(250, 215, 170, 183); //the outside lock circle part
+					fill(light_gray);
+					ellipse(250, 215, 100, 108); //the inside circle negative space
+					fill(dark_gray);
+					rect(140, 227, 220, 138); //rectangle at the bottom, main lock
+
+					popMatrix();
+
+				};
+
+				//function to draw a lock (rectangular shape)
+				var drawArrow = function(x, y, size) {
+
+					pushMatrix();
+
+					translate(x, y); //moves it to the proper spot
+					scale(size / 500);
+
+					fill(219, 229, 246);
+					rect(0, 0, 500, 500); //a big rectangle providing background for the arrow
+
+					translate(-1, 5);
+					fill(bkgrdColor);
+					rect(302, 121, 100, 275); //the vertical line
+					rect(155, 121, 200, 100); //the horizontal line
+
+					translate(27, 0); //arrow shift right
+					triangle(47, 170, 157, 70, 157, 270); //arrow
+
+					popMatrix();
+
+				};
+
+				// draws a random person based on given characteristics
+				var drawCharacter = function (x, y, male, hair, hairColor, skinColor, shirtColor, pantsColor, glasses, tie, talking) {
+    pushMatrix();
+    translate(x + 20, y);
+    scale(-0.5,0.5); // 40 by 80 scaled to 20 by 40
+
+    // based on number, redefine colors to actual color values
+    hairColor %= 3;
+    switch (hairColor) {
+        case 0:
+            hairColor = color(43, 32, 3); // black
+            break;
+        case 1:
+            hairColor = color(105, 89, 46); // brown
+            break;
+        case 2:
+            hairColor = color(217,62,20); // red
+            break;
+    }
+    skinColor %= 4;
+    switch (skinColor) {
+        case 0:
+            skinColor = color(234,192,134); //lightest
+            break;
+        case 1:
+            skinColor = color(224,172,105);
+            break;
+        case 2:
+            skinColor = color(196, 151, 67);
+            break;
+        case 3:
+            skinColor = color(171, 130, 53); // to darkest
+            break;
+    }
+    shirtColor %= 4;
+    switch (shirtColor) {
+        case 0:
+            shirtColor = color(179, 68, 88); // red
+            break;
+        case 1:
+            shirtColor = color(129, 50, 179); // purple
+            break;
+        case 2:
+            shirtColor = color(17, 24, 120); // blue
+            break;
+        case 3:
+            shirtColor = color(193, 196, 35); // yellow
+            break;
+    }
+    pantsColor %= 3;
+    switch (pantsColor) {
+        case 0:
+            pantsColor = color(18, 17, 14); // black
+            break;
+        case 1:
+            pantsColor = color(101, 111, 122); //grey
+            break;
+        case 2:
+            pantsColor = color(3, 31, 66); // dark blue
+            break;
+    }
+
+    noStroke();
+
+
+	pushMatrix();
+
+	// adds a slight movement to the head
+	if (!talking) {
+		translate(cosine(frameCount*5), 1-abs(sine(frameCount*5)));
+    }
+
+	hair %= 4;
+    // background on the hair
+    fill(hairColor);
+    if (!male) {
+        if (hair === 0) {
+            rect(-1, 15, 42, 36);
+            rect(9, 13, 32, 5);
+        } else if (hair === 1) {
+            rect(-1, 15, 43, 36);
+        } else if (hair === 2) {
+            rect(-1, 15, 43, 22);
+        } else {
+			console.log(hair);
 		}
-		
-		popMatrix();
-		
     }
-    
-    if (levelTransition > 0) {
-        
-        //deals with the screen change fade in
-        noStroke();
-        fill(0, 0, 0, levelTransition);
-        rect(0, 0, width, height);
-        levelTransition -= 10;
-        
+
+    popMatrix();
+
+    fill (shirtColor);
+    // shirt
+    if (male) {
+        rect(4, 38, 30, 30, 6);
+    } else {
+        rect(4, 38, 30, 30, 6);
+        beginShape();
+        vertex(4, 58);
+        vertex(34, 58);
+        vertex(38, 70);
+        vertex(0, 70);
+        endShape();
     }
-    
-    if (frameCount % 20 === 0) {
-        
-        t = (1000/(millis() - pmillis)).toFixed(1);
-        
+
+    if (tie) {
+        fill (0);
+        beginShape();
+        vertex(16, 38);
+        vertex(22, 38);
+        vertex(20, 41);
+        vertex(21, 52);
+        vertex(19, 54);
+        vertex(17, 52);
+        vertex(18, 41);
+        endShape();
     }
-    fill(0, 0, 0);
-    textSize(15);
-	textAlign(LEFT);
-    //text(t, 20, 15); //uncomment if you want frameRate to appear
-	pmillis = millis();
-		
+
+    noStroke();
+
+    fill (pantsColor);
+    // pants
+    if (male) {
+        rect(8, 68, 8, 12);
+        rect(22, 68, 8, 12);
+    } else {
+        rect(8, 70, 8, 10);
+        rect(22, 70, 8, 10);
+    }
+
+	pushMatrix();
+
+	// adds a slight movement to the head
+	if (!talking) {
+		translate(cosine(frameCount*5), 1-abs(sine(frameCount*5)));
+    }
+
+    // draw head
+    fill(skinColor);
+    rect(0, 0, 40, 40, 20);
+
+    // eyes
+    fill (0);
+    ellipse(18, 18, 6, 6);
+    ellipse(30, 18, 6, 6);
+
+    // mouth
+    var w = talking ? 2*sine(frameCount*14) + 7 : 8;
+    rect(23 - w/2, 26, w, talking ? sine(frameCount*14) + 3 : 2, 6);
+
+    fill (hairColor);
+    // draw hair (different based on gender)
+    hair %= 4;
+
+    beginShape();
+    if (male) {
+        switch (hair) {
+            case 0:
+                vertex(6, 8);
+                vertex(20, 6);
+                vertex(38, 8);
+                vertex(40, 7);
+                vertex(30, 0);
+                vertex(20, 0);
+                vertex(12, 1);
+                vertex(4, 5);
+                vertex(0, 14);
+                break;
+            case 1:
+                vertex(21, 3);
+                vertex(16, 1);
+                vertex(18, -13);
+                vertex(21, 3);
+                vertex(24, -24);
+                vertex(25, 8);
+                break;
+            case 2:
+                vertex(6, 8);
+                vertex(23, 6);
+                vertex(38, 8);
+                vertex(40, -4);
+                vertex(33, 0);
+                vertex(29, -5);
+                vertex(26, 1);
+                vertex(22, -5);
+                vertex(19, -1);
+                vertex(16, -6);
+                vertex(12, 1);
+                vertex(4, -1);
+                vertex(0, 14);
+                break;
+            // case 3 is bald
+        }
+    } else {
+        switch (hair) {
+            case 0:
+                vertex(3, 6);
+                vertex(12, 0);
+                vertex(29, 0);
+                vertex(35, 4);
+                vertex(42, 14);
+                vertex(28, 9);
+                vertex(25, 8);
+                vertex(20, 7);
+                vertex(11, 13);
+                vertex(6, 20);
+                vertex(2, 37);
+                vertex(-1, 51);
+                vertex(-3, 36);
+                vertex(-1, 14);
+                break;
+            case 1:
+                strokeWeight(1);
+                vertex(3, 6);
+                vertex(12, 0);
+                vertex(20, -1);
+                vertex(29, 0);
+                vertex(35, 4);
+                vertex(42, 14);
+                vertex(43, 18);
+                vertex(43, 29);
+                vertex(45, 37);
+                vertex(42, 51);
+                vertex(34, 51);
+                vertex(42, 38);
+                vertex(40, 28);
+                vertex(35, 14);
+                vertex(28, 9);
+                vertex(25, 8);
+                vertex(20, 7);
+                vertex(11, 13);
+                vertex(6, 20);
+                vertex(2, 37);
+                vertex(-1, 51);
+                vertex(-5, 42);
+                vertex(-4, 36);
+                vertex(-5, 28);
+                vertex(-4, 24);
+                vertex(-4, 19);
+                vertex(-2, 14);
+                break;
+            case 2:
+                strokeWeight(1);
+                vertex(3, 6);
+                vertex(12, 0);
+                vertex(20, -1);
+                vertex(29, 0);
+                vertex(35, 4);
+                vertex(42, 14);
+                vertex(43, 18);
+                vertex(43, 29);
+                vertex(45, 37);
+                vertex(42, 37);
+                vertex(40, 28);
+                vertex(35, 14);
+                vertex(28, 9);
+                vertex(25, 8);
+                vertex(20, 7);
+                vertex(11, 13);
+                vertex(6, 20);
+                vertex(2, 37);
+                vertex(-4, 37);
+                vertex(-5, 28);
+                vertex(-4, 24);
+                vertex(-4, 19);
+                vertex(-2, 14);
+                break;
+            case 3:
+                break;
+        }
+    }
+    endShape();
+
+    popMatrix();
+
+
+    // arms
+    strokeWeight(8);
+    stroke(skinColor);
+    if (talking) {
+        line(32, 42, 33 + 2 * cosine(frameCount * 5), 54);
+        line(7, 42, 6 - 2 * cosine(frameCount * 5), 54);
+    } else {
+        var angle = abs(330 - frameCount*2 % 660) - 90;
+        var ang = angle;
+        if (angle < -60) {
+            ang = -60 - (angle + 60);
+        } else if (angle === 90) {
+            ang = 90;
+        } else if (angle > 85) {
+            ang = 85;
+        }
+        // -60 -30 70 100
+        line(32, 42, 32 + 12*cosine (ang), 42 + 12*sine (ang));
+        line(7, 42, 6, 54);
+    }
+
+
+    popMatrix();
 };
 
+				//triggers a death, no args needed
+				var death = function(damage) {
 
-}
-}}
-    // Get the canvas that Processing-js will use
-    var canvas = document.getElementById("mycanvas");
-	
-    // Pass the function sketchProc (defined in myCode.js) to Processing's constructor.
-    var processingInstance = new Processing(canvas, sketchProc); 
- </script>
+					if (deathCount <= 0) {
+						// time until playing again
+						deathCount = 150;
+
+						// a big shake on damage
+						shakeAmt = 10;
+
+						// decrease health
+						health -= damage;
+
+						// makes a red flash
+						levelTransition = 150;
+						transitionColor = color(255, 0, 0);
+
+						// sends to game over
+						if (health <= 0) {
+							health = 0;
+							shakeAmt = 0; // no shake needed if game over
+							genExplosion(player[0] + player[2]/2, player[1] + player[3]/2, 1.5, color(200, 50, 10), 10);
+						}
+					}
+
+				};
+
+				var genExplosion = function (x, y, power, color, amt) {
+					for (var i = 0; i < amt; i ++)
+						explosion.push([x, y, random(-1, 1)*power, random(-2.5, -0.5)*power, random(0, 2 * PI), color]);
+				}
+
+				//deals with pressing and releasing keys
+
+				//becomes true when key is pressed, false when released
+				var keys = [];
+
+				keyPressed = function() {
+
+					//remapping WASD to arrow key keyCodes
+					if (keyCode === 65) { //A
+
+						keys[37] = true; //left
+
+					} else if (keyCode === 68) { //D
+
+						keys[39] = true; //RIGHT
+
+					} else if (keyCode === 87) { //W
+
+						keys[38] = true; //UP
+
+					} else if (keyCode === 83) { //S
+
+						keys[40] = true; //DOWN
+
+					} else {
+
+						keys[keyCode] = true; //if not just WASD, then normal
+
+					}
+
+				};
+
+				keyReleased = function() {
+
+					// hit space and build a block
+					if (keyCode === 32) {
+						if (worldNum === 0) {
+							if (blocks[blocks.length - 1][2] != 3) {
+								// where to potentially place block
+								var lx;
+								if (flip) {
+									lx = Math.floor(player[0] / 40) * 40 - 40;
+								} else {
+									lx = Math.floor((player[0] + player[2]) / 40) * 40 + 40;
+								}
+								var ly = Math.floor(player[1] / 40) * 40;
+
+								// if a block is already there
+								var valid = true;
+								for (var i in blocks) {
+									if (lx === blocks[i][0] && ly === blocks[i][1])
+										valid = false;
+									if (blocks[i][2] === 2 && lx == blocks[i][0] &&
+										(ly === blocks[i][1] - 10 || ly === blocks[i][1] - 25))
+										valid = false
+								}
+								// within the screen
+								if (lx < 0 || lx > far)
+									valid = false;
+
+								// otherwise add it
+								if (valid) {
+									// block at x and y, type is 3, and it will last for 200 frames (~4 seconds)
+									blocks.push([lx, ly, 3, 400]);
+								}
+							}
+						}
+					} else if (keyCode === 10) { // ENTER
+						for (var i in blocks) {
+							if (blocks[i][2] === 5) {
+								if (blocks[i][5] !== -1 && player[0] > blocks[i][0] - player[2] - 60) { // if in range
+									blocks[i][5] ++;
+								}
+							}
+						}
+					}
+					//same thing but false on release
+					if (keyCode === 65)
+						keys[37] = false;
+					else if (keyCode === 68)
+						keys[39] = false;
+					else if (keyCode === 87)
+						keys[38] = false;
+					else if (keyCode === 83)
+						keys[40] = false;
+					else
+						keys[keyCode] = false;
+				};
+
+				noStroke();
+
+				draw = function() {
+					textFont(createFont("Century Gothic Bold"));
+					if (page === "menu") { //main menu page
+
+						pushMatrix();
+
+						scale(sc);
+
+						background(bkgrdColor);
+
+						var m = 0;
+
+						for (var i = m - 400; i <= m + 600 + 450; i += 400) {
+
+							fill(87, 104, 145);
+							noStroke();
+
+							beginShape();
+
+							vertex(i, 300);
+							vertex(i + 150, 100);
+							vertex(i + 150, 800);
+							vertex(i, 800);
+
+							endShape();
+
+							fill(102, 119, 160);
+							beginShape();
+
+							vertex(i + 150, 100);
+							vertex(i + 300, 300);
+							vertex(i + 300, 800);
+							vertex(i + 150, 800);
+
+							endShape();
+
+						}
+
+						for (var i = m - 400; i <= m + 600 + 450; i += 400) {
+
+							fill(87, 104, 145);
+							beginShape();
+
+							vertex(i + 350, 180 + 50);
+							vertex(i + 350, 800);
+							vertex(i - 100, 800);
+
+							endShape();
+
+							fill(102, 119, 160);
+							beginShape();
+
+							vertex(i + 350, 180 + 50);
+							vertex(i + 800, 800);
+							vertex(i + 350, 800);
+
+							endShape();
+
+						}
+
+						for (var i in clouds) {
+
+							drawCloud(clouds[i][0], clouds[i][1], clouds[i][3]);
+
+							clouds[i][0] += clouds[i][2];
+
+							if (clouds[i][0] < -150 & clouds[i][2] < 0) {
+
+								clouds[i][2] *= -1;
+								clouds[i][1] = parseFloat(random(150, 350).toFixed(2));
+
+							}
+							if (clouds[i][0] > 600 + 150) {
+
+								clouds[i][2] *= -1;
+								clouds[i][1] = parseFloat(random(150, 350).toFixed(2));
+
+							}
+
+						}
+
+						popMatrix();
+
+						noStroke();
+
+						//document.body.style.backgroundColor = "black";
+
+						textFont(createFont("Century Gothic Bold"));
+						textAlign(CENTER, CENTER);
+
+						fill(255, 255, 255);
+						textSize(height / 7);
+						text("EXPLORATION:\nENGINEER", width / 2, height * 0.3); //main title
+
+						fill(255, 255, 255, 130);
+						beginShape();
+
+						for (var i = 0; i <= 2 * PI; i += PI / 3) {
+
+							vertex(width / 2 + 100 * cos(i), height * 0.725 + 100 * sin(i));
+
+						}
+
+						vertex(width / 2 + 50 * cosine(0), height * 0.725 + 50 * sine(0));
+						vertex(width / 2 + 50 * cosine(240), height * 0.725 + 50 * sine(240));
+						vertex(width / 2 + 50 * cosine(120), height * 0.725 + 50 * sine(120));
+						vertex(width / 2 + 50 * cosine(0), height * 0.725 + 50 * sine(0));
+
+						endShape();
+
+					} else if (page === "worlds") {
+
+						pushMatrix();
+
+						scale(sc);
+
+						background(bkgrdColor);
+
+						var m = 0;
+
+						for (var i = m - 400; i <= m + 600 + 450; i += 400) {
+
+							fill(87, 104, 145);
+							noStroke();
+
+							beginShape();
+
+							vertex(i, 300);
+							vertex(i + 150, 100);
+							vertex(i + 150, 800);
+							vertex(i, 800);
+
+							endShape();
+
+							fill(102, 119, 160);
+							beginShape();
+
+							vertex(i + 150, 100);
+							vertex(i + 300, 300);
+							vertex(i + 300, 800);
+							vertex(i + 150, 800);
+
+							endShape();
+
+						}
+
+						for (var i = m - 400; i <= m + 600 + 450; i += 400) {
+
+							fill(87, 104, 145);
+							beginShape();
+
+							vertex(i + 350, 180 + 50);
+							vertex(i + 350, 800);
+							vertex(i - 100, 800);
+
+							endShape();
+
+							fill(102, 119, 160);
+							beginShape();
+
+							vertex(i + 350, 180 + 50);
+							vertex(i + 800, 800);
+							vertex(i + 350, 800);
+
+							endShape();
+
+						}
+
+						for (var i in clouds) {
+
+							drawCloud(clouds[i][0], clouds[i][1], clouds[i][3]);
+
+							clouds[i][0] += clouds[i][2];
+
+							if (clouds[i][0] < -150 & clouds[i][2] < 0) {
+
+								clouds[i][2] *= -1;
+								clouds[i][1] = parseFloat(random(150, 350).toFixed(2));
+
+							}
+							if (clouds[i][0] > 600 + 150) {
+
+								clouds[i][2] *= -1;
+								clouds[i][1] = parseFloat(random(150, 350).toFixed(2));
+
+							}
+
+						}
+
+						noStroke();
+
+						textAlign(CENTER, CENTER);
+						textFont(createFont("Century Gothic Bold"));
+
+						fill(255, 255, 255);
+						textSize(400 / 10);
+						text("WORLDS", 600 / 2, 400 * 0.115); //main title
+
+						fill(255, 255, 255, 200);
+						rect(20, 300, 560, 80);
+						rect(20, 90, 173, 190);
+						rect(213, 90, 173, 190);
+						rect(406, 90, 173, 190);
+
+						textSize(29);
+						fill(0, 0, 0, 200);
+						text("M I N I - G A M E", 300, 340);
+
+						textSize(40);
+						text("1", 20 + 173 / 2, 120 * 1.5);
+						text("2", 213 + 173 / 2, 120 * 1.5);
+						text("3", 406 + 173 / 2, 120 * 1.5);
+
+						drawArrow(20, 20, 33);
+
+						popMatrix();
+
+					} else if (page === "levels") {
+
+						pushMatrix();
+
+						scale(sc);
+
+						background(bkgrdColor);
+						var m = 0;
+
+						for (var i = m - 400; i <= m + 600 + 450; i += 400) {
+
+							fill(87, 104, 145);
+							noStroke();
+
+							beginShape();
+
+							vertex(i, 300);
+							vertex(i + 150, 100);
+							vertex(i + 150, 800);
+							vertex(i, 800);
+
+							endShape();
+
+							fill(102, 119, 160);
+							beginShape();
+
+							vertex(i + 150, 100);
+							vertex(i + 300, 300);
+							vertex(i + 300, 800);
+							vertex(i + 150, 800);
+
+							endShape();
+
+						}
+
+						for (var i = m - 400; i <= m + 600 + 450; i += 400) {
+
+							fill(87, 104, 145);
+							beginShape();
+
+							vertex(i + 350, 180 + 50);
+							vertex(i + 350, 800);
+							vertex(i - 100, 800);
+
+							endShape();
+
+							fill(102, 119, 160);
+							beginShape();
+
+							vertex(i + 350, 180 + 50);
+							vertex(i + 800, 800);
+							vertex(i + 350, 800);
+
+							endShape();
+
+						}
+
+						for (var i in clouds) {
+
+							drawCloud(clouds[i][0], clouds[i][1], clouds[i][3]);
+
+							clouds[i][0] += clouds[i][2];
+
+							if (clouds[i][0] < -150 & clouds[i][2] < 0) {
+
+								clouds[i][2] *= -1;
+								clouds[i][1] = parseFloat(random(150, 350).toFixed(2));
+
+							}
+							if (clouds[i][0] > 600 + 150) {
+
+								clouds[i][2] *= -1;
+								clouds[i][1] = parseFloat(random(150, 350).toFixed(2));
+
+							}
+
+						}
+
+						noStroke();
+
+						textAlign(CENTER, CENTER);
+						textFont(createFont("Century Gothic Bold"));
+
+						if (worldNum === 3) {
+
+							fill(255, 255, 255);
+							textSize(400 / 10);
+							text("AERODYNAMIC", 600 / 2, 400 * 0.12); //main title
+
+							fill(255, 255, 255, 200);
+							for (var i = 0; i < 3; i++) {
+								fill(255, 255, 255, 200);
+								rect(20 + 193 * i, 90, 173, 290);
+								fill(0, 0, 0, 200);
+								textSize(40);
+								text((i + 1).toString(), 20 + 193 * i + 173 / 2, 90 + 290 / 2);
+							}
+
+						} else {
+
+							fill(255, 255, 255);
+							textSize(400 / 10);
+							var title = "";
+							if (worldNum === 0)
+								title = "MECHANICAL";
+							else if (worldNum === 1)
+								title = "ELECTRICAL";
+							else if (worldNum === 2)
+								title = "ENVIRONMENTAL";
+							text(title, 600 / 2, 400 * 0.12); //main title
+
+							for (var i = 0; i < 3; i++) {
+
+								for (var j = 0; j < 2; j++) {
+
+									fill(255, 255, 255, 200);
+									rect(20 + 193.3 * i, 90 + j * 155, 173.3, 135);
+									if (unlocked[worldNum][3 * j + i]) {
+										fill(0, 0, 0, 200);
+										textSize(40);
+										text((i + 1 + 3 * j).toString(), 20 + 193.3 * i + 173.3 / 2, 90 + j * 155 + 37);
+										for (var k = 0; k < 3; k++) {
+											drawStar(20 + 193.3 * i + 173.3 / 2 + 20 * cos(k * 2 * PI / 3 - PI / 6 + 4 * PI / 3),
+													 90 + j * 155 + 2 * 135 / 3 + 15 * sin(k * 2 * PI / 3 - PI / 6 + 4 * PI / 3),
+													 15, (k < starRecord[worldNum][5 * j + i] ? starColor : color(0, 0, 0, 100)));
+										}
+									} else {
+										drawLock(20 + 193.3 * i + 173.3 / 2 - 30, 90 + j * 155 + 135 / 2 - 30, 60);
+									}
+
+								}
+
+							}
+
+						}
+
+						drawArrow(20, 20, 33);
+
+						popMatrix();
+
+					} else if (first) {
+						// link("http://pranavpatil.tk/games/cyber-champion.html", "_blank");
+						blocks = [];
+						stars = [];
+
+						delayYvel = 0;
+						far = 0;
+						flip = false;
+						
+						//go through maps array
+						for (var i = 0; i < maps[worldNum][levelNum].length; i++) {
+							for (var j = 0; j < maps[worldNum][levelNum][i].length; j++) {
+								var item = maps[worldNum][levelNum][i][j]; //takes value
+								var x = j * 40;
+								var y = 400 - (maps[worldNum][levelNum].length - i) * 40; //reverse y value because of vertically scrolling UP
+								if (item === "*") { //normal block
+									blocks.push([x, y, 1]);
+									if (x > far) {
+										far = x;
+									}
+								} else if (item === "S") {
+									blocks.push([x, y + 10, 2, 40, 30]);
+								} else if (item === "t") {
+									blocks.push([x, y + 25, 2, 20, 15]);
+									blocks.push([x + 20, y + 25, 2, 20, 15]);
+								} else if (item === "_") {
+									blocks.push([x, y, 4]);
+								} else if (item === "0") { //player start
+									player = [x, y, player[2], player[3], 0, random(-2, -0.5), false, false, false, false, false];
+									orig = [x, y]; //can reset to this
+									amt = 0; //RESETS VALUES
+									amt1 = 50;
+									cameraAim = [-x + 300, -y + 200];
+								} else if (item === "D") { //player end
+									door = [x, y];
+								} else if (item === "c") { //stars
+									stars.push([x, y, 0]);
+								} else if (parseInt(item) >= 1 && parseInt(item) <= 9) {
+									// x, y, type, which person, if talking, current speech num, m/f?, hair style, hair color, skin color
+									// shirt color, pants color, glasses?, tie?
+									blocks.push([x, y, 5, parseInt(item), false, 0, random(1) < 0.492, floor(random(3)), random(1) < 0.7 ? 0 : (random(1) < 0.6 ? 1 : 2),
+										floor(random(4)), floor(random(4)), floor(random(3)), random(1) < 0.4, random(1) < 0.6]);
+								} else if (item !== " ") { //not empty space
+									//ADD SOMETHING HERE!!!
+								}
+
+							}
+
+						}
+
+						if (clouds.length === 0) {
+							for (var i = 0; i < far / 600; i++) {
+								clouds.push([parseFloat(random(0, far).toFixed(2)),
+											 parseFloat(random(-200, 200).toFixed(2)),
+											 parseFloat((random(0, 2) < 1 ? -1 : 1) * random(0.5, 1).toFixed(2)),
+											 parseFloat(random(4, 6).toFixed(2))]);
+							}
+						}
+
+						position = [];
+
+						//resets values
+						startTime = frameCount;
+						levelStar = 0;
+						starDisplay = [0, 0, 0];
+						health = maxHealth;
+						deathCount = 0;
+						playing = true;
+						rand = -1;
+
+						//draws blocks
+						for (var i in blocks) {
+
+							top = true;
+
+							//goes through blocks to see if anything is directly above it
+							for (var j in blocks) {
+
+								if (i !== j & blocks[i][0] === blocks[j][0] & blocks[i][1] === (blocks[j][1] + 40) & blocks[i][2] === blocks[j][2]) {
+
+									top = false;
+
+								}
+
+							}
+
+							bottom = true;
+
+							//goes through blocks to see if anything is directly below it
+							for (var j in blocks) {
+
+								if (i !== j & blocks[i][0] === blocks[j][0] & blocks[i][1] === (blocks[j][1] - 40) & blocks[i][2] === blocks[j][2]) {
+
+									bottom = false;
+
+								}
+
+							}
+
+							left = true;
+
+							//goes through blocks to see if anything is directly below it
+							for (var j in blocks) {
+
+								if (i !== j & blocks[i][1] === blocks[j][1] & blocks[i][0] === (blocks[j][0] + 40) & blocks[i][2] === blocks[j][2]) {
+
+									left = false;
+
+								}
+
+							}
+
+							right = true;
+
+							//goes through blocks to see if anything is directly below it
+							for (var j in blocks) {
+
+								if (i !== j & blocks[i][1] === blocks[j][1] & blocks[i][0] === (blocks[j][0] - 40) & blocks[i][2] === blocks[j][2]) {
+
+									right = false;
+
+								}
+
+							}
+
+							position.push([top, bottom, left, right]);
+
+						}
+						first = false;
+					} else
+
+						//game page is separate from all the rest so that it goes in the same frame as first
+						if (page === "game" & !first) {
+
+							pushMatrix();
+
+							scale(sc);
+							background(bkgrdColor);
+							noStroke();
+
+							pushMatrix();
+
+							aim = [-constrain(player[0] - 250, 0, far + 40 - 600), -constrain(player[1] - 200, -10000, -50) - 50];
+
+							if (levelTransition < 10) {
+
+								cameraAim[0] -= (cameraAim[0] - aim[0]) / 40;
+								cameraAim[1] -= (cameraAim[1] - aim[1]) / 40;
+
+								if (player[0] < -cameraAim[0] + 100 | player[0] > -cameraAim[0] + 500 | player[1] < -cameraAim[1] + 100 | player[1] > -cameraAim[1] + 300) {
+
+									cameraAim[0] -= (cameraAim[0] - aim[0]) / 80;
+									cameraAim[1] -= (cameraAim[1] - aim[1]) / 80;
+
+								}
+
+							}
+
+							if (shakeAmt > 2)
+								shakeAmt -= 0.5;
+							else
+								shakeAmt = 0;
+
+							if (playing && deathCount > 0)
+								deathCount --;
+
+							translate(cameraAim[0] + random(-shakeAmt, shakeAmt), cameraAim[1] + random(-shakeAmt, shakeAmt));
+
+							var m = -cameraAim[0] + cameraAim[0] % 400;
+
+							for (var i = m - 400; i <= m + 600 + 450; i += 400) {
+
+								fill(87, 104, 145);
+								noStroke();
+
+								beginShape();
+
+								vertex(i, 300);
+								vertex(i + 150, 100);
+								vertex(i + 150, 800);
+								vertex(i, 800);
+
+								endShape();
+
+								fill(102, 119, 160);
+								beginShape();
+
+								vertex(i + 150, 100);
+								vertex(i + 300, 300);
+								vertex(i + 300, 800);
+								vertex(i + 150, 800);
+
+								endShape();
+
+							}
+
+							for (var i = m - 400; i <= m + 600 + 450; i += 400) {
+
+								fill(87, 104, 145);
+								beginShape();
+
+								vertex(i + 350, 180 + 50);
+								vertex(i + 350, 800);
+								vertex(i - 100, 800);
+
+								endShape();
+
+								fill(102, 119, 160);
+								beginShape();
+
+								vertex(i + 350, 180 + 50);
+								vertex(i + 800, 800);
+								vertex(i + 350, 800);
+
+								endShape();
+
+							}
+
+							for (var i in clouds) {
+
+								drawCloud(clouds[i][0], clouds[i][1], clouds[i][3]);
+
+								clouds[i][0] += clouds[i][2];
+
+								if (clouds[i][0] < -250 & clouds[i][2] < 0) {
+
+									clouds[i][2] *= -1;
+									clouds[i][1] = parseFloat(random(150, 350).toFixed(2));
+
+								}
+								if (clouds[i][0] > far + 250 & clouds[i][2] > 0) {
+
+									clouds[i][2] *= -1;
+									clouds[i][1] = parseFloat(random(150, 350).toFixed(2));
+
+								}
+
+							}
+
+							player[6] = true; //up is open
+							player[7] = true; //down is open
+							player[8] = true; //left is open
+							player[9] = true; //right is open
+
+							noJump = false;
+
+							//collision
+							for (var i in blocks) {
+
+								// makes sure it's remotely close to player
+								if (blocks[i][1] > -aim[1] - 50 & blocks[i][1] < -aim[1] + 450 & blocks[i][0] > -aim[0] - 25 & blocks[i][0] < -aim[0] + 625) {
+
+									/**
+
+									REMEMBER!
+
+									0 - x
+									1 - y
+									2 - w
+									3 - h
+
+									6 to 9 = if sides are open up down left right
+									*/
+
+
+									if (blocks[i][2] === 1 || (worldNum === 0 && blocks[i][2] === 3)) { // normal block and created block
+
+										var gap = 5;
+
+										if (player[1] > (blocks[i][1] - player[3] + gap) & player[1] < (blocks[i][1] + 40 - gap) &
+											player[0] < (blocks[i][0] + 40) & player[0] > (blocks[i][0] + 40 - 4)) {
+
+											player[8] = false; //left is closed
+											player[0] = blocks[i][0] + 40;
+											player[4] = 0;
+
+										}
+										if (player[1] > (blocks[i][1] - player[3] + gap) & player[1] < (blocks[i][1] + 40 - gap) &
+											player[0] < (blocks[i][0] - player[2] + 4) & player[0] > (blocks[i][0] - player[2])) {
+
+											player[9] = false; //right is closed
+											player[0] = blocks[i][0] - player[2];
+											player[4] = 0;
+
+										}
+										if (player[5] >= 0 & player[0] > (blocks[i][0] - player[2]) & player[0] < (blocks[i][0] + 40) &
+											player[1] <= (blocks[i][1]) & player[1] >= (blocks[i][1] - player[3] - player[5])) {
+
+											if (shakeAmt === 0 & abs(player[5]) > 10)
+												shakeAmt = abs(player[5]) / 3;
+											if (blocks[i][2] === 3) {
+												blocks[i][3] -= 3;
+												if (abs(player[5]) > 10)
+													blocks[i][3] = 0;
+											}
+
+											player[7] = false; //down is closed
+											player[1] = blocks[i][1] - player[3] + 0.01;
+											player[5] = 0;
+											player[10] = false;
+
+										}
+										if (player[5] <= 0 && player[0] > (blocks[i][0] - player[2]) & player[0] < (blocks[i][0] + 40) &
+											player[1] <= (blocks[i][1] + 40) & player[1] >= (blocks[i][1] + 40 + player[5])) {
+
+											if (blocks[i][2] === 3) {
+												blocks[i][3] = 0;
+											} else {
+												player[6] = false; //up is closed
+												player[5] = 0;
+												player[1] = blocks[i][1] + 40 + 0.01;
+											}
+
+										}
+
+										//if under a block, you cant jump
+										if (player[0] > (blocks[i][0] - player[2] + 1) & player[0] < (blocks[i][0] + 40 - 1) &
+											player[1] >= (blocks[i][1] + 39.7) & player[1] < (blocks[i][1] + 41.3))
+											noJump = true;
+
+									} else if (blocks[i][2] === 2) { // triangle spike
+
+										if ((player[0] + player[2]) > blocks[i][0] + blocks[i][3] / 2 - (player[1] + player[3] - blocks[i][1]) * (blocks[i][3] / 2) / blocks[i][4] &
+											player[1] < blocks[i][1] + blocks[i][4] &
+											player[0] < blocks[i][0] + blocks[i][3] / 2 + (player[1] + player[3] - blocks[i][1]) * (blocks[i][3] / 2) / blocks[i][4])
+											death(20);
+
+									} else if (blocks[i][2] === 4) { // tiny spike layer
+
+										if (player[0] > blocks[i][0] - player[2] && player[0] < blocks[i][0] + 40 &&
+										   player[1] > blocks[i][1] + 30 - player[3] && player[1] < blocks[i][1] + 40)
+											death(15);
+
+									} else if (blocks[i][2] === 5) { // non-player character
+										// x, y, type, which person, if talking, current speech num
+										// blocks.push([x,y,5,parseInt(item), false,0]);
+
+										// if not done talking
+										if (blocks[i][5] !== -1) {
+											player[0] = constrain(player[0], 0, blocks[i][0] - player[2] - 20);
+											if (player[0] === blocks[i][0] - player[2] - 20) {
+												player[4] = 0;
+											}
+											if (player[0] > blocks[i][0] - player[2] - 60) {
+												blocks[i][4] = true;
+												if (blocks[i][5] >= peopleSpeech[worldNum][levelNum][blocks[i][3] - 1].length) {
+													blocks[i][5] = -1; // signal that it's done talking
+												} else {
+													pushMatrix();
+													translate(blocks[i][0] + 10, blocks[i][1] - 90);
+													fill (245);
+													rect (0, 0, 240, 80, 20);
+													beginShape();
+													vertex(32, 78);
+													vertex(44, 78);
+													vertex(24, 95);
+													endShape(CLOSE);
+													popMatrix();
+													fill (10);
+													textSize(11);
+													textAlign(CENTER, CENTER);
+													textFont(createFont("Century Gothic Bold"));
+													text(peopleSpeech[worldNum][levelNum][blocks[i][3] - 1][blocks[i][5]], blocks[i][0] + 25, blocks[i][1] - 87.5, 210, 70);
+												}
+											}
+										}
+										if (blocks[i][4] && blocks[i][5] === -1 || player[0] <= blocks[i][0] - player[2] - 60) { // if mouth is still moving
+											blocks[i][4] = false;
+										}
+									}
+								}
+
+								// now only the player-made fragile block
+								if (blocks[i][2] === 3) {
+									if (blocks[i][3] > 0) {
+										blocks[i][3] --;
+									} else {
+										genExplosion(blocks[i][0] + 20, blocks[i][1] + 20, 2, color(124, 83, 41), 20);
+										blocks.splice(i, 1);
+										i --;
+										continue;
+									}
+								}
+
+							}
+							for (var i in stars) {
+
+								pushMatrix();
+								translate(stars[i][0] + 20, stars[i][1] + 20);
+								rot(frameCount * 2);
+								drawStar(0, 0, stars[i][2], starColor);
+								popMatrix();
+
+								var x = stars[i][0] + 20;
+								var y = stars[i][1] + 20;
+
+								if (stars[i][2] <= 13) {
+
+									stars[i][2] += (13.15 - stars[i][2]) / 10;
+
+								}
+
+								if (player[0] >= (x - player[2] - 13) & player[0] <= (x + 13) & player[1] >= (y - player[3] - 13) & player[1] <= (y + 13)) {
+
+									levelStar++;
+
+									if (levelStar > starRecord[worldNum][levelNum]) {
+										starRecord[worldNum][levelNum] = levelStar;
+									}
+
+									// x, y, power, color, how many to make
+									genExplosion(x, y, 2, color(220, 150, 40, 200), 8);
+
+									stars.splice(i, 1);
+
+								}
+
+							}
+
+							for (var i in explosion) {
+
+								pushMatrix();
+
+								translate(explosion[i][0], explosion[i][1]);
+								rotate(explosion[i][4]);
+								fill(explosion[i][5]);
+								rect(-1.5, -3.5, 3, 7);
+
+								popMatrix();
+
+								explosion[i][4] += 0.2;
+
+								explosion[i][3] += 0.31;
+
+								explosion[i][0] += explosion[i][2];
+								explosion[i][1] += explosion[i][3];
+
+								if (explosion[i][1] > 420) {
+									explosion.splice(i, 1);
+								}
+							}
+
+							if (playing) {
+
+								var upVel = -5.5;
+
+								//controls
+								if (keys[UP] & !player[7] & player[6] & !noJump) {
+
+									player[5] = upVel;
+									player[10] = true;
+									ran = false;
+
+								} else if (keys[DOWN] & player[7]) {
+
+									player[5] = 12;
+
+								}
+
+								if (keys[UP] & player[6]) {
+									upTime++;
+								} else {
+									upTime = 0;
+								}
+
+								if (player[5] === (upVel + 0.31) && upTime < 10 && upTime !== 0) {
+									player[5] = upVel;
+								}
+
+								//movements are not sudden!
+								if (keys[LEFT] & !keys[RIGHT]) {
+
+									player[4] -= 0.15;
+
+								} else if (keys[RIGHT] & !keys[LEFT]) {
+
+									player[4] += 0.15;
+
+								} else if (abs(player[4]) > 0.01) { //doesnt slice for inf
+
+									player[4] /= 1.1;
+
+								} else {
+
+									player[4] = 0; //resets
+
+								}
+
+							}
+
+							//constraint on horizontal movement
+							player[4] = constrain(player[4], -3, 3);
+
+							if (playing) {
+
+								//applies gravity!!!
+								player[5] += 0.31;
+
+							}
+
+							if (player[0] > -cameraAim[0] - 50 & player[0] < -cameraAim[0] + 650 & playing) {
+
+								//moves player
+								player[0] += player[4];
+								player[1] += player[5];
+
+							}
+
+							//constrains player to be on the screen
+							player[0] = constrain(player[0], 0, 40 - player[2] + far);
+
+							//if player fell off
+							if (player[1] > 1200) {
+
+								death(health); // death and remove all health points
+								page = "death";
+
+							}
+
+							//if he's on the edge
+							if (player[0] === 0 | player[0] === (600 - player[2])) {
+
+								player[4] = 0; //no x movement
+
+							}
+
+							// hit a door
+							if (player[0] > (door[0]) & player[0] < (door[0] + 40 - player[2]) & player[1] > (door[1] - 10) & player[1] < (door[1] + 45 - player[3])) {
+
+								first = true;
+								levelNum = (levelNum + 1) % maps[worldNum].length;
+								unlocked[worldNum][levelNum] = true;
+
+								starDisplay = [0, 0, 0];
+
+								if (levelNum === 0) {
+
+									page = "levels";
+
+								}
+								page = "levels";
+
+								while (clouds.length > 0) {
+
+									clouds.pop();
+
+								}
+
+								levelTransition = 255;
+
+							}
+
+							//draws the door
+							drawDoor(door[0], door[1]);
+
+							if (player[4] > 0) {
+
+								flip = false;
+
+							}
+							if (player[4] < 0) {
+
+								flip = true;
+
+							}
+
+							if (levelTransition < 230) {
+
+								var thing = [player[0], player[1], player[2], player[3], player[4], player[5], player[6], player[7], player[8], player[9], player[10]];
+
+								// record.push(thing);
+
+							}
+
+							//draws blocks
+							for (var i in blocks) {
+
+								// sets position (if its at the top, bottom, etc)
+								if (i < position.length) {
+									top = position[i][0];
+									bottom = position[i][1];
+									left = position[i][2];
+									right = position[i][3];
+								}
+
+								//if the block is within the y translate
+								if (blocks[i][1] > -cameraAim[1] - 50 & blocks[i][1] < -cameraAim[1] + 450 & blocks[i][0] > -cameraAim[0] - 50 & blocks[i][0] < -cameraAim[0] + 650) {
+
+									switch (blocks[i][2]) {
+										case 1:
+											//draws a more complex block
+											drawBlock(blocks[i][0], blocks[i][1], i);
+											break;
+										case 2:
+											fill(61, 61, 61);
+											noStroke();
+											triangle(blocks[i][0], blocks[i][1] + blocks[i][4], blocks[i][0] + blocks[i][3] / 2, blocks[i][1], blocks[i][0] + blocks[i][3], blocks[i][1] + blocks[i][4]);
+											fill(56, 56, 56);
+											triangle(blocks[i][0], blocks[i][1] + blocks[i][4], blocks[i][0] + blocks[i][3] / 2, blocks[i][1], blocks[i][0] + blocks[i][3] / 2, blocks[i][1] + blocks[i][4]);
+											break;
+										case 3:
+											var maxShake = 100;
+											var divShake = maxShake/3;
+											var shakeX = constrain(maxShake - blocks[i][3], 0, maxShake)*random(-1, 1)/divShake;
+											var shakeY = constrain(maxShake - blocks[i][3], 0, maxShake)*random(-1, 1)/divShake;
+											image(fragileBlock, blocks[i][0] + shakeX, blocks[i][1] + shakeY);
+											break;
+										case 4:
+											image (lowSpike, blocks[i][0], blocks[i][1] + 30);
+											break;
+										case 5:
+											drawCharacter (blocks[i][0], blocks[i][1], blocks[i][6], blocks[i][7], blocks[i][8], blocks[i][9], blocks[i][10], blocks[i][11], blocks[i][12], blocks[i][13], blocks[i][4]);
+											break;
+										default:
+											fill(255, 0, 0);
+											rect(blocks[i][0], blocks[i][1], 40, 40);
+											break;
+									}
+
+								}
+
+							}
+
+							onDoor = false;
+
+							if (deathCount % 20 < 10 && health > 0) {
+								//draws the player
+								drawPlayer(player[0], player[1], player[2], player[3], player);
+							}
+
+							popMatrix();
+							
+							noStroke();
+
+							fill(255, 255, 255, 200);
+							// home
+							rect(560, 10, 30, 30);
+							// level select
+							rect(520, 10, 30, 30);
+							// restart
+							rect(480, 10, 30, 30);
+
+							// details
+							fill(27, 125, 0);
+
+							// level select squares
+							pushMatrix();
+							translate(520, 10);
+							rect(5, 5, 7.5, 7.5);
+							rect(17, 17, 7.5, 7.5);
+							rect(17, 5, 7.5, 7.5);
+							rect(5, 17, 7.5, 7.5);
+							popMatrix();
+
+							pushMatrix();
+							translate(560, 10);
+							rect(9, 14, 4, 10);
+							rect(17, 14, 4, 10);
+							rect(9, 14, 12, 6);
+							triangle(15, 6, 5, 16, 25, 16);
+							popMatrix();
+
+							// restart swirl
+							stroke (27, 125, 0);
+							strokeWeight(4);
+
+							pushMatrix();
+							translate(480, 10);
+							line(22, 6, 8, 6);
+							line(8, 6, 8, 14);
+							line(5, 13, 8, 16);
+							line(11, 13, 8, 16);
+
+							line(8, 24, 22, 24);
+							line(22, 24, 22, 16);
+							line(22, 14, 19, 17);
+							line(22, 14, 25, 17);
+							popMatrix();
+
+							noStroke();
+
+							// star background
+							fill(0);
+							rect(8, 10, 90, 30);
+
+							// draws three stars in the top right
+							for (var i = 0; i < 3; i++) {
+
+								if (i < levelStar) {
+
+									if (starDisplay[i] < 10) {
+
+										starDisplay[i] += (10.15 - starDisplay[i]) / 15;
+
+									} else {
+
+										starDisplay[i] = 10;
+
+									}
+
+								} else {
+
+									if (starDisplay[i] > 0) {
+
+										starDisplay[i] -= (starDisplay[i] + 0.15) / 15;
+
+									} else {
+
+										starDisplay[i] = 0;
+
+									}
+
+								}
+
+								pushMatrix();
+
+								translate(26 + 27 * i, 26);
+								rotate(starDisplay[i] * PI / 5);
+								drawStar(0, 0, 11, color(222 - starDisplay[i] * 2.5, 226 - starDisplay[i] * 6.5, 235 - starDisplay[i] * 20.6, 200 + starDisplay[i] * 5.5));
+
+								popMatrix();
+
+							}
+
+							var percent = constrain(health/maxHealth, 0, 1);
+							fill(100);
+							rect(110, 10, 358, 30);
+							fill (510 * (1 - percent), 510*percent, 0);
+							rect(113, 13, 352*percent, 24);
+
+							if (health <= 0) {
+								health -= 0.01;
+								playing = false;
+								if (health < -2) {
+									page = "death";
+									levelTransition = 150;
+									transitionColor = color(255, 0, 0);
+								}
+							}
+
+							popMatrix();
+
+						} else if (page === "death") {
+
+							pushMatrix();
+							scale (sc);
+							textFont(createFont("Century Gothic Bold"));
+							background (0, 0, 0);
+							fill (255, 255, 255);
+							textSize(40);
+							textAlign(CENTER);
+							text("GAME OVER", 300, 100);
+
+							if (rand === -1) {
+								if (random(4) < 1) {
+									message = deathMessage[0][floor(random(deathMessage[0].length))]; // generic message
+								} else {
+									message = deathMessage[worldNum + 1][floor(random(deathMessage[worldNum + 1].length))]; // world specific message
+								}
+								rand = 0;
+							}
+							textFont(createFont("Century Gothic"));
+							textSize(20);
+							fill (255);
+							text("Did you know?", 300, 200);
+							textSize (15);
+							text(message, 100, 220, 400, 100);
+
+							fill (255, 255, 255);
+							rect(360, 310, 60, 60);
+							rect(270, 310, 60, 60);
+							rect(180, 310, 60, 60);
+
+							// buttons
+							fill(0, 0, 0);
+
+							// level select squares
+							pushMatrix();
+							translate(270, 310);
+							scale(2);
+							rect(5, 5, 7.5, 7.5);
+							rect(17, 17, 7.5, 7.5);
+							rect(17, 5, 7.5, 7.5);
+							rect(5, 17, 7.5, 7.5);
+							popMatrix();
+
+							// home
+							pushMatrix();
+							translate(360, 310);
+							scale(2);
+							rect(9, 14, 4, 10);
+							rect(17, 14, 4, 10);
+							rect(9, 14, 12, 6);
+							triangle(15, 6, 5, 16, 25, 16);
+							popMatrix();
+
+							// restart swirl
+							stroke (0,0,0);
+							strokeWeight(4);
+
+							pushMatrix();
+							translate(180, 310);
+							scale(2);
+							line(22, 6, 8, 6);
+							line(8, 6, 8, 14);
+							line(5, 13, 8, 16);
+							line(11, 13, 8, 16);
+
+							line(8, 24, 22, 24);
+							line(22, 24, 22, 16);
+							line(22, 14, 19, 17);
+							line(22, 14, 25, 17);
+							popMatrix();
+
+							noStroke();
+
+							popMatrix();
+
+						}
+
+					if (levelTransition > 0) {
+
+						//deals with the screen change fade in
+						noStroke();
+
+						fill(color(transitionColor, levelTransition));
+						rect(0, 0, width, height);
+						levelTransition -= 10;
+
+					} else {
+						levelTransition = 0;
+						transitionColor = color(0, 0, 0);
+					}
+
+					if (frameCount % 20 === 0) {
+
+						t = (1000 / (millis() - pmillis)).toFixed(1);
+
+					}
+					fill(0, 0, 0);
+					textSize(15);
+					textAlign(LEFT);
+					// text(t, 20, 15); //uncomment if you want frameRate to appear
+					pmillis = millis();
+				};
+
+
+			}
+		}
+	}
+	// Get the canvas that Processing-js will use
+	var canvas = document.getElementById("mycanvas");
+
+	// Pass the function sketchProc (defined in myCode.js) to Processing's constructor.
+	var processingInstance = new Processing(canvas, sketchProc);
+</script>
+
 </html>
