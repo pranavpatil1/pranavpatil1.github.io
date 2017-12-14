@@ -206,7 +206,7 @@
 				S = big spike
 				t = two small spikes (use sparingly)
 				c = star
-				_ = lower death zone
+				_ = lower death zone ( use for large area bottom collision )
 				1-9 = person to talk to
 
 				*/
@@ -217,19 +217,42 @@
 						[
 							"                                                               c",
 							"",
-							"c            0                                                    *                                       *********                ",
+							"c                                                                 *                                       *********                ",
 							"*                                           *                     *                        c            *                          ",
-							"*                   1               *       *         2           *         3         ss   S     s      ____________               D",
+							"*            0      1               *       *         2           *         3         ss   S     s      ____________               D",
 							"******************************  *******  ******  ***************************************************************************************",
 
 						],
 						[
-							"  0           D",
-							"****************"
+							"                          S  S   S                                                           ",
+							"                          *  *   *                                                           ",
+							"  0                          *   *                                                           ",
+							"*****                *           *                                   S                       ",
+							"*****                *   _*      *                                   *                       ",
+							"***** ***   ** *  ****   ** _*                          *********    *                       ",
+							"    *                       **                       *               *                       ",
+							"    *   _________________________*                *          **       *                      ",
+							"    *   **********************************      *                     *    ******************",
+							"    *                                        1         c   **          *****                *",
+							"    *                                  *********       *            2           D          c*",
+							"    *                  ***                                       ****************************",
+							"    *      tt   c   **    *     *                                                            ",
+							"    ** ** **** ****          *** ***                                                         ",
 						],
 						[
-							"  0           D",
-							"****************"
+							"                            S                                                                  ",
+							"                            *  S                                                               ",
+							"                            *  *                                                               ",
+							"                           c*  *                                                               ",
+							"              ***************  *                                                               ",
+							"                             SS*                                                               ",
+							"       *************************                                                               ",
+							" 0    1                            2                                                           ",
+							" ******        ************************                                                        ",
+							"       *******                                                                                ",
+							"             ***************                                                                   ",
+							"                                                                                               ",
+							"                                                                                               ",
 						],
 						[
 							"                                         c",
@@ -255,16 +278,33 @@
 							"   c                *  *                                          *********                                                         ",
 							"   *                *  *                               *       ****       ***                                   ****                ",
 							"                       *                            ****   **               ***                                                     ",
-							"                    *                                                         ****                           ***  c                 ",
+							"                    *                                                         ****  2                        ***  c    3            ",
 							" *               *  *  *                     *****                               ****                    *        *   **  **        ",
-							"    0  tS           *__*     S                                                     *****                ____________________      D",
-							"  ************************   ***********  **                                           ************************************************",
+							"    0  tS           *__*     S   1                                                 *****                ____________________      D",
+							"  **************    ******   ***********  **                                           ************************************************",
 
 						],
 						[
-							"  0           D",
-							"****************"
-						]
+							"*",
+							"*",
+							"*",
+							"*",
+							"* X",
+							"*****",
+							"    *",
+							"    *",
+							"    *",
+							"    ******                                               2   SS   t     ",
+							"         *                              *      S       ******************",
+							"c        *                            * *************                   *     *****",
+							"*                                     *                                 *              *****",
+							"**  ***********                       **                                *",
+							"              *                                                         *________________________",
+							"              *                                                         ********************************",
+							"              *                                                                                             ****      D",
+							"              *   1         t          *     c                                                  c        0          ****",
+							"              *****    *** ** **  **  **     *                                                 ***  **  ***      ",
+						],
 					],
 					[
 						[
@@ -364,7 +404,7 @@
 					for (var j = 0; j < maps[i].length; j++) {
 
 						// CHANGE THIS TO === 0 TO >= TO 0
-						unlocked[unlocked.length - 1].push(j === 0 ? true : false)
+						unlocked[unlocked.length - 1].push(j >= 0 ? true : false)
 
 					}
 
@@ -393,7 +433,7 @@
 				var stars = [];
 
 				// confetti-like explosion
-				// [x, y, xvel, yvel, angle, color]
+				// [x, y, xvel, yvel, angle, color, time]
 				var explosion = [];
 
 				var pmillis = 0;
@@ -528,7 +568,7 @@
 
 					} else if (page === "game") {
 
-						if (mouseY > (10 * sc) & mouseY < (40 * sc)) {
+						if (mouseY > (10 * sc) & mouseY < (40 * sc) && deathCount <= 0) {
 
 							if (mouseX > (560 * sc) & mouseX < (590 * sc)) {
 								page = "menu";
@@ -1453,9 +1493,7 @@
             rect(-1, 15, 43, 36);
         } else if (hair === 2) {
             rect(-1, 15, 43, 22);
-        } else {
-			console.log(hair);
-		}
+        }
     }
 
     popMatrix();
@@ -1699,7 +1737,7 @@
 
 				var genExplosion = function (x, y, power, color, amt) {
 					for (var i = 0; i < amt; i ++)
-						explosion.push([x, y, random(-1, 1)*power, random(-2.5, -0.5)*power, random(0, 2 * PI), color]);
+						explosion.push([x, y, random(-1, 1)*power, random(-2.5, -0.5)*power, random(0, 2 * PI), color, 255]);
 				}
 
 				//deals with pressing and releasing keys
@@ -2441,7 +2479,7 @@
 											if (shakeAmt === 0 & abs(player[5]) > 10)
 												shakeAmt = abs(player[5]) / 3;
 											if (blocks[i][2] === 3) {
-												blocks[i][3] -= 3;
+												blocks[i][3] += 1;
 												if (abs(player[5]) > 10)
 													blocks[i][3] = 0;
 											}
@@ -2474,8 +2512,11 @@
 
 										if ((player[0] + player[2]) > blocks[i][0] + blocks[i][3] / 2 - (player[1] + player[3] - blocks[i][1]) * (blocks[i][3] / 2) / blocks[i][4] &
 											player[1] < blocks[i][1] + blocks[i][4] &
-											player[0] < blocks[i][0] + blocks[i][3] / 2 + (player[1] + player[3] - blocks[i][1]) * (blocks[i][3] / 2) / blocks[i][4])
+											player[0] < blocks[i][0] + blocks[i][3] / 2 + (player[1] + player[3] - blocks[i][1]) * (blocks[i][3] / 2) / blocks[i][4]) {
+											if (player[0] >= blocks[i][0] - player[2] && player[0] <= blocks[i][0] + blocks[i][3] &&
+										   player[1] > blocks[i][1] + blocks[i][4] - player[3] && player[1] < blocks[i][1] + blocks[i][4])
 											death(20);
+										}
 
 									} else if (blocks[i][2] === 4) { // tiny spike layer
 
@@ -2483,49 +2524,13 @@
 										   player[1] > blocks[i][1] + 30 - player[3] && player[1] < blocks[i][1] + 40)
 											death(15);
 
-									} else if (blocks[i][2] === 5) { // non-player character
-										// x, y, type, which person, if talking, current speech num
-										// blocks.push([x,y,5,parseInt(item), false,0]);
-
-										// if not done talking
-										if (blocks[i][5] !== -1) {
-											player[0] = constrain(player[0], 0, blocks[i][0] - player[2] - 20);
-											if (player[0] === blocks[i][0] - player[2] - 20) {
-												player[4] = 0;
-											}
-											if (player[0] > blocks[i][0] - player[2] - 60) {
-												blocks[i][4] = true;
-												if (blocks[i][5] >= peopleSpeech[worldNum][levelNum][blocks[i][3] - 1].length) {
-													blocks[i][5] = -1; // signal that it's done talking
-												} else {
-													pushMatrix();
-													translate(blocks[i][0] + 10, blocks[i][1] - 90);
-													fill (245);
-													rect (0, 0, 240, 80, 20);
-													beginShape();
-													vertex(32, 78);
-													vertex(44, 78);
-													vertex(24, 95);
-													endShape(CLOSE);
-													popMatrix();
-													fill (10);
-													textSize(11);
-													textAlign(CENTER, CENTER);
-													textFont(createFont("Century Gothic Bold"));
-													text(peopleSpeech[worldNum][levelNum][blocks[i][3] - 1][blocks[i][5]], blocks[i][0] + 25, blocks[i][1] - 87.5, 210, 70);
-												}
-											}
-										}
-										if (blocks[i][4] && blocks[i][5] === -1 || player[0] <= blocks[i][0] - player[2] - 60) { // if mouth is still moving
-											blocks[i][4] = false;
-										}
-									}
+									} 
 								}
 
 								// now only the player-made fragile block
 								if (blocks[i][2] === 3) {
 									if (blocks[i][3] > 0) {
-										blocks[i][3] --;
+										blocks[i][3] -= 3;
 									} else {
 										genExplosion(blocks[i][0] + 20, blocks[i][1] + 20, 2, color(124, 83, 41), 20);
 										blocks.splice(i, 1);
@@ -2556,10 +2561,6 @@
 
 									levelStar++;
 
-									if (levelStar > starRecord[worldNum][levelNum]) {
-										starRecord[worldNum][levelNum] = levelStar;
-									}
-
 									// x, y, power, color, how many to make
 									genExplosion(x, y, 2, color(220, 150, 40, 200), 8);
 
@@ -2575,7 +2576,7 @@
 
 								translate(explosion[i][0], explosion[i][1]);
 								rotate(explosion[i][4]);
-								fill(explosion[i][5]);
+								fill(color(explosion[i][5], explosion[i][6]));
 								rect(-1.5, -3.5, 3, 7);
 
 								popMatrix();
@@ -2586,8 +2587,13 @@
 
 								explosion[i][0] += explosion[i][2];
 								explosion[i][1] += explosion[i][3];
-
-								if (explosion[i][1] > 420) {
+								
+								if (explosion[i][6] > 0) {
+									explosion[i][6] -= 3;
+									if (explosion[i][1] > 420) {
+										explosion.splice(i, 1);
+									}
+								} else {
 									explosion.splice(i, 1);
 								}
 							}
@@ -2678,6 +2684,10 @@
 
 							// hit a door
 							if (player[0] > (door[0]) & player[0] < (door[0] + 40 - player[2]) & player[1] > (door[1] - 10) & player[1] < (door[1] + 45 - player[3])) {
+
+								if (levelStar > starRecord[worldNum][levelNum]) {
+									starRecord[worldNum][levelNum] = levelStar;
+								}
 
 								first = true;
 								levelNum = (levelNum + 1) % maps[worldNum].length;
@@ -2773,6 +2783,48 @@
 
 							}
 
+							noStroke();
+							// draw the people speech bubbles
+							for (var i in blocks) {
+								if (blocks[i][2] === 5) { // non-player character
+									// x, y, type, which person, if talking, current speech num
+									// blocks.push([x,y,5,parseInt(item), false,0]);
+
+									// if not done talking
+									if (blocks[i][5] !== -1) {
+										player[0] = constrain(player[0], 0, blocks[i][0] - player[2] - 20);
+										if (player[0] === blocks[i][0] - player[2] - 20) {
+											player[4] = 0;
+										}
+										if (player[0] > blocks[i][0] - player[2] - 60) {
+											blocks[i][4] = true;
+											if (blocks[i][5] >= peopleSpeech[worldNum][levelNum][blocks[i][3] - 1].length) {
+												blocks[i][5] = -1; // signal that it's done talking
+											} else {
+												//speech bubble
+												pushMatrix();
+												translate(blocks[i][0] + 10, blocks[i][1] - 90);
+												fill (245);
+												rect (0, 0, 240, 80, 20);
+												beginShape();
+												vertex(32, 78);
+												vertex(44, 78);
+												vertex(24, 95);
+												endShape(CLOSE);
+												popMatrix();
+												fill (10);
+												textSize(11);
+												textAlign(CENTER, CENTER);
+												textFont(createFont("Century Gothic Bold"));
+												text(peopleSpeech[worldNum][levelNum][blocks[i][3] - 1][blocks[i][5]], blocks[i][0] + 25, blocks[i][1] - 87.5, 210, 70);
+											}
+										}
+									}
+									if (blocks[i][4] && blocks[i][5] === -1 || player[0] <= blocks[i][0] - player[2] - 60) { // if mouth is still moving
+										blocks[i][4] = false;
+									}
+								}
+							}
 							onDoor = false;
 
 							if (deathCount % 20 < 10 && health > 0) {
