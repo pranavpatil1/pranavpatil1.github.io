@@ -858,6 +858,16 @@ keyReleased = function() {
     }
 };
 
+var mouseIsPressed = false;
+	
+mousePressed = function() {
+	mouseIsPressed = true;
+};
+
+mouseReleased = function() {
+	mouseIsPressed = false;
+};
+
 draw = function() {
     
     if (scene === 0) {

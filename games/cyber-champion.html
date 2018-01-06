@@ -1819,7 +1819,7 @@ var maxDeaths = 0; //most deaths in one level
 var badEnds = 0; //the number of different game over visited
 
 var usePosts = true; //draw the posts?
-var tutorial = false; //tutorial?
+var tutorial = true; //tutorial?
 var stage = 0; //stage of tutorial
 var stageT = 0; //last stage, timer
 
@@ -1923,6 +1923,7 @@ mouseReleased = function() {
             if (mouseX > 330 & mouseX < 420 & mouseY > 335 & mouseY < 365) {
                 
                 tutorial = !tutorial;
+				localStorage.setItem("cyberchampion_tutorial", tutorial.toString())
                 stage = 0;
                 
             }
@@ -2511,6 +2512,13 @@ if (localStorage.getItem("cyberchampion_access") !== null) {
 	
 	access = JSON.parse(localStorage.getItem("cyberchampion_access"));
 	
+}
+if (localStorage.getItem("cyberchampion_tutorial") !== null) {
+	
+	tutorial = "true" === localStorage.getItem("cyberchampion_tutorial");
+	
+} else {
+	localStorage.setItem("cyberchampion_tutorial", "true");
 }
 
 draw = function() {
@@ -4430,6 +4438,7 @@ CONFUSING ARRAYS!
                         //tutorial ends
                         stage = 0;
                         tutorial = false;
+						localStorage.setItem("cyberchampion_tutorial", "false");
                         
                     } else {
                         
@@ -4460,6 +4469,7 @@ CONFUSING ARRAYS!
                         
                         stage = 0;
                         tutorial = false;
+						localStorage.setItem("cyberchampion_tutorial", "false");
                         
                     } else {
                         
