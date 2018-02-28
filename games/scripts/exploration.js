@@ -109,6 +109,15 @@ var bkgrdColor = color(85, 179, 214);
 // the switches, but i like to call them flips
 var flips = [];
 
+// the seeds that the player can throw [x, y, xvel, yvel]
+var seeds = [];
+
+// 500 frame lifetime tree, with x and y positions 
+var trees = [];
+
+// time until the player can throw another seed, 0 means player can throw, resets to 250
+var noThrow = 0;
+
 // how long the user has held the down key
 var upTime = 0;
 
@@ -158,7 +167,7 @@ c = star
 _ = lower death zone ( use for large area bottom collision )
 1-9 = person to talk to
 LRTB = edges of a platform
-!@#$ = the switch corresponding to the platform
+!@#$ = the switch corresponding to the platform (number these row major)
 
 */
 
@@ -310,16 +319,16 @@ var maps = [
 			"c                                                       *     c          *                                                                         ",
 			"**                                    __                 L    R          __________                               _                                ",
 			" ***                                 ****                 * @       *********************                         *                          b     ",
-			"   ***            1       R S ^                         * ***                                           ******  _                L    %   r      D ",
+			"   ***            1 L     R S ^                         * ***                                           ******  _                L    %   r      D ",
 			"     ***     0 $ ***       ****  b         #  2        _*  **                                3       *          *   _     S          ***     ******",
 			"       *********                           ******   ** **                                   *******               * * *********                   ",
 		],
 		[
-			"                                                                T   T   T   T    *   3    S                            ",
-			"                                          2   S                                 *   *** * *  ***                       ",
-			"                          T   T   T     ****  *                                *          *      ***                   ",
-			"                                     **       *                                           *          ***               ",
-			"         S                                    *                                           *              ***           ",
+			"                                                                T   T   T   T        2    S                            ",
+			"                                              S                                  *  *** * *  ***                       ",
+			"                          T   T   T     ****  *                                 *         *      ***                   ",
+			"                                              *                                *          *          ***               ",
+			"         S                           **       *                                           *              ***           ",
 			"         *                                    * ** **                                     *                  ***       ",
 			"       * *                        c           *  ___                        c             *_______________   _   ***   ",
 			"    0    *    1   ! @ #                       *  ***   $ % ^ &                            *****************c***        ",
@@ -339,11 +348,16 @@ var maps = [
 			"                                                                                                         ",
 			"                                                                                                         ",
 		],
-	], // world 2: electrical, computer science, computer engineering
+	], // world 2 - electrical, computer science, computer engineering
 	[
 		[
-			"0           D",
-			"*************"
+			"                                 *",
+			"  *                               ",
+			"  *                               ",
+			"  *                   ******      ",
+			"  *     0  *                      ",
+			"  *        *                      ",
+			"*********************         ****"
 		],
 		[
 			"0           D",
@@ -405,34 +419,32 @@ var peopleSpeech = [
 	], // world 1
 	[
 		[
-			["", "", ""],
-			["", "", ""],
-			["", "", ""]
+			["Welcome to the next stage of engineering, with all things electrical!", "You have a new power here. Whenever you see a switch, you can power it with a zap of electricity by hitting SPACE.", "You need to zap the switch with an electric current so it can communicate with the platform. I bet they use Bluetooth."],
+			["I'm an electrical engineer. When electricity became more widespread and electronics began appearing, there was a need for people like me.", "Electrical engineers work with technology combined with electricity. It's a newer form of engineering."],
+			["Electrical engineering is so huge because electronics are everywhere!", "Anything that you plug in or that needs batteries was designed by an electrical engineer.", "The phone, TV, and even parts of video game consoles are created by electrical engineers.", "Are you getting the hang of all these switches and moving platforms?"]
 		], // 2-1
 		[
-			["", "", ""],
-			["", "", ""],
-			["", "", ""]
+			["One of the coolest things electrical engineers do is work on electric motors.", "These can be used in all sorts of places, like in Tesla cars!"],
+			["Electrical engineering ties into civil engineering too.", "When designing the electrical systems in tall buildings, I need to make sure electricity gets to all parts of the building.", "These buildings are tall!"],
+			["Lots of the cool special effects we see are the work of electrical engineers.", "In amusement park rides, like in Disneyland, lots of rides have cool special effects to make the whole ride more fun.", "Electrical engineers get to do lots of cool stuff!"]
 		], // 2-2
 		[
-			["", "", ""],
-			["", "", ""],
-			["", "", ""]
+			["Computer scientists write code to tell computers what to do. We call this software.", "Computers are everywhere and are involved in all professions. That means there's a huge need for computer scientists!"],
+			["Anything that an electrical engineer makes needs code behind it. This code tells it what it needs to do and when.", "For example, motors in a robot need to be programmed to run at a certain speed or only once in a while."],
+			["Did you know computers read binary code? When computers were first being created, all the early programming languages were machine code.", "Now, there are much easier languages like Python where the code reads like a sentence.", "For example, `if (hungry) eat();` is just like \"If you're hungry, eat.\""]
 		], // 2-3
 		[
-			["", "", ""],
-			["", "", ""],
-			["", "", ""]
+			["Modern computer scientists work with artificial intelligence and machine learning. ", "In The Sims, the code tells the AI people how to move and when."],
+			["Computer scientists can also write code for games (like this one). We would call that a game designer or web developer.", "Old games were 8-bit, meaning all the images and animations were all block-like.", "Modern games are 3D and extremely realistic, or even in virtual reality. Awesome!"],
+			["Computer scientists can also code smart systems like autopilot in airplanes or driverless cars."]
 		], // 2-4
 		[
-			["", "", ""],
-			["", "", ""],
-			["", "", ""]
+			["Computer engineers and electrical engineers are both really cool and they're both really important.", "They both work really closely together, so there are some people who do both. We call them computer engineers."],
+			["There's two major parts to a computer engineers work: software and hardware. They're both equally important. ", "The hardware is setting up wires, circuit boards, and other actual physical parts.", "The software is all the code which tells the hardware what to do."]
 		], // 2-5
 		[
-			["", "", ""],
-			["", "", ""],
-			["", "", ""]
+			[],
+			[]
 		], // 2-6
 	], // world 2
 	[
@@ -475,7 +487,7 @@ for (var i in maps) {
 	for (var j = 0; j < maps[i].length; j++) {
 
 		// CHANGE THIS TO === 0 TO >= TO 0
-		unlocked[unlocked.length - 1].push(j >= 0);
+		unlocked[unlocked.length - 1].push(j === 0);
 
 	}
 
@@ -1734,6 +1746,12 @@ void keyReleased ()
 					}
 				}
 			}
+		} else if (worldNum === 2 && noThrow <= 0) {
+			if (flip)
+				seeds.push([player[0] - 2, player[1] + 20, -5, -5]);
+			else
+				seeds.push([player[0] + 25, player[1] + 20, 5, -5]);
+			noThrow = 250; // sets a 250 frame or 5 second delay
 		}
 	} else if (keyCode === 10) { // ENTER
 		for (var i in blocks) {
@@ -2133,6 +2151,8 @@ void draw ()
 		blocks = [];
 		stars = [];
 		flips = [];
+		seeds = [];
+		trees = [];
 		delayYvel = 0;
 		far = 0;
 		flip = false;
@@ -2848,7 +2868,15 @@ void draw ()
 			}
 			
 			for (var i in flips) {
-				if (keys[32] && player[0] + player[2] >= flips[i][0] && player[0] <= flips[i][0] + 40 && player[1] + player[3] >= flips[i][1] & player[1] <= flips[i][1] + 40) {
+				var inRange = player[0] + player[2] >= flips[i][0] && player[0] <= flips[i][0] + 40 && player[1] + player[3] >= flips[i][1] & player[1] <= flips[i][1] + 40;
+				if (inRange) {
+					fill(10);
+					textSize(10);
+					textAlign(CENTER, CENTER);
+					textFont(createFont("Century Gothic Bold"));
+					text("[SPACE]", flips[i][0] + 52, flips[i][1] + 30);
+				}
+				if (keys[32] && inRange) {
 					flips[i][2] = true;
 				} else {
 					flips[i][2] = false;
@@ -2879,7 +2907,17 @@ void draw ()
 				
 				popMatrix();
 			}
-
+			
+			noThrow --;
+			
+			for (var i in seeds) {
+				seeds[i][3] += 0.31;
+				seeds[i][0] += seeds[i][2];
+				seeds[i][1] += seeds[i][3];
+				
+				ellipse(seeds[i][0], seeds[i][1], 10, 10);
+			}
+			
 			for (var i in stars) {
 
 				pushMatrix();
@@ -3029,7 +3067,7 @@ void draw ()
 									textAlign(CENTER, CENTER);
 									textFont(createFont("Century Gothic Bold"));
 									text(peopleSpeech[worldNum][levelNum][blocks[i][3] - 1][blocks[i][5]], blocks[i][0] + 25, blocks[i][1] - 87.5, 210, 70);
-									text("Press ENTER to continue", blocks[i][0] + 170, blocks[i][1]);
+									text("Press [ENTER]", blocks[i][0] + 170, blocks[i][1]);
 								}
 							}
 						}
