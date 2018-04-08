@@ -113,7 +113,7 @@ var flips = [];
 var seeds = [];
 
 // 500 frame lifetime tree, with x and y positions 
-var trees = [];
+var trees = null;
 
 // time until the player can throw another seed, 0 means player can throw, resets to 250
 var noThrow = 0;
@@ -351,7 +351,8 @@ var maps = [
 	], // world 2 - electrical, computer science, computer engineering
 	[
 		[
-			"                                 *",
+			"                                D ",
+			"                               ***",
 			"  *                               ",
 			"  *                               ",
 			"  *                   ******      ",
@@ -487,7 +488,7 @@ for (var i in maps) {
 	for (var j = 0; j < maps[i].length; j++) {
 
 		// CHANGE THIS TO === 0 TO >= TO 0
-		unlocked[unlocked.length - 1].push(j === 0);
+		unlocked[unlocked.length - 1].push(j >= 0);
 
 	}
 
@@ -1746,11 +1747,12 @@ void keyReleased ()
 					}
 				}
 			}
-		} else if (worldNum === 2 && noThrow <= 0) {
+		} else if (worldNum === 2 && seeds.length == 0) {
+			// throw a seed, with slight player velocity influence
 			if (flip)
-				seeds.push([player[0] - 2, player[1] + 20, -5, -5]);
+				seeds.push([player[0] - 2, player[1] + 20, -4, -5 + player[5]/2]);
 			else
-				seeds.push([player[0] + 25, player[1] + 20, 5, -5]);
+				seeds.push([player[0] + 25, player[1] + 20, 4, -5 + player[5]/2]);
 			noThrow = 250; // sets a 250 frame or 5 second delay
 		}
 	} else if (keyCode === 10) { // ENTER
@@ -2152,7 +2154,7 @@ void draw ()
 		stars = [];
 		flips = [];
 		seeds = [];
-		trees = [];
+		trees = null;
 		delayYvel = 0;
 		far = 0;
 		flip = false;
@@ -2205,36 +2207,7 @@ void draw ()
 							k = 0;
 						}
 					}
-					var flipChar = "~";
-					switch (pCount) {
-						case 1:
-							flipChar = "!";
-							break;
-						case 2:
-							flipChar = "@";
-							break;
-						case 3:
-							flipChar = "#";
-							break;
-						case 4:
-							flipChar = "$";
-							break;
-						case 5:
-							flipChar = "%";
-							break;
-						case 6:
-							flipChar = "^";
-							break;
-						case 7:
-							flipChar = "&";
-							break;
-						case 8:
-							flipChar = "(";
-							break;
-						case 9:
-							flipChar = ")";
-							break;
-					}
+					var flipChar = "~!@#$%^&()"[pCount];
 					for (var a = 0; a < maps[worldNum][levelNum].length; a ++) {
 						var index = maps[worldNum][levelNum][a].indexOf(flipChar);
 						if (index !== -1) {
@@ -2256,36 +2229,7 @@ void draw ()
 							k = 0;
 						}
 					}
-					var flipChar = "~";
-					switch (pCount) {
-						case 1:
-							flipChar = "!";
-							break;
-						case 2:
-							flipChar = "@";
-							break;
-						case 3:
-							flipChar = "#";
-							break;
-						case 4:
-							flipChar = "$";
-							break;
-						case 5:
-							flipChar = "%";
-							break;
-						case 6:
-							flipChar = "^";
-							break;
-						case 7:
-							flipChar = "&";
-							break;
-						case 8:
-							flipChar = "(";
-							break;
-						case 9:
-							flipChar = ")";
-							break;
-					}
+					var flipChar = "~!@#$%^&()"[pCount];
 					for (var a = 0; a < maps[worldNum][levelNum].length; a ++) {
 						var index = maps[worldNum][levelNum][a].indexOf(flipChar);
 						if (index !== -1) {
@@ -2577,6 +2521,29 @@ void draw ()
 						if (player[0] > (blocks[i][0] - player[2] + 1) & player[0] < (blocks[i][0] + 40 - 1) &
 							player[1] >= (blocks[i][1] + 39.7) & player[1] < (blocks[i][1] + 41.3)) {
 							noJump = true;
+						}
+						
+						for (var j = 0; j < seeds.length; j ++) {
+							if (seeds[j][0] > blocks[i][0] && seeds[j][0] < blocks[i][0] + 40 && seeds[j][1] > blocks[i][1] && seeds[j][1] < blocks[i][1] + 40)
+							{
+								if (position[i][0]) // if at top
+								{
+									var noTrees = true;
+									for (var k in trees)
+										if (trees[k][0] == blocks[i][0] && trees[k][1] == blocks[i][1])
+											noTrees = false;
+									if (noTrees && (trees == null || trees[0] != blocks[i][0] || trees[1] != blocks[i][1])) {
+										if (trees != null) {
+											genExplosion(trees[0] + 20, trees[1] - 55, 1.5, color(100, 230, 100), 3);
+											genExplosion(trees[0] + 20, trees[1] - 35, 1.5, color(100, 230, 100), 3);
+											genExplosion(trees[0] + 20, trees[1] - 15, 1.5, color(100, 230, 100), 3);
+										}
+										trees = [blocks[i][0], blocks[i][1], 500];
+									}
+								}
+								seeds.splice(j);
+								j--;
+							}
 						}
 
 					} else if (blocks[i][2] === 2) { // triangle spike
@@ -2910,12 +2877,55 @@ void draw ()
 			
 			noThrow --;
 			
-			for (var i in seeds) {
+			for (var i = 0; i < seeds.length; i ++) {
 				seeds[i][3] += 0.31;
 				seeds[i][0] += seeds[i][2];
 				seeds[i][1] += seeds[i][3];
 				
+				noStroke();
+				fill(139,69,19);
 				ellipse(seeds[i][0], seeds[i][1], 10, 10);
+				
+				if (seeds[i][1] > 420) {
+					seeds.splice(i, 1);
+					i --;
+				}
+			}
+			if (trees != null) {
+				// draw the tree
+				pushMatrix();
+				translate(trees[0], trees[1] - 70);
+				scale(0.2);
+				noStroke();
+				fill(102, 60, 28);
+				rect (80, 250, 40, 100);
+				fill (91, 175, 98);
+				rect(0, 0, 200, 310, 40);
+				fill (78, 156, 95);
+				rect(0, 0, 100, 310, 40);
+				rect(50, 0, 50, 310);
+				popMatrix();
+
+				var x = trees[0];
+				var y = trees[1] - 70;
+				if (player[5] >= 0 & player[0] > (x - player[2]) & player[0] < (x + 40) &
+					player[1] + player[3] <= y + 2 & player[1] >= (y - player[3] - Math.abs(player[5])) && player[5] > 0) {
+
+					player[7] = false;
+					player[1] = y - player[3] + 0.01;
+					player[5] = -8;
+					player[10] = false;
+
+				}				
+
+				// continue time, check if tree is dead
+				trees[2] --;
+				if (trees[2] <= 0) {
+					genExplosion(trees[0] + 20, trees[1] - 55, 1.5, color(100, 230, 100), 3);
+					genExplosion(trees[0] + 20, trees[1] - 35, 1.5, color(100, 230, 100), 3);
+					genExplosion(trees[0] + 20, trees[1] - 15, 1.5, color(100, 230, 100), 3);
+					trees = null;
+				}
 			}
 			
 			for (var i in stars) {
