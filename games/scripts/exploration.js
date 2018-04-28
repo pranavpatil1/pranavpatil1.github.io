@@ -115,9 +115,6 @@ var seeds = [];
 // 500 frame lifetime tree, with x and y positions 
 var trees = null;
 
-// time until the player can throw another seed, 0 means player can throw, resets to 250
-var noThrow = 0;
-
 // how long the user has held the down key
 var upTime = 0;
 
@@ -133,15 +130,15 @@ var clouds = [
 ];
 
 var deathMessage = [
-	["You can use the down arrow to slam down", "Engineers do most of their work in teams to solve problems.", "Engineers design and build things that make a difference and solve real world problems", "Engineers have saved lives through inventions like the pacemaker and Omnipod", "Engineers protect our planet by combating issues like global warming", "Chemical engineers use chemistry, physics, and math to solve problems with chemicals", "Biomedical engineers", "Computer engineers", "Environmental engineers", "Mechanical engineers", "Electrical engineers", "Software engineers"],
+	["You can use the down arrow to slam down", "Engineers do most of their work in teams to solve problems.", "Engineers design and build things that make a difference and solve real world problems", "Engineers have saved lives through inventions like the pacemaker and Omnipod", "Engineers protect our planet by combating issues like global warming", "Chemical engineers use chemistry, physics, and math to solve problems with chemicals", "Biomedical engineers are awesome!", "Computer engineers are awesome!", "Environmental engineers are awesome!", "Mechanical engineers are awesome!", "Electrical engineers are awesome!", "Software engineers are awesome!"],
 	["Mechanical engineering is one of the oldest types of engineering", "Mechanical engineering is solving problems through mechanical devices", "Robotics is a subdiscipline of mechanical engineering", "In the automobile industry, mechanical engineers develop components like gears and engines to make cars more safe and efficient."],
-	[],
-	[]
+	["There's lots of open jobs in computer science", "Electrical engineers are super important. Electronics are everywhere!", "It's a lot easier to write code now than when computers were invented", "Electrical engineering is newer than mechanical or civil engineering."],
+	["Greenhouse gases are ", "Solar power and wind power are types of renewable energy", "Environmental engineers develop tech which won't hurt the environment"]
 ];
 var message; // message storage for death message
 var rand = -1; // random storage for death message
 
-var invention = ["diesel engine", "combustion engine", "phonograph", "long lasting lightbulb we see today", "car", "parachute", "bicycle", ""];
+var invention = ["diesel engine", "combustion engine", "phonograph", "long lasting lightbulb we see today", "car", "parachute", "bicycle"];
 for (var i in invention) {
 	deathMessage[1].push("Mechanical engineers invented the " + invention[i]);
 }
@@ -150,9 +147,21 @@ for (var i in invention) {
 	deathMessage[1].push("Civil engineers build " + invention[i]);
 }
 
-invention = ["zap"];
+invention = ["video games", "software chips", "things with electricity", "smartphones"];
 for (var i in invention) {
 	deathMessage[2].push("Electrical engineers build " + invention[i]);
+}
+invention = ["algorithms for self-driving cars", "code", "artificial intelligence"];
+for (var i in invention) {
+	deathMessage[2].push("Computer scientists create " + invention[i]);
+}
+invention = ["computing devices", "software and hardware", "awesome tech!"];
+for (var i in invention) {
+	deathMessage[2].push("Computer engineers create " + invention[i]);
+}
+invention = ["biofiltration", "hybrid cars", "vehicles that don't create greenhouse gases"];
+for (var i in invention) {
+	deathMessage[3].push("Environmental engineers invented " + invention[i]);
 }
 /**
 
@@ -166,7 +175,7 @@ t = two small spikes (use sparingly)
 c = star
 _ = lower death zone ( use for large area bottom collision )
 1-9 = person to talk to
-LRTB = edges of a platform
+LRTB = edges of a platform (will start on side that is caps)
 !@#$ = the switch corresponding to the platform (number these row major)
 
 */
@@ -337,51 +346,128 @@ var maps = [
 			"                                                                                                            ***********"
 		],
 		[
-			"                                                                                                         ",
-			"                                                                                                         ",
-			"                         1                                                                               ",
-			"                    T  ***                                                                               ",
-			"          L      r       *                                                                               ",
-			"        L      r         *                                                                               ",
-			"      !0 @          B #  *                                                                               ",
-			"      ****           *** ****                                                                            ",
-			"                                                                                                         ",
-			"                                                                                                         ",
+			"                                                                                )     T                          ",
+			"                                       T  *  T  *  T  *                     *****          S                     ",
+			"                                          *     *     *         2! l     *     R           *           SStDt  c  ",
+			"                         1                *     *             ****                          S        S****** *** ",
+			"                    T  ***                *           @l         R                          *        *           ",
+			"          L      r       *                      (     *                                      S     S*            ",
+			"        L      r         *  S             &     *     *                                      *     *             ",
+			"      #0 $          B %  * S*S  S   ^     *     *  c  *                                          S*              ",
+			"      ****           *** * **** **  *  b  *  b  *  b  *                                          *               ",
+			"                                                                                      c        S*                ",
+			"                                                                                      b   **  **                 ",
 		],
 	], // world 2 - electrical, computer science, computer engineering
 	[
 		[
-			"                                D ",
-			"                               ***",
-			"  *                               ",
-			"  *                               ",
-			"  *                   ******      ",
-			"  *     0  *                      ",
-			"  *        *                      ",
-			"*********************         ****"
+			"                                                                    c                        3       ",
+			"                                                                    *                * ********      ",
+			"                                         S                         *                 *     *         ",
+			"                                c        *      SS               S*                  *     *         ",
+			"  c                                      *  S   **              **                   *     *   *     ",
+			"                                    ****** *******                                   *** **          ",
+			"                                                                                         *        ** ",
+			"                                                   ***   2                               *           ",
+			"                                *****                   ******                           *           ",
+			"    0      S  S    S  S                                                              *****      D    ",
+			"   ****    **** SS ****  1                                      *****              t *         ***   ",
+			"       *  *    ****    ***** ***                                         ****  ***** *               "
 		],
 		[
-			"0           D",
-			"*************"
+			"                                                    ***",
+			"                                                      *",
+			"                                                     c*",
+			"                                                    ***",
+			"  c                                                                                                      D *       * c",
+			"  *                                                                                                    *****  *     ****",
+			"  *                             *****    *****   ****",
+			"  *                             *                     S S",
+			"  * __  __         0   1        *                   tS* *S    2                                      **",
+			"  *******************************                   ****** *****  **               **              **",
+			"                                                                     **             *S   3       **",
+			"                                                                           *****    ********   **",
 		],
 		[
-			"0           D",
-			"*************"
+			"     c",
+			"     *",
+			"     *",
+			"  0  *",
+			"  *  *",
+			"  ** *",
+			"     *",
+			"  * **",
+			"  *  *",
+			"  ** *",
+			"     *",
+			"  * **",
+			"  *  *                      *",
+			"  ** *                                                  c                                 S",
+			"     *                          ****                                            S         *",
+			"  *                                    ****                            S        *         *",
+			"  *                       *                                    S       *        *         *",
+			"  *        1            ______________________   2             *       *        c       * *      D",
+			"  ***************  ************************************   **** * ***** * ****** * ******* * ********"
 		],
 		[
-			"0           D",
-			"*************"
+			"                                                                                                    ",
+			"                                                                                                    ",
+			"                0                                                                                   ",
+			"                                                                                                    ",
+			"                c                                                                                   ",
+			"                                                                                                    ",
+			"                                                                                                    ",
+			"               c                                                                                    ",
+			"     *                      *                                                                       ",
+			"                                                                                                    ",
+			"                 c                                                                                  ",
+			"                                                                                                    ",
+			"                D                                                                                   ",
+			"         *     ***     *                                                                            ",
+			"                                                                                                    ",
+			"                                                                                                    "
 		],
 		[
-			"0           D",
-			"*************"
+			"                                                                                                    ",
+			"                                                                                                    ",
+			"                                                                                                    ",
+			"                                                                                                    ",
+			"                                                                                                    ",
+			"                                                                                                    ",
+			"                                                                                                    ",
+			"                                                                                                    ",
+			"                                                                                                    ",
+			"                                                                                                    ",
+			"                                                                                                    ",
+			"                                                                                                    ",
+			"                                                                                                    ",
+			"                                                                                                    ",
+			"                                                                                                    ",
+			"                                                                                                    "
 		],
 		[
-			"0           D",
-			"*************"
+			"                                                                                           c",
+			"",
+			"                                                               c                                                                        ",
+			"                                                                       ***  *    ****                                                   ",
+			"                                                                                          S S                                           ",
+			"                                                                                        *** ***                                         ",
+			"                                                                     S                    *_*       3                                   ",
+			"                                                               ***  ***                   ***     *****                                 ",
+			"                                                                                                                                        ",
+			"   0                                                                                                       t    S                       ",
+			"  ***                                                                                                      ******                       ",
+			"    *SSS   1                                 c            S   *                                                                         ",
+			"    *************                                        ***                                                         S S                ",
+			"                *SSSS                                                                                               *****               ",
+			"                **********                                                                                                              ",
+			"                         *_S S_S     S_S  S_S SS   2   *                                                                       S        ",
+			"                         ****************************  *                                                                      **        ",
+			"                                                                                                                                     D  ",
+			"                                                                                                                                   *****",
 		],
-	]
-]; //and so 1300+ lines of level maps were created
+	] // world 3 - something about the environment idk
+]; //and just like that (ok maybe a few months of work) many many many many lines of level maps were created
 
 // unlocked levels
 var unlocked = [];
@@ -444,15 +530,14 @@ var peopleSpeech = [
 			["There's two major parts to a computer engineers work: software and hardware. They're both equally important. ", "The hardware is setting up wires, circuit boards, and other actual physical parts.", "The software is all the code which tells the hardware what to do."]
 		], // 2-5
 		[
-			[],
-			[]
+			["There's so many ways for students to get into electrical or computer engineering, such as FIRST", "FIRST has competitions like FRC and FTC for robotics. Google them!"],
+			["It's really amazing how software and hardware need to work in sync.", "Knowing how to build a mechanical device isn't super helpful if you can't put motors on it."]
 		], // 2-6
 	], // world 2
 	[
 		[
-			["", "", ""],
-			["", "", ""],
-			["", "", ""]
+			["Hi! I'm an environmental engineer.", "There's so much awesome tech in our world, but it sometimes hurts the environment.", "I create tech to help the environment."],
+			["Environmental engineering helps to fight issues like global warming, wastewater treatement, and acid rain.", "Existing technology often makes these worse.", "I improve on existing devices or create new things to help this."],
 		], // 3-1
 		[
 			["", "", ""],
@@ -523,6 +608,9 @@ var explosion = [];
 var pmillis = 0;
 var t = 0;
 
+var male = false;
+var emojiSwitch = 0;
+
 //scaling for mouse clicks
 var sc = width / 600;
 mouseReleased = function() {
@@ -538,6 +626,11 @@ mouseReleased = function() {
 			first = true;
 
 			levelTransition = 255;
+
+		} else if (dist(mouseX, mouseY, width / 600 * 572, width / 600 * 372) < 30) {
+
+			male = !male; // flip binary switch
+			emojiSwitch = 220;
 
 		}
 
@@ -1056,10 +1149,10 @@ var drawPlayer = function (x, y, running, flip, jumping_amt) {
     translate(x + (flip ? 20 : 0), y);
     scale(flip ? -0.5 : 0.5, 0.5); // 40 by 80 scaled to 20 by 40
 
-    var hairColor = color(43, 32, 3); // black
+	var hairColor = color(43, 32, 3); // black
     var skinColor = color(196, 151, 67);
-    var shirtColor = color(23, 26, 8); // black
-    var pantsColor = color(3, 31, 66); // dark blue
+    var shirtColor = male ? color(23, 26, 8): color(70, 11, 77); // black
+    var pantsColor = male ? color(3, 31, 66) : color(8, 17, 28); // dark blue
     
     noStroke();
     
@@ -1070,15 +1163,35 @@ var drawPlayer = function (x, y, running, flip, jumping_amt) {
     }
     rect(8 + offset, 64, 8, 12);
     rect(22 - offset, 64, 8, 12);
-    
+    pushMatrix();
+	// adds a slight movement to the head
+	if (running) {
+		translate(cosine(frameCount*11), 1-abs(sine(frameCount*10)));
+    }
+    fill (hairColor);
+    if (!male) {
+		rect(-1, 15, 43, 36);
+    }
+    popMatrix();
     fill (shirtColor);
-    rect(4, 38, 30, 27, 6);
+    if (male) {
+        rect(4, 38, 30, 27, 6);
+    } else {
+        rect(4, 38, 30, 30, 6);
+		beginShape();
+		vertex(4, 57);
+		vertex(34, 57);
+		vertex(38, 68);
+		vertex(0, 68);
+		endShape();
+    }
     
 	pushMatrix();
 	// adds a slight movement to the head
 	if (running) {
 		translate(cosine(frameCount*11), 1-abs(sine(frameCount*10)));
     }
+    
     // draw head
     fill(skinColor);
     rect(0, 0, 40, 40, 20);
@@ -1093,19 +1206,50 @@ var drawPlayer = function (x, y, running, flip, jumping_amt) {
     
     fill (hairColor);
     beginShape();
-    vertex(6, 8);
-    vertex(23, 6);
-    vertex(38, 8);
-    vertex(40, -4);
-    vertex(33, 0);
-    vertex(29, -5);
-    vertex(26, 1);
-    vertex(22, -5);
-    vertex(19, -1);
-    vertex(16, -6);
-    vertex(12, 1);
-    vertex(4, -1);
-    vertex(0, 14);
+    if (male) {
+        vertex(6, 8);
+        vertex(23, 6);
+        vertex(38, 8);
+        vertex(40, -4);
+        vertex(33, 0);
+        vertex(29, -5);
+        vertex(26, 1);
+        vertex(22, -5);
+        vertex(19, -1);
+        vertex(16, -6);
+        vertex(12, 1);
+        vertex(4, -1);
+        vertex(0, 14);
+    } else {
+        strokeWeight(1);
+		vertex(3, 6);
+		vertex(12, 0);
+		vertex(20, -1);
+		vertex(29, 0);
+		vertex(35, 4);
+		vertex(42, 14);
+		vertex(43, 18);
+		vertex(43, 29);
+		vertex(45, 37);
+		vertex(42, 51);
+		vertex(34, 51);
+		vertex(42, 38);
+		vertex(40, 28);
+		vertex(35, 14);
+		vertex(28, 9);
+		vertex(25, 8);
+		vertex(20, 7);
+		vertex(11, 13);
+		vertex(6, 20);
+		vertex(2, 37);
+		vertex(-1, 51);
+		vertex(-5, 42);
+		vertex(-4, 36);
+		vertex(-5, 28);
+		vertex(-4, 24);
+		vertex(-4, 19);
+		vertex(-2, 14);
+    }
     endShape();
     popMatrix();
     
@@ -1133,6 +1277,7 @@ var drawPlayer = function (x, y, running, flip, jumping_amt) {
     
     popMatrix();
 };
+
 var drawDoor = function(x, y, dark) {
 
 	pushMatrix();
@@ -1747,13 +1892,12 @@ void keyReleased ()
 					}
 				}
 			}
-		} else if (worldNum === 2 && seeds.length == 0) {
+		} else if (worldNum === 2 && seeds.length === 0) {
 			// throw a seed, with slight player velocity influence
 			if (flip)
 				seeds.push([player[0] - 2, player[1] + 20, -4, -5 + player[5]/2]);
 			else
 				seeds.push([player[0] + 25, player[1] + 20, 4, -5 + player[5]/2]);
-			noThrow = 250; // sets a 250 frame or 5 second delay
 		}
 	} else if (keyCode === 10) { // ENTER
 		for (var i in blocks) {
@@ -1883,8 +2027,10 @@ void draw ()
 		textAlign(CENTER, CENTER);
 
 		fill(255, 255, 255);
-		textSize(height / 7);
-		text("EXPLORATION:\nENGINEER", width / 2, height * 0.3); //main title
+		textSize(height / 10);
+		text("the world of", width / 2, height * 0.24); //main title
+		textSize(height / 6);
+		text("ENGINEERS", width / 2, height * 0.36); //main title
 
 		fill(255, 255, 255, 130);
 		beginShape();
@@ -1899,8 +2045,16 @@ void draw ()
 		vertex(width / 2 + 50 * cosine(240), height * 0.725 + 50 * sine(240));
 		vertex(width / 2 + 50 * cosine(120), height * 0.725 + 50 * sine(120));
 		vertex(width / 2 + 50 * cosine(0), height * 0.725 + 50 * sine(0));
-
+		
 		endShape();
+
+		emojiSwitch /= 1.175;
+		
+		fill(255, 255, 255, male ? 220 - emojiSwitch : emojiSwitch);
+		textSize(height/15);
+		text("👦", width * 0.955, height * 0.93);
+		fill(255, 255, 255, !male ? 220 - emojiSwitch : emojiSwitch);
+		text("👧", width * 0.955, height * 0.93);
 
 	} else if (page === "worlds") {
 
@@ -1988,7 +2142,7 @@ void draw ()
 
 		fill(255, 255, 255);
 		textSize(400 / 10);
-		text("WORLDS", 600 / 2, 400 * 0.115); //main title
+		text("SECTORS", 600 / 2, 400 * 0.115); //main title
 
 		fill(255, 255, 255, 200);
 		rect(20, 90, 173, 290);
@@ -2107,14 +2261,14 @@ void draw ()
 
 			fill(255, 255, 255);
 			textSize(400 / 10);
-			var title = "WORLD " + (worldNum + 1);
+			var title = "SECTOR " + (worldNum + 1);
 			
 			if (worldNum === 0) {
-				title = "WORLD 1: BUILD";
+				title = "SECTOR 1: BUILD";
 			} else if (worldNum === 1) {
-				title = "WORLD 2: ZAP";
+				title = "SECTOR 2: ZAP";
 			} else if (worldNum === 2) {
-				title = "WORLD 3: GROW";
+				title = "SECTOR 3: GROW";
 			}
 			
 			text(title, 600 / 2, 400 * 0.12); //main title
@@ -2193,7 +2347,18 @@ void draw ()
 				} else if (parseInt(item,10) >= 1 && parseInt(item,10) <= 9) {
 					// x, y, type, which person, if talking, current speech num, m/f?, hair style, hair color, skin color
 					// shirt color, pants color, glasses?, tie?
-					blocks.push([x, y, 5, parseInt(item), false, 0, random(1) < 0.492, floor(random(3)), random(1) < 0.7 ? 0 : (random(1) < 0.6 ? 1 : 2),
+					var dude = random(1) < 0.492;
+					var hair = 0;
+					if (dude) {
+						if (random(1) < 0.1) {
+							hair = 2; // exciting and rare mohawk
+						} else {
+							hair = floor(random(2));
+						}
+					} else {
+						hair = floor(random(3));
+					}
+					blocks.push([x, y, 5, parseInt(item), false, 0, dude, hair, random(1) < 0.7 ? 0 : (random(1) < 0.6 ? 1 : 2),
 						floor(random(4)), floor(random(4)), floor(random(3)), random(1) < 0.4, random(1) < 0.6, true
 					]);
 				} else if (item.toLowerCase() === "r") {
@@ -2207,6 +2372,7 @@ void draw ()
 							k = 0;
 						}
 					}
+					// weird bug but too late to fix - '~' never used since pCount starts at 1
 					var flipChar = "~!@#$%^&()"[pCount];
 					for (var a = 0; a < maps[worldNum][levelNum].length; a ++) {
 						var index = maps[worldNum][levelNum][a].indexOf(flipChar);
@@ -2525,23 +2691,30 @@ void draw ()
 						
 						for (var j = 0; j < seeds.length; j ++) {
 							if (seeds[j][0] > blocks[i][0] && seeds[j][0] < blocks[i][0] + 40 && seeds[j][1] > blocks[i][1] && seeds[j][1] < blocks[i][1] + 40)
-							{
+							{ // COME BACK
 								if (position[i][0]) // if at top
 								{
-									var noTrees = true;
-									for (var k in trees)
-										if (trees[k][0] == blocks[i][0] && trees[k][1] == blocks[i][1])
-											noTrees = false;
-									if (noTrees && (trees == null || trees[0] != blocks[i][0] || trees[1] != blocks[i][1])) {
-										if (trees != null) {
+									var validSpot = true;
+									for (var a = 0; a < blocks.length; a ++) {
+										if (blocks[a][0] === blocks[i][0]) {
+											if (blocks[a][2] === 4 && blocks[i][1] === blocks[a][1] + 40 || 
+												blocks[a][2] === 2 && blocks[i][1] === blocks[a][1] + blocks[a][4] ||
+											   	blocks[a][2] === 5 && blocks[i][1] === blocks[a][1] + 40) // tries to hit all cases of spikes
+												validSpot = false;
+										}
+									}
+									if (validSpot && (trees === null || trees[0] !== blocks[i][0] || trees[1] !== blocks[i][1])) {
+										if (trees !== null) {
 											genExplosion(trees[0] + 20, trees[1] - 55, 1.5, color(100, 230, 100), 3);
 											genExplosion(trees[0] + 20, trees[1] - 35, 1.5, color(100, 230, 100), 3);
 											genExplosion(trees[0] + 20, trees[1] - 15, 1.5, color(100, 230, 100), 3);
 										}
-										trees = [blocks[i][0], blocks[i][1], 500];
+										trees = [blocks[i][0], blocks[i][1], 250];
+									} else if (trees !== null && trees[0] === blocks[i][0] && trees[1] === blocks[i][1]) {
+										trees[2] = 200;
 									}
 								}
-								seeds.splice(j);
+								seeds.splice(j, 1);
 								j--;
 							}
 						}
@@ -2875,8 +3048,6 @@ void draw ()
 				popMatrix();
 			}
 			
-			noThrow --;
-			
 			for (var i = 0; i < seeds.length; i ++) {
 				seeds[i][3] += 0.31;
 				seeds[i][0] += seeds[i][2];
@@ -2891,7 +3062,7 @@ void draw ()
 					i --;
 				}
 			}
-			if (trees != null) {
+			if (trees !== null) {
 				// draw the tree
 				pushMatrix();
 				translate(trees[0], trees[1] - 70);
@@ -3012,14 +3183,14 @@ void draw ()
 									var jim = false;
 									if (blocks[i][5] < 375) {
 										blocks[i][4] = false;
-										dialogue = "Hi, I'm Jim. I think I'm lost, but I'm on a mission. Where am I? What is this place?";
+										dialogue = "Hi, I'm " + (male ? "Jim" : "Jill") + ". I think I'm lost, but I'm on a mission. Where am I? What is this place?";
 										jim = true;
 									} else if (blocks[i][5] < 800) {
 										blocks[i][4] = true;
-										dialogue = "Hi Jim. This is the world of engineering! I'm an engineer, and so are all the people here. What's your mission?";
+										dialogue = "Hi " + (male ? "Jim" : "Jill") + ". This is the world of engineering! I'm an engineer, and so are all the people here. What's your mission?";
 									} else if (blocks[i][5] < 1100) {
 										blocks[i][4] = false;
-										dialogue = "Awesome! I want to learn about engineering. Can you tell me more?";
+										dialogue = "I want to learn about engineering. Can you tell me more?";
 										jim = true;
 									} else {
 										blocks[i][4] = true;
