@@ -1,3 +1,32 @@
+// If you have any feedback, please comment it below!
+// I want to improve this game as much as I can.
+
+/*
+
+MIT License
+
+Copyright (c) 2018 Pranav Patil
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+*/
+
 size(780, 520);
 frameRate(60);
 
@@ -132,8 +161,8 @@ var clouds = [
 var deathMessage = [
 	["You can use the down arrow to slam down", "Engineers do most of their work in teams to solve problems.", "Engineers design and build things that make a difference and solve real world problems", "Engineers have saved lives through inventions like the pacemaker and Omnipod", "Engineers protect our planet by combating issues like global warming", "Chemical engineers use chemistry, physics, and math to solve problems with chemicals", "Biomedical engineers are awesome!", "Computer engineers are awesome!", "Environmental engineers are awesome!", "Mechanical engineers are awesome!", "Electrical engineers are awesome!", "Software engineers are awesome!"],
 	["Mechanical engineering is one of the oldest types of engineering", "Mechanical engineering is solving problems through mechanical devices", "Robotics is a subdiscipline of mechanical engineering", "In the automobile industry, mechanical engineers develop components like gears and engines to make cars more safe and efficient."],
-	["There's lots of open jobs in computer science", "Electrical engineers are super important. Electronics are everywhere!", "It's a lot easier to write code now than when computers were invented", "Electrical engineering is newer than mechanical or civil engineering."],
-	["Greenhouse gases are ", "Solar power and wind power are types of renewable energy", "Environmental engineers develop tech which won't hurt the environment"]
+	["There's lots of jobs in computer and software engineering", "Electrical engineers are super important. Electronics are everywhere!", "It's a lot easier to write code now than when computers were invented", "Electrical engineering is newer than mechanical or civil engineering."],
+	["Greenhouse gases like carbon dioxide hurt the earth", "Solar power and wind power are types of renewable energy", "Environmental engineers develop tech which won't hurt the environment"]
 ];
 var message; // message storage for death message
 var rand = -1; // random storage for death message
@@ -153,7 +182,7 @@ for (var i in invention) {
 }
 invention = ["algorithms for self-driving cars", "code", "artificial intelligence"];
 for (var i in invention) {
-	deathMessage[2].push("Computer scientists create " + invention[i]);
+	deathMessage[2].push("Software engineers create " + invention[i]);
 }
 invention = ["computing devices", "software and hardware", "awesome tech!"];
 for (var i in invention) {
@@ -216,10 +245,10 @@ var maps = [
 			"                                               *                          **   **              ",
 			"                                               *                    **                         ",
 			"                                            c  *                                               ",
-			"                1                      S  **** *                 c                             ",
-			"              ***                      *       *                 *                             ",
-			"            S      **               S          *           _     *_                            ",
-			" 0         **          **           *                      *     **                            ",
+			"                1                         **** *                 c                             ",
+			"              ***                      *                         *                             ",
+			"            S      **                *                     _     *_                            ",
+			" 0         **          **                                  *     **                            ",
 			"*****                       **                           *   *         *                       ",
 			"       **                       **         S    2     *         *__*         c                 ",
 			"                                    ** ** *********             ****        **                 ",
@@ -308,16 +337,16 @@ var maps = [
 		[
 			"*     *                                 *                                                                                    c",
 			"*     *c                                *                                                                                  S**",
-			"*     * *                         1&    *                                                                                  *  ",
-			"*0      *                      S**** T  *       T  Tc                                                    3               S*   ",
-			"****S   * *                    *   *    *                                                             T****              *    ",
-			"    *     *                  S*    *    *                                                                 *             *     ",
-			"     *S   * *                *     *    *                !           (       2                      @     *          S*       ",
-			"      *     ****           S*      *  SS*              ***L  **  *****  T  ****  r  ****        T*****b    *         *        ",
-			"       *S        L       R *       *  ***                                     *     *                              S*         ",
-			"        *            #             *       $ %  b  B                          *_____*______   ^             *      *      D   ",
-			"         ****************          *     *****                                ***************** b           *******     ***** ",
-			"                                   * b ***                              B                                                     ",
+			"*       *                         1     *                                                                                  *  ",
+			"*0      *                      S***  T **       T  Tc                                                    3               S*   ",
+			"****S     *                    *   &    *                                                             T****              *    ",
+			"    *     *                  S*    *  SS*                                                                 *             *     ",
+			"     *S     *                *     *  ***                            (     ! 2                      @     *          S*       ",
+			"      *     ****           S*      *                   ***   **  *****L T  ****    r****        T*****b    *         *        ",
+			"       *S        L       R *       *                                          *     *                              S*         ",
+			"        *            #             *  *    $ %  b  B                          *_____*______   ^             *      *      D   ",
+			"         ****************          *  **  ****                                ***************** b           *******     ***** ",
+			"                                   * b **                               B                                                     ",
 		],
 		[
 			"                                 T                                           S                                                                     ",
@@ -328,13 +357,13 @@ var maps = [
 			"c                                                       *     c          *                                                                         ",
 			"**                                    __                 L    R          __________                               _                                ",
 			" ***                                 ****                 * @       *********************                         *                          b     ",
-			"   ***            1 L     R S ^                         * ***                                           ******  _                L    %   r      D ",
+			"   ***             1L     R S ^                         * ***                                           ******  _                L    %   r      D ",
 			"     ***     0 $ ***       ****  b         #  2        _*  **                                3       *          *   _     S          ***     ******",
 			"       *********                           ******   ** **                                   *******               * * *********                   ",
 		],
 		[
-			"                                                                T   T   T   T        2    S                            ",
-			"                                              S                                  *  *** * *  ***                       ",
+			"                                                                T   T   T   T         2   S                            ",
+			"                                              S                                  *  *** * * ****                       ",
 			"                          T   T   T     ****  *                                 *         *      ***                   ",
 			"                                              *                                *          *          ***               ",
 			"         S                           **       *                                           *              ***           ",
@@ -361,7 +390,7 @@ var maps = [
 	], // world 2 - electrical, computer science, computer engineering
 	[
 		[
-			"                                                                    c                        3       ",
+			"                                                                    c                                ",
 			"                                                                    *                * ********      ",
 			"                                         S                         *                 *     *         ",
 			"                                c        *      SS               S*                  *     *         ",
@@ -371,7 +400,7 @@ var maps = [
 			"                                                   ***   2                               *           ",
 			"                                *****                   ******                           *           ",
 			"    0      S  S    S  S                                                              *****      D    ",
-			"   ****    **** SS ****  1                                      *****              t *         ***   ",
+			"   ****    **** SS ****  1                                      *****            3 t *         ***   ",
 			"       *  *    ****    ***** ***                                         ****  ***** *               "
 		],
 		[
@@ -410,22 +439,23 @@ var maps = [
 			"  ***************  ************************************   **** * ***** * ****** * ******* * ********"
 		],
 		[
-			"                                                                                                    ",
-			"                                                                                                    ",
-			"                0                                                                                   ",
-			"                                                                                                    ",
-			"                c                                                                                   ",
-			"                                                                                                    ",
-			"                                                                                                    ",
-			"               c                                                                                    ",
-			"     *                      *                                                                       ",
-			"                                                                                                    ",
-			"                 c                                                                                  ",
-			"                                                                                                    ",
-			"                D                                                                                   ",
-			"         *     ***     *                                                                            ",
-			"                                                                                                    ",
-			"                                                                                                    "
+			"                                                                                        D",
+			"                                                    _S_                             c   **",
+			"    *                                             c ***                                *",
+			"    *                                                *",
+			"    *            S                          2        *",
+			"    * 0          *                       ******      *                                *",
+			"    ********     *                                   *                                   *",
+			"                 *                                   *",
+			"c               *                                  ***",
+			"*      S       *                     ****                      *   *                   *",
+			"       *S******                ****                                     **",
+			"        *S                                      *                                        *",
+			"   *     *                                      *         *   *             *",
+			"                         * ***                  *      __________________________    3",
+			"     *                                          *****************************************",
+			"                  1",
+			"       *  ** ** *** * ***",
 		],
 		[
 			"                                                                                                    ",
@@ -476,7 +506,7 @@ var peopleSpeech = [
 	[
 		[
 			["Beginning scene\n\n[ENTER]"],
-			["In each world, you'll be given a unique power! You can use your new power to travel this world and meet new people.", "In this world, hit SPACE to create a block - blocks are fragile!", "You can hold UP to jump higher, or just tap for a short jump"],
+			["In each world, you'll be given a unique power! You can use your new power to travel this world and meet new people.", "In this world, press SPACE to create a block.", "You can hold the 'UP' arrow or 'W' to jump higher. Keep going!"],
 			["The goal of an engineer's work is to make the world a better place.", "Engineers have created fuel-efficient cars to help the environment and artificial retinas to help the blind.", "They've even created more advanced smartphones to make people's everyday lives easier."]
 		], // 1-1
 		[
@@ -486,17 +516,17 @@ var peopleSpeech = [
 		[
 			["A mechanical engineer is an engineer who works with things that move (mechanics).", "Mechanical engineers design, develop, and build everything from bicycles, cars, and trains to airplanes and even space ships."],
 			["I'm a robotics engineer, a type of mechanical engineer. Robots are used to do tasks too dangerous for humans.", "We design robots with cool sensors and then build and test them so they can be used in the real world.", "We need to be very precise when making robots, so the job goes to engineers. These robots are saving lives!"],
-			["Before creating something, mechanical engineers need to design it.", "We can design 3D models on computers before we make them.", "We can even 3D print the model!"]
+			["Before creating something, mechanical engineers need to design it.", "We can design 3D models on computers to see what something might look like.", "We can even 3D print our models!"]
 		], // 1-3
 		[
-			["There are two types of mechanical engineers, design engineers and system engineers.", "As a design engineer, I work with my team to solve problems based on what I've learned.", "Then, we test it and improve, and finally others are able to use our invention."],
-			["I'm a system engineer, that's a type of mechanical engineer.", "System engineers usually work to maintain, or upgrade existing systems. The world changes, so we need to change with it!"],
+			["There are two types of mechanical engineers, design engineers and systems engineers.", "As a design engineer, I make sure a product's design will work.", "Then, we test it and improve, and finally others are able to use our invention."],
+			["I'm a systems engineer, that's a type of mechanical engineer.", "Systems engineers usually work to maintain, or upgrade existing systems. The world changes, so we need to change with it!"],
 			["Mechanical engineers can get awesome jobs! They work on building super smart cars and even animating characters at Pixar.", "Some parts of mechanical engineering require calculus or trigonometry, but most calculations can be done by computers."]
 		], // 1-4
 		[
-			["Civil engineering is all about creating buildings, roads, power supplies, and other public structures we see everyday.", "They need to design buildings that can survive natural disasters.", "They also create road designs that avoid traffic jams."],
-			["Civil engineers work is a bit like mechanical engineers because they use the same skills.", "Civil engineers need to do things like make sure buildings stay up even in the worst case scenarios."],
-			["I work on designing water slides so that the kids riding go fast and have fun, but they always stay on the ride.", "I need to make sure everything I make is super safe! People need to trust that the public places they go to are all safe."]
+			["Civil engineering is all about creating buildings, roads, power supplies, and other public structures.", "They design buildings that can survive natural disasters.", "They also build and design roads to take us places without traffic jams."],
+			["A civil engineer's work is a bit like mechanical engineers because they use the same skills.", "Civil engineers need to do things like make sure buildings stay up even in the worst case scenarios."],
+			["I work on designing water slides so that kids can go fast and have fun, but always stay on the ride.", "I need to make sure everything I make is super safe! People need to trust that the public places they go to are all safe."]
 		], // 1-5
 		[
 			["I designs tunnels to run under mountains. I guess people got tired of driving around all the time.", "Those things are super strong! They use a sturdy structure to withstand a mountain's weight."],
@@ -506,27 +536,27 @@ var peopleSpeech = [
 	], // world 1
 	[
 		[
-			["Welcome to the next stage of engineering, with all things electrical!", "You have a new power here. Whenever you see a switch, you can power it with a zap of electricity by hitting SPACE.", "You need to zap the switch with an electric current so it can communicate with the platform. I bet they use Bluetooth."],
-			["I'm an electrical engineer. When electricity became more widespread and electronics began appearing, there was a need for people like me.", "Electrical engineers work with technology combined with electricity. It's a newer form of engineering."],
-			["Electrical engineering is so huge because electronics are everywhere!", "Anything that you plug in or that needs batteries was designed by an electrical engineer.", "The phone, TV, and even parts of video game consoles are created by electrical engineers.", "Are you getting the hang of all these switches and moving platforms?"]
+			["Welcome to the next category of engineering, with all things electrical!", "You have a new power here. Whenever you see a switch, you can power it with a zap of electricity by hitting SPACE.", "You need to zap the switch with an electric current so it can communicate with the platform. I bet they use Bluetooth."],
+			["Thomas Edison opened the first power plant in 1882 and began a need for electrical engineering.", "Electrical engineers work with technology and electricity. It's a newer form of engineering."],
+			["Electrical engineering is crucial because electronics are everywhere!", "Anything that you plug in or that needs batteries was designed by an electrical engineer.", "The phone, TV, and even parts of video game consoles are created by electrical engineers.", "Are you getting the hang of all these switches and moving platforms?"]
 		], // 2-1
 		[
-			["One of the coolest things electrical engineers do is work on electric motors.", "These can be used in all sorts of places, like in Tesla cars!"],
-			["Electrical engineering ties into civil engineering too.", "When designing the electrical systems in tall buildings, I need to make sure electricity gets to all parts of the building.", "These buildings are tall!"],
-			["Lots of the cool special effects we see are the work of electrical engineers.", "In amusement park rides, like in Disneyland, lots of rides have cool special effects to make the whole ride more fun.", "Electrical engineers get to do lots of cool stuff!"]
+			["One of the best things electrical engineers do is work on electric motors.", "These can be used in all sorts of places, like in electric cars!"],
+			["Electrical engineering ties into civil engineering too.", "When designing electrical systems in buildings, I make sure electricity safely gets to all the rooms.", "Some of these buildings are REALLY tall!"],
+			["Lots of the cool special effects we see are the work of electrical engineers.", "In amusement parks, like Disneyland, these special effects make rides more \"amusing\".", "Electrical engineers get to do lots of awesome stuff!"]
 		], // 2-2
 		[
-			["Computer scientists write code to tell computers what to do. We call this software.", "Computers are everywhere and are involved in all professions. That means there's a huge need for computer scientists!"],
-			["Anything that an electrical engineer makes needs code behind it. This code tells it what it needs to do and when.", "For example, motors in a robot need to be programmed to run at a certain speed or only once in a while."],
-			["Did you know computers read binary code? When computers were first being created, all the early programming languages were machine code.", "Now, there are much easier languages like Python where the code reads like a sentence.", "For example, `if (hungry) eat();` is just like \"If you're hungry, eat.\""]
+			["Software engineers write code to tell computers what to do. We call this software.", "Computers are everywhere and are involved in all professions. That means there's a huge need for computer scientists!"],
+			["Anything that an electrical engineer makes needs code behind it. Code is how people tell computers what to do.", "For example, motors in a robot need to be programmed on when to run."],
+			["Did you know computers read binary code (0 and 1)?", "There are much easier programming languages where the code reads like a sentence.", "For example, `if (hungry) eat();` is just like \"If you're hungry, eat.\""]
 		], // 2-3
 		[
-			["Modern computer scientists work with artificial intelligence and machine learning. ", "In The Sims, the code tells the AI people how to move and when."],
-			["Computer scientists can also write code for games (like this one). We would call that a game designer or web developer.", "Old games were 8-bit, meaning all the images and animations were all block-like.", "Modern games are 3D and extremely realistic, or even in virtual reality. Awesome!"],
-			["Computer scientists can also code smart systems like autopilot in airplanes or driverless cars."]
+			["Modern software engineers work with artificial intelligence (AI) and machine learning.", "Engineers are designing a robot to read your facial expressions.", "WOAH!"],
+			["Software engineers also write code for games (like this one). We would call them game developers.", "Old games were 8-bit, like the original Super Mario Bros.", "Modern games like Pokémon Go combine the real and virtual worlds. Awesome!"],
+			["Software engineers have created smart systems like autopilot in airplanes or even driverless cars."]
 		], // 2-4
 		[
-			["Computer engineers and electrical engineers are both really cool and they're both really important.", "They both work really closely together, so there are some people who do both. We call them computer engineers."],
+			["Software engineers and electrical engineers are both really cool and they're both really important.", "They both work really closely together, so there are some people who do both. We call them computer engineers."],
 			["There's two major parts to a computer engineers work: software and hardware. They're both equally important. ", "The hardware is setting up wires, circuit boards, and other actual physical parts.", "The software is all the code which tells the hardware what to do."]
 		], // 2-5
 		[
@@ -536,22 +566,22 @@ var peopleSpeech = [
 	], // world 2
 	[
 		[
-			["Hi! I'm an environmental engineer.", "There's so much awesome tech in our world, but it sometimes hurts the environment.", "I create tech to help the environment."],
+			["Technology helps and hurts the environment. In this sector, you have the power to plant trees!", "Press space to throw a seed and plant a tree. These trees grow instantly and are bouncy!", "This tech is advanced!"],
+			["Hi! I'm an environmental engineer.", "There's so much awesome tech in our world, but sometimes it hurts the environment.", "I create tech to help the environment."],
 			["Environmental engineering helps to fight issues like global warming, wastewater treatement, and acid rain.", "Existing technology often makes these worse.", "I improve on existing devices or create new things to help this."],
 		], // 3-1
 		[
-			["", "", ""],
-			["", "", ""],
-			["", "", ""]
+			["Environmental engineers have designed all sorts of inventions to help the planet.", "They've created rooftop gardens, pollution monitors, and ", "They even figure out how to clean up oil spills so they don't hurt the fish."],
+			["I've studied the atmosphere, and climate change is a growing problem.", "Efficiently producing things like hydrogen fuel cells can help our environment"],
+			["Environmental engineers also work in sustainability, on things like renewable energy.", "Engineers work on making different types of renewable energy make sense on a larger scale.", "Wind energy is a new one. Kites can generate electricity!"]
 		], // 3-2
 		[
-			["", "", ""],
-			["", "", ""],
-			["", "", ""]
+			["Hi! I'm a biomedical engineer. I apply engineering and technology to biology.", "That means I'm making things like prosthetic limbs, health monitors, and artifial organs.", "Biomedical engineers make sure people with health problems can live normal lives."],
+			["Biomedical engineers are super important in medicine and health.", "There's this new tech called smart pills. It's a tiny computer chip that can figure out why you're sick.", "This is the future!"]
 		], // 3-3
 		[
-			["", "", ""],
-			["", "", ""],
+			["Hey! I'm a chemical engineer and I have the best job!", "I work with producing chemicals efficiently or making new materials (at a nano level).", "I make sure the gas that fills up your car is efficient and cheap."],
+			["I'm just saying, my job is the coolest. I'm a food engineer, a type of chemical engineer.", "I make the yummiest ice creams in the world! It's all chemistry really."],
 			["", "", ""]
 		], // 3-4
 		[
@@ -2050,9 +2080,15 @@ void draw ()
 
 		emojiSwitch /= 1.175;
 		
-		fill(255, 255, 255, male ? 220 - emojiSwitch : emojiSwitch);
+		fill(255, 255, 255);
 		textSize(height/15);
+		
+		text("AVATAR: ", width * 0.8325, height * 0.93);
+		
+		// boy emoji
+		fill(255, 255, 255, male ? 220 - emojiSwitch : emojiSwitch);
 		text("👦", width * 0.955, height * 0.93);
+		// girl emoji
 		fill(255, 255, 255, !male ? 220 - emojiSwitch : emojiSwitch);
 		text("👧", width * 0.955, height * 0.93);
 
