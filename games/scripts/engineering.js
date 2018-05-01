@@ -2389,9 +2389,9 @@ void draw ()
 					var hair = 0;
 					if (dude) {
 						if (random(1) < 0.1) {
-							hair = 2; // exciting and rare mohawk
+							hair = 1; // exciting and rare mohawk
 						} else {
-							hair = floor(random(2));
+							hair = 2 * floor(random(2));
 						}
 					} else {
 						hair = floor(random(3));
