@@ -511,16 +511,16 @@ var peopleSpeech = [
 		], // 1-1
 		[
 			["Hi, I'm an engineer. I work on airplanes... well... the engines. I guess that makes me special.", "There are so many types of engineers: mechanical, environmental, computer, chemical, and more.", "You'll meet quite a few and learn what they do. Also, nice jumps back there!"],
-			["An engineer's salary can be anywhere from 80K to 100K to much more; it ranges based on what type of engineer.", "For me, working as part of a team and solving problems is the best part about being an engineer.", "Good luck on your journey!"]
+			["An engineer's salary can be anywhere from 80K to 100K or much more; it ranges based on what type of engineer.", "For me, working as part of a team and solving problems is the best part about being an engineer.", "Good luck on your journey!"]
 		], // 1-2
 		[
-			["A mechanical engineer is an engineer who works with things that move (mechanics).", "Mechanical engineers design, develop, and build everything from bicycles, cars, and trains to airplanes and even space ships."],
+			["A mechanical engineer is an engineer who works with things that move (mechanics).", "Mechanical engineers design, develop, and build everything from bicycles, cars, and trains to airplanes and even spaceships."],
 			["I'm a robotics engineer, a type of mechanical engineer. Robots are used to do tasks too dangerous for humans.", "We design robots with cool sensors and then build and test them so they can be used in the real world.", "We need to be very precise when making robots, so the job goes to engineers. These robots are saving lives!"],
 			["Before creating something, mechanical engineers need to design it.", "We can design 3D models on computers to see what something might look like.", "We can even 3D print our models!"]
 		], // 1-3
 		[
 			["There are two types of mechanical engineers, design engineers and systems engineers.", "As a design engineer, I make sure a product's design will work.", "Then, we test it and improve, and finally others are able to use our invention."],
-			["I'm a systems engineer, that's a type of mechanical engineer.", "Systems engineers usually work to maintain, or upgrade existing systems. The world changes, so we need to change with it!"],
+			["I'm a systems engineer, that's a type of mechanical engineer.", "Systems engineers usually work to maintain or upgrade existing systems. The world changes, so we need to change with it!"],
 			["Mechanical engineers can get awesome jobs! They work on building super smart cars and even animating characters at Pixar.", "Some parts of mechanical engineering require calculus or trigonometry, but most calculations can be done by computers."]
 		], // 1-4
 		[
@@ -529,7 +529,7 @@ var peopleSpeech = [
 			["I work on designing water slides so that kids can go fast and have fun, but always stay on the ride.", "I need to make sure everything I make is super safe! People need to trust that the public places they go to are all safe."]
 		], // 1-5
 		[
-			["I designs tunnels to run under mountains. I guess people got tired of driving around all the time.", "Those things are super strong! They use a sturdy structure to withstand a mountain's weight."],
+			["I design tunnels to run under mountains. I guess people got tired of driving around all the time.", "Those things are super strong! They use a sturdy structure to withstand a mountain's weight."],
 			["The Golden Gate Bridge was created by civil engineers like me.", "More than 2 billion vehicles have crossed, and it's the longest suspension bridge."],
 			["The Hoover Dam is awesome! And it wasn't built by beavers; it was built by civil engineers.", "It was the largest dam when it was made and it generates 4 billion kilowatt-hours of power per year.", "I guess hydroelectricity really is powerful."]
 		], // 1-6
@@ -557,10 +557,10 @@ var peopleSpeech = [
 		], // 2-4
 		[
 			["Software engineers and electrical engineers are both really cool and they're both really important.", "They both work really closely together, so there are some people who do both. We call them computer engineers."],
-			["There's two major parts to a computer engineers work: software and hardware. They're both equally important. ", "The hardware is setting up wires, circuit boards, and other actual physical parts.", "The software is all the code which tells the hardware what to do."]
+			["There are two major parts to a computer engineer's work: software and hardware. They're both equally important. ", "The hardware is setting up wires, circuit boards, and other actual physical parts.", "The software is all the code which tells the hardware what to do."]
 		], // 2-5
 		[
-			["There's so many ways for students to get into electrical or computer engineering, such as FIRST", "FIRST has competitions like FRC and FTC for robotics. Google them!"],
+			["There are so many ways for students to get into electrical or computer engineering, such as FIRST", "FIRST has competitions like FRC and FTC for robotics. Google them!"],
 			["It's really amazing how software and hardware need to work in sync.", "Knowing how to build a mechanical device isn't super helpful if you can't put motors on it."]
 		], // 2-6
 	], // world 2
@@ -568,7 +568,7 @@ var peopleSpeech = [
 		[
 			["Technology helps and hurts the environment. In this sector, you have the power to plant trees!", "Press space to throw a seed and plant a tree. These trees grow instantly and are bouncy!", "This tech is advanced!"],
 			["Hi! I'm an environmental engineer.", "There's so much awesome tech in our world, but sometimes it hurts the environment.", "I create tech to help the environment."],
-			["Environmental engineering helps to fight issues like global warming, wastewater treatement, and acid rain.", "Existing technology often makes these worse.", "I improve on existing devices or create new things to help this."],
+			["Environmental engineering helps to fight issues like global warming, wastewater treatment, and acid rain.", "Existing technology often makes these worse.", "I improve on existing devices or create new things to help this."],
 		], // 3-1
 		[
 			["Environmental engineers have designed all sorts of inventions to help the planet.", "They've created rooftop gardens, pollution monitors, and ", "They even figure out how to clean up oil spills so they don't hurt the fish."],
@@ -576,7 +576,7 @@ var peopleSpeech = [
 			["Environmental engineers also work in sustainability, on things like renewable energy.", "Engineers work on making different types of renewable energy make sense on a larger scale.", "Wind energy is a new one. Kites can generate electricity!"]
 		], // 3-2
 		[
-			["Hi! I'm a biomedical engineer. I apply engineering and technology to biology.", "That means I'm making things like prosthetic limbs, health monitors, and artifial organs.", "Biomedical engineers make sure people with health problems can live normal lives."],
+			["Hi! I'm a biomedical engineer. I apply engineering and technology to biology.", "That means I'm making things like prosthetic limbs, health monitors, and artificial organs.", "Biomedical engineers make sure people with health problems can live normal lives."],
 			["Biomedical engineers are super important in medicine and health.", "There's this new tech called smart pills. It's a tiny computer chip that can figure out why you're sick.", "This is the future!"]
 		], // 3-3
 		[
@@ -603,7 +603,7 @@ for (var i in maps) {
 	for (var j = 0; j < maps[i].length; j++) {
 
 		// CHANGE THIS TO === 0 TO >= TO 0
-		unlocked[unlocked.length - 1].push(j >= 0);
+		unlocked[unlocked.length - 1].push(j === 0);
 
 	}
 
