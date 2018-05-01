@@ -2080,11 +2080,13 @@ void draw ()
 
 		emojiSwitch /= 1.175;
 		
-		fill(255, 255, 255);
+		fill(255, 255, 255, 400 - frameCount);
+		textSize(height/24);
+		
+		text("Click to switch: ", width * 0.825, height * 0.93);
+		
 		textSize(height/15);
-		
-		text("AVATAR: ", width * 0.8325, height * 0.93);
-		
+		fill(255, 255, 255);
 		// boy emoji
 		fill(255, 255, 255, male ? 220 - emojiSwitch : emojiSwitch);
 		text("👦", width * 0.955, height * 0.93);
