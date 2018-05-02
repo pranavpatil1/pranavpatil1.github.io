@@ -171,10 +171,11 @@ var invention = ["diesel engine", "combustion engine", "phonograph", "long lasti
 for (var i in invention) {
 	deathMessage[1].push("Mechanical engineers invented the " + invention[i]);
 }
-invention = ["bridges", "dams", "roads", "skyscrapers", "the Eiffel Tower"];
+invention = ["bridges", "dams", "roads", "skyscrapers"];
 for (var i in invention) {
 	deathMessage[1].push("Civil engineers build " + invention[i]);
 }
+deathMessage[1].push("Civil engineers built the Eiffel Tower");
 
 invention = ["video games", "software chips", "things with electricity", "smartphones"];
 for (var i in invention) {
@@ -458,22 +459,26 @@ var maps = [
 			"       *  ** ** *** * ***",
 		],
 		[
-			"                                                                                                    ",
-			"                                                                                                    ",
-			"                                                                                                    ",
-			"                                                                                                    ",
-			"                                                                                                    ",
-			"                                                                                                    ",
-			"                                                                                                    ",
-			"                                                                                                    ",
-			"                                                                                                    ",
-			"                                                                                                    ",
-			"                                                                                                    ",
-			"                                                                                                    ",
-			"                                                                                                    ",
-			"                                                                                                    ",
-			"                                                                                                    ",
-			"                                                                                                    "
+			"                                                c",
+			"",
+			"",
+			"                                     __                   2                                        c",
+			"                     1             ******               *****",
+			"                   ****                    _*_*_*_*_*_                                           *",
+			"                         ****              ***********                                         *",
+			"               *              ***                                       ***   S   ***   3  S *",
+			"                                                                  ***        ***       *****     S",
+			"             *                                                                                   ***",
+			"         SS",
+			"        ****                                                                                  S",
+			"                                                                                              ****",
+			"",
+			"      *                                                                                 c          S",
+			"                                                                                        ****     ***",
+			"    *",
+			"  0",
+			" ***                                                                                            D",
+			"                                                                                              *****"
 		],
 		[
 			"                                                                                           c",
@@ -571,7 +576,7 @@ var peopleSpeech = [
 			["Environmental engineering helps to fight issues like global warming, wastewater treatment, and acid rain.", "Existing technology often makes these worse.", "I improve on existing devices or create new things to help this."],
 		], // 3-1
 		[
-			["Environmental engineers have designed all sorts of inventions to help the planet.", "They've created rooftop gardens, pollution monitors, and ", "They even figure out how to clean up oil spills so they don't hurt the fish."],
+			["Environmental engineers have designed all sorts of inventions to help the planet.", "They've created rooftop gardens, pollution monitors, and more!", "They even figure out how to clean up oil spills so they don't hurt the fish."],
 			["I've studied the atmosphere, and climate change is a growing problem.", "Efficiently producing things like hydrogen fuel cells can help our environment"],
 			["Environmental engineers also work in sustainability, on things like renewable energy.", "Engineers work on making different types of renewable energy make sense on a larger scale.", "Wind energy is a new one. Kites can generate electricity!"]
 		], // 3-2
@@ -582,17 +587,17 @@ var peopleSpeech = [
 		[
 			["Hey! I'm a chemical engineer and I have the best job!", "I work with producing chemicals efficiently or making new materials (at a nano level).", "I make sure the gas that fills up your car is efficient and cheap."],
 			["I'm just saying, my job is the coolest. I'm a food engineer, a type of chemical engineer.", "I make the yummiest ice creams in the world! It's all chemistry really."],
-			["", "", ""]
+			["Water from rivers might be called freshwater, but engineers need to filter it (for cheap!)", "Environmental engineers also need to increase the efficiency of generating energy. Solar panels weren't always common!"]
 		], // 3-4
 		[
-			["", "", ""],
-			["", "", ""],
-			["", "", ""]
+			["Engineers design toys, space vehicles, and even optimize ultra HD TVs (hint: nanotech)", "I'm sure you've noticed, engineers are basically everywhere and they work on almost everything!", "This is the world of engineers of course..."],
+			["Engineering is about helping people by solving problems with innovation!", "You've seen different types of engineers, but they all are working towards the same goal.", "Their skills may be different, but that's what makes engineering unique!"],
+			["My favorite part about being an engineer is seeing the impact of my work.", "New technology inspires the world, and we're creating solutions that are saving lives!"]
 		], // 3-5
 		[
-			["", "", ""],
-			["", "", ""],
-			["", "", ""]
+			["The world needs people like you to be engineers!"],
+			["Let's make the world a better place, one innovation at a time!"],
+			["Thanks for visiting the World of Engineers!"]
 		], // 3-6
 	] // world 3
 ];
@@ -603,7 +608,7 @@ for (var i in maps) {
 	for (var j = 0; j < maps[i].length; j++) {
 
 		// CHANGE THIS TO === 0 TO >= TO 0
-		unlocked[unlocked.length - 1].push(j === 0);
+		unlocked[unlocked.length - 1].push(j >= 0);
 
 	}
 
