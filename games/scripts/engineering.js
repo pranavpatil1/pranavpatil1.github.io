@@ -1,34 +1,8 @@
 // If you have any feedback, please comment it below!
 // I want to improve this game as much as I can.
 
-/*
-
-MIT License
-
-Copyright (c) 2018 Pranav Patil
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
-*/
-
-size(780, 520);
 frameRate(60);
+size(760,520);
 
 angleMode = "radians";
 
@@ -576,7 +550,7 @@ var peopleSpeech = [
 			["Environmental engineering helps to fight issues like global warming, wastewater treatment, and acid rain.", "Existing technology often makes these worse.", "I improve on existing devices or create new things to help this."],
 		], // 3-1
 		[
-			["Environmental engineers have designed all sorts of inventions to help the planet.", "They've created rooftop gardens, pollution monitors, and more!", "They even figure out how to clean up oil spills so they don't hurt the fish."],
+			["Environmental engineers have designed all sorts of inventions to help the planet.", "They've created rooftop gardens, pollution monitors, and ", "They even figure out how to clean up oil spills so they don't hurt the fish."],
 			["I've studied the atmosphere, and climate change is a growing problem.", "Efficiently producing things like hydrogen fuel cells can help our environment"],
 			["Environmental engineers also work in sustainability, on things like renewable energy.", "Engineers work on making different types of renewable energy make sense on a larger scale.", "Wind energy is a new one. Kites can generate electricity!"]
 		], // 3-2
@@ -1886,16 +1860,30 @@ void keyReleased ()
 	// hit space and build a block
 	if (keyCode === 32) {
 		if (worldNum === 0) {
-			if (blocks[blocks.length - 1][2] !== 3) {
-				// where to potentially place block
-				var lx;
-				if (flip) {
-					lx = Math.floor(player[0] / 40) * 40 - 40;
-				} else {
-					lx = Math.ceil((player[0] + player[2]) / 40) * 40;
-				}
-				var ly = Math.floor(player[1] / 40) * 40;
+			if (blocks[blocks.length - 1][2] === 3) {
+			    blocks.pop();
+			}
+			// where to potentially place block
+			var lx;
+			if (flip) {
+				lx = Math.floor(player[0] / 40) * 40 - 40;
+			} else {
+				lx = Math.ceil((player[0] + player[2]) / 40) * 40;
+			}
+			var ly = Math.floor(player[1] / 40) * 40;
 
+			// if a block is already there
+			var valid = checkOpen(lx, ly);
+			// otherwise add it
+			if (valid) {
+				// block at x and y, type is 3, and it will last for 200 frames (~4 seconds)
+				blocks.push([lx, ly, 3, millis()]);
+			} else {
+				if (flip) {
+					lx = Math.ceil((player[0] + player[2]) / 40) * 40;
+				} else {
+					lx = Math.floor((player[0]) / 40) * 40 - 40;
+				}
 				// if a block is already there
 				var valid = checkOpen(lx, ly);
 				// otherwise add it
@@ -1903,36 +1891,24 @@ void keyReleased ()
 					// block at x and y, type is 3, and it will last for 200 frames (~4 seconds)
 					blocks.push([lx, ly, 3, 400]);
 				} else {
-					if (flip) {
-						lx = Math.ceil((player[0] + player[2]) / 40) * 40;
-					} else {
-						lx = Math.floor((player[0]) / 40) * 40 - 40;
-					}
+					lx = Math.floor(player[0] / 40) * 40;
 					// if a block is already there
-					var valid = checkOpen(lx, ly);
+					var valid = checkOpen(lx, ly) && checkOpen(lx, ly - 40);
 					// otherwise add it
 					if (valid) {
 						// block at x and y, type is 3, and it will last for 200 frames (~4 seconds)
 						blocks.push([lx, ly, 3, 400]);
-					} else {
-						lx = Math.floor(player[0] / 40) * 40;
-						// if a block is already there
-						var valid = checkOpen(lx, ly) && checkOpen(lx, ly - 40);
-						// otherwise add it
-						if (valid) {
-							// block at x and y, type is 3, and it will last for 200 frames (~4 seconds)
-							blocks.push([lx, ly, 3, 400]);
-							player[1] -= 40;
-						}
+						player[1] -= 40;
 					}
 				}
 			}
 		} else if (worldNum === 2 && seeds.length === 0) {
 			// throw a seed, with slight player velocity influence
-			if (flip)
+			if (flip) {
 				seeds.push([player[0] - 2, player[1] + 20, -4, -5 + player[5]/2]);
-			else
+			} else {
 				seeds.push([player[0] + 25, player[1] + 20, 4, -5 + player[5]/2]);
+			}
 		}
 	} else if (keyCode === 10) { // ENTER
 		for (var i in blocks) {
@@ -2686,7 +2662,7 @@ void draw ()
 							player[4] = 0;
 
 						}
-						if (player[1] > (blocks[i][1] - player[3] + gap) & player[1] < (blocks[i][1] + 40 - gap) &
+						if (player[1] > (blocks[i][1] - player[3] + gap) & player[1] < (blocks[i][1] + 40 - gap) &&
 							player[0] < (blocks[i][0] - player[2] + 4) & player[0] > (blocks[i][0] - player[2])) {
 
 							player[9] = false; //right is closed
@@ -2701,7 +2677,7 @@ void draw ()
 								shakeAmt = abs(player[5]) / 3;
 							}
 							if (blocks[i][2] === 3) {
-								blocks[i][3] += 1;
+								blocks[i][3] += 25;
 								if (abs(player[5]) > 10) {
 									blocks[i][3] = 0;
 								}
@@ -2740,10 +2716,9 @@ void draw ()
 									var validSpot = true;
 									for (var a = 0; a < blocks.length; a ++) {
 										if (blocks[a][0] === blocks[i][0]) {
-											if (blocks[a][2] === 4 && blocks[i][1] === blocks[a][1] + 40 || 
-												blocks[a][2] === 2 && blocks[i][1] === blocks[a][1] + blocks[a][4] ||
-											   	blocks[a][2] === 5 && blocks[i][1] === blocks[a][1] + 40) // tries to hit all cases of spikes
+											if (blocks[a][2] === 4 && blocks[i][1] === blocks[a][1] + 40 ||  blocks[a][2] === 2 && blocks[i][1] === blocks[a][1] + blocks[a][4] || blocks[a][2] === 5 && blocks[i][1] === blocks[a][1] + 40) {// tries to hit all cases of spikes
 												validSpot = false;
+											}
 										}
 									}
 									if (validSpot && (trees === null || trees[0] !== blocks[i][0] || trees[1] !== blocks[i][1])) {
@@ -2795,9 +2770,7 @@ void draw ()
 
 				// now only the player-made fragile block
 				if (blocks[i][2] === 3) {
-					if (blocks[i][3] > 0) {
-						blocks[i][3] -= 3;
-					} else {
+					if (millis() - blocks[i][3] > 3200) {
 						genExplosion(blocks[i][0] + 20, blocks[i][1] + 20, 2, color(124, 83, 41), 20);
 						blocks.splice(i, 1);
 						i--;
@@ -3219,19 +3192,20 @@ void draw ()
 							player[4] = 0;
 						}
 						if (player[0] > blocks[i][0] - player[2] - 60) {
+							// world 1-1, first person!
 							if (worldNum === 0 && levelNum === 0 && blocks[i][3] === 1) {
-								if (blocks[i][5] < 1600) {
-									blocks[i][5] ++;
+								// says different things based on how long this person has been talking for
+								if (blocks[i][5] <= 3) {
 									var dialogue = "";
 									var jim = false;
-									if (blocks[i][5] < 375) {
+									if (blocks[i][5] === 0) {
 										blocks[i][4] = false;
 										dialogue = "Hi, I'm " + (male ? "Jim" : "Jill") + ". I think I'm lost, but I'm on a mission. Where am I? What is this place?";
 										jim = true;
-									} else if (blocks[i][5] < 800) {
+									} else if (blocks[i][5] === 1) {
 										blocks[i][4] = true;
 										dialogue = "Hi " + (male ? "Jim" : "Jill") + ". This is the world of engineering! I'm an engineer, and so are all the people here. What's your mission?";
-									} else if (blocks[i][5] < 1100) {
+									} else if (blocks[i][5] === 2) {
 										blocks[i][4] = false;
 										dialogue = "I want to learn about engineering. Can you tell me more?";
 										jim = true;
@@ -3265,6 +3239,7 @@ void draw ()
 									textAlign(CENTER, CENTER);
 									textFont(createFont("Century Gothic Bold"));
 									text(dialogue, blocks[i][0] + (jim ? -235 : 25), blocks[i][1] - 87.5, 210, 70);
+									text("Press [ENTER]", blocks[i][0] + (jim ? -175 : 170), blocks[i][1]);
 								} else {
 									blocks[i][5] = -1;
 								}
