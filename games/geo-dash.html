@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Geo Dash: Play on Gaming Genius</title>
+		
+		<link href="https://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet" type="text/css">
+		
+		<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+		<script> 
+			$(function(){
+				$("#header").load("/header.html");
+				$("#footer").load("/footer.html");
+			});
+		</script>
+		<style>
+			p {
+				font-family: Inconsolata, sans-serif;
+				font-size: 14px;
+			}
+			body {
+				background-color:black;
+			}
+			#content {
+				text-align: justify;
+				width: 600px;
+				margin: auto;
+			}
+			.loader {
+				position: fixed;
+				left: 0px;
+				top: 0px;
+				width: 100%;
+				height: 100%;
+				z-index: 9999;
+				background: 50% 50% no-repeat rgb(1, 1, 1);
+			}
+		</style>
+	</head>
+	<body>
+		<script type="text/javascript">
+			$(window).load(function() {
+				$(".loader").fadeOut("slow");
+			})
+		</script>
+		<div class="loader"></div>
+		<div id="header"></div>
+		
+		<div id="content">
+			<h3>RECREATION: GEOMETRY DASH</h3>
+			<p> 
+				<!--This draws the Canvas on the webpage -->
+				<canvas id="mycanvas"></canvas> 
+			</p>
+		</div>
+		
+		<div id="footer"></div>
+	</body>
+	<script src="https://cdn.jsdelivr.net/processing.js/1.4.8/processing.min.js"></script> 
+ 
+ <script>
+    var sketchProc = function(processingInstance) {
+        
+        with (processingInstance) {
+            
+            size(600, 400);
+{
+//Play in a 760 by 400 screen
+
+//TODO: portal to flying, finish flying map, portal to normal, finish rest of the map
+
+/**
+
+UP DOWN LEFT RIGHT
+
+0   - blank
+1   - normal platform (plain)                       x
+2   - normal platform (w/ pattern)                  x
+3   - half platform                                 x
+4   - bounce platform
+5   - air bounce pad
+6   - gravity switch pad
+7   - coin
+8-b - normal spike x4
+c-f - flat spike x4
+g-j - tiny spike x4
+k   - platform on ground inside a bunch of spikes   x
+l-o - portal to plane x4
+p-s - portal to normal x4 (which way you exit, standard is right)
+t-w - portal to gravity switch x4
+
+*/
+//initialize with all the beginning variables
+{
+
+var page = "menu";
+
+//draws everything in the actual map. this is all the main things and is the primary layer
+
+var maps = []; //create variable before for an error that i dont understand
+
+maps = [
+    
+    [
+
+"                                                                                                                                                                                                                                                    222222222222222222222222                                      2             2999999999999992                               29999                         99999929999999999999999222222222222222",
+"                                                                                                                                                                                                                                                    222222222222222222222222                                      2                                                            2                                   2                222222222222222",
+"                                                                                                                                                                33      33        8888                                                         8    222222222222222222222222                                      2                                                                                                2                222222222222222",
+"                                                                                                                                                     3         8888    8888       3333       8                                                 3    222222222222222222222222                                                                                                                                       2                 ",
+"                                                                                                                                                 3       2222222222222222222222          22222                                             3             22222222222222    o                                                                                                                                                         ",
+"                                                                                                                                             3             222222222222222222222222222222222228              8                         3                                                                                                                                                                                             ",
+"                                                                                                                                         3                 222222222222222222222222222222222222222222222  3333       8             3                                                                                                                                                                                                 ",
+"                                                               1                                                           8         3                     22222222222222222222222222222222222222222           3333333         3             2222222222222222222222222222222                                                                                                                         2                              222222222222222",
+"                                                           1   2                                           8        22222222222222                         22222222222222222222222222222222222222222                   33333                        222222222222222222222222                                                                                     2                             2     2                              222222222222222",
+"                   8                 c8              881   2   2                    88     22222222   22222222222   22222222222222                         22222222222222222222222222222222222222222                                                222222222222222222222222                                                    28888888888888882                28888                   2888882888882                              222222222222222"
+
+], //level 1
+    [
+
+"                                                                                                                                                                                                                                                    222222222222222222222222                                      2             2999999999999992                               29999                         99999929999999999999999222222222222222",
+"                                                                                                                                                                                                                                                    222222222222222222222222                                      2                                                            2                                   2                222222222222222",
+"                                                                                                                                                                33      33        8888                                                         8    222222222222222222222222                                      2                                                                                                2                222222222222222",
+"                                                                                                                                                     3         8888    8888       3333       8                                                 3    222222222222222222222222                                                                                                                                       2                 ",
+"                                                                                                                                                 3       2222222222222222222222          22222                                             3             22222222222222    o                                                                                                                                                         ",
+"                                                                                                                                             3             222222222222222222222222222222222228              8                         3                                                                                                                                                                                             ",
+"                                                                                                                                         3                 222222222222222222222222222222222222222222222  3333       8             3                                                                                                                                                                                                 ",
+"                                                               1                                                           8         3                     22222222222222222222222222222222222222222           3333333         3             2222222222222222222222222222222                                                                                                                         2                              222222222222222",
+"                                                           1   2                                           8        22222222222222                         22222222222222222222222222222222222222222                   33333                        222222222222222222222222                                                                                     2                             2     2                              222222222222222",
+"                   8                 c8              881   2   2                    88     22222222   22222222222   22222222222222                         22222222222222222222222222222222222222222                                                222222222222222222222222                                                    28888888888888882                28888                   2888882888882                              222222222222222"
+
+], //level 2
+    [
+
+"                                                                                                                                                                                                                                                    222222222222222222222222                                      2             2999999999999992                               29999                         99999929999999999999999222222222222222",
+"                                                                                                                                                                                                                                                    222222222222222222222222                                      2                                                            2                                   2                222222222222222",
+"                                                                                                                                                                33      33        8888                                                         8    222222222222222222222222                                      2                                                                                                2                222222222222222",
+"                                                                                                                                                     3         8888    8888       3333       8                                                 3    222222222222222222222222                                                                                                                                       2                 ",
+"                                                                                                                                                 3       2222222222222222222222          22222                                             3             22222222222222    o                                                                                                                                                         ",
+"                                                                                                                                             3             222222222222222222222222222222222228              8                         3                                                                                                                                                                                             ",
+"                                                                                                                                         3                 222222222222222222222222222222222222222222222  3333       8             3                                                                                                                                                                                                 ",
+"                                                               1                                                           8         3                     22222222222222222222222222222222222222222           3333333         3             2222222222222222222222222222222                                                                                                                         2                              222222222222222",
+"                                                           1   2                                           8        22222222222222                         22222222222222222222222222222222222222222                   33333                        222222222222222222222222                                                                                     2                             2     2                              222222222222222",
+"                   8                 c8              881   2   2                    88     22222222   22222222222   22222222222222                         22222222222222222222222222222222222222222                                                222222222222222222222222                                                    28888888888888882                28888                   2888882888882                              222222222222222"
+
+] //level 3
+    
+];
+
+//draws everything in the background, but also blocks that are sometimes layers over things in the primary layer.
+var bkgrd = [
+    
+    [
+        
+        "",
+        "",
+        "",
+        
+    ], //level 1
+    [
+        
+        
+        
+    ], //level 2
+    [
+        
+        
+        
+    ], //level 3
+    
+];
+
+//which level (starts at 0)
+var levelNum = 0;
+
+//player array (rather than an Object)
+var player = [100, 360, 4, 0, false, 0]; //x, y, xvel, yvel, rotation amt, jump?
+
+//how much to translate
+var trans = [0, -120]; //translate x and translate y
+
+//for organizing the platforms to lessen lag
+var org = [];
+
+//will hold all of the blocks
+var blocks = [];
+
+//first frame? will deal with moving from the maps and bkgrd arrays to blocks
+var first = true;
+
+//the mode the player is playing in. this may change throughout a level
+var mode = 0; //normal, flying
+
+//is the user clicking? can be done by clicking a button or the mouse
+var clicking = false;
+
+//functions too!
+
+//for resetting the player to the start of a level
+var reset = function() {
+    
+    player = [200, 360, 4, 0, false, 355.5];
+    trans = [0, -120];
+    mode = 0;
+    
+};
+
+//deals with the clicking variable
+mousePressed = function() {
+    
+    if (page === "game") {
+        
+        clicking = true;
+        
+    }
+    
+};
+mouseReleased = function() {
+    
+    if (page === "game") {
+        
+        clicking = false;
+        
+        if (mouseX > 15 & mouseY > 15 & mouseX < 50 & mouseY < 50) {
+            
+            page = "pause";
+            
+        }
+        
+    } else if (page === "menu") {
+        
+        if (mouseX > 230 & mouseX < 370 & mouseY > 170 & mouseY < 320) {
+            
+            page = "select";
+            
+        }
+        
+    } else if (page === "select") {
+        
+        if (mouseX < 100) {
+            
+            if (levelNum > 0) {
+                
+                levelNum --;
+                
+            }
+            
+        } else if (mouseX > 500) {
+            
+            if (levelNum < (maps.length - 1)) {
+                
+                levelNum ++;
+                
+            }
+            
+        } else {
+            
+            page = "game";
+            reset();
+            
+        }
+        
+    } else if (page === "pause") {
+        
+        if (mouseX > 220 & mouseX < 300 & mouseY > 210 & mouseY < 230) {
+            
+            page = "game";
+            
+        }
+        if (mouseX > 340 & mouseX < 375 & mouseY > 210 & mouseY < 230) {
+            
+            page = "menu";
+            
+        }
+        
+    }
+    
+};
+
+keyPressed = function() {
+    
+    clicking = true;
+    
+};
+keyReleased = function() {
+    
+    clicking = false;
+    
+};
+
+}
+
+//all the images
+{
+
+pushMatrix();
+
+background(0, 0, 0, 0);
+
+translate(5, 5);
+
+strokeWeight(1);
+for (var i = 0; i < 40; i ++) {
+    
+    stroke(0, 0, 0, 255 - (i*10 - 200));
+    line(20 - i/2, i, 20 + i/2, i);
+    
+}
+
+for (var i = 0; i < 3; i ++) {
+    
+    stroke(255, 255, 255, 255 - i*80);
+    line(20, -i, 40 + i, 40);
+    line(20, -i, -i, 40);
+    line(40 + i, 40 + i, -i, 40 + i);
+    
+}
+
+var tri = get(0, 0, 50, 50);
+
+popMatrix();
+
+noStroke();
+
+background(0, 0, 0, 0);
+
+for (var i = 0; i < 100; i += 5) {
+    
+    fill(37,71,255, 30);
+    rect(0, 0, i, 400);
+    rect(width - i, 0, i, 400);
+    
+}
+
+var cover = get(0, 0, 100, 80);
+
+}
+
+frameRate(60);
+
+draw = function() {
+    
+    if (page === "menu") {
+        
+        background(50, 77, 252);
+        textAlign(LEFT, LEFT);
+        textFont(createFont("impact", 55));
+        fill(255, 255, 255);
+        text("GEOMETRY DASH", 125, 125);
+        textFont(createFont("impact", 55));
+        fill(13, 255, 0);
+        text("GEOMETRY DASH", 124, 126);
+        rectMode(CENTER);
+        
+        pushMatrix();
+        
+        translate(100, 0);
+        
+        //center play button
+        stroke(0, 0, 0);
+        strokeWeight(3);
+        fill(0, 123, 255);
+        rect(200, 250, 100, 100, 5);
+        stroke(255, 255, 255);
+        noFill();
+        rect(200, 250, 106, 106, 5);
+        stroke(0, 0, 0);
+        fill(21, 255, 0);
+        beginShape();
+        vertex(177, 187);
+        vertex(223, 187);
+        vertex(223, 227);
+        vertex(263, 227);
+        vertex(263, 272);
+        vertex(223, 272);
+        vertex(223, 315);
+        vertex(177, 315);
+        vertex(177, 272);
+        vertex(137, 272);
+        vertex(137, 227);
+        vertex(177, 227);
+        endShape(CLOSE);
+        noFill();
+        stroke(255, 255, 255);
+        beginShape();
+        vertex(174, 184);
+        vertex(226, 184);
+        vertex(226, 224);
+
+        vertex(266, 224);
+
+        vertex(266, 275);
+
+        vertex(226, 275);
+
+        vertex(226, 318);
+
+        vertex(174, 318);
+
+        vertex(174, 275);
+
+        vertex(134, 275);
+
+        vertex(134, 224);
+
+        vertex(174, 224);
+
+        endShape(CLOSE);
+
+        //left character button
+
+        pushMatrix();
+
+        translate(-200, -250);
+
+        scale(0.75);
+
+        translate(155, 416);
+
+        stroke(0, 0, 0);
+
+        strokeWeight(3);
+
+        fill(0, 123, 255);
+
+        rect(200, 250, 100, 100, 5);
+
+        stroke(255, 255, 255);
+
+        noFill();
+
+        rect(200, 250, 106, 106, 5);
+
+        stroke(0, 0, 0);
+
+        fill(21, 255, 0);
+
+        beginShape();
+
+        vertex(177, 187);
+
+        vertex(223, 187);
+
+        vertex(223, 227);
+
+        vertex(263, 227);
+
+        vertex(263, 272);
+
+        vertex(223, 272);
+
+        vertex(223, 315);
+
+        vertex(177, 315);
+
+        vertex(177, 272);
+
+        vertex(137, 272);
+
+        vertex(137, 227);
+
+        vertex(177, 227);
+
+        endShape(CLOSE);
+
+        noFill();
+
+        stroke(255, 255, 255);
+
+        beginShape();
+
+        vertex(174, 184);
+
+        vertex(226, 184);
+
+        vertex(226, 224);
+
+        vertex(266, 224);
+
+        vertex(266, 275);
+
+        vertex(226, 275);
+
+        vertex(226, 318);
+
+        vertex(174, 318);
+
+        vertex(174, 275);
+
+        vertex(134, 275);
+
+        vertex(134, 224);
+
+        vertex(174, 224);
+
+        endShape(CLOSE);
+
+        popMatrix();
+
+        //right "more" button
+
+        pushMatrix();
+
+        translate(-200, -250);
+
+        scale(0.75);
+
+        translate(515, 416);
+
+        stroke(0, 0, 0);
+
+        strokeWeight(3);
+
+        fill(0, 123, 255);
+
+        rect(200, 250, 100, 100, 5);
+
+        stroke(255, 255, 255);
+
+        noFill();
+
+        rect(200, 250, 106, 106, 5);
+
+        stroke(0, 0, 0);
+
+        fill(21, 255, 0);
+
+        beginShape();
+
+        vertex(177, 187);
+
+        vertex(223, 187);
+
+        vertex(223, 227);
+
+        vertex(263, 227);
+
+        vertex(263, 272);
+
+        vertex(223, 272);
+
+        vertex(223, 315);
+        vertex(177, 315);
+        vertex(177, 272);
+        vertex(137, 272);
+        vertex(137, 227);
+        vertex(177, 227);
+        endShape(CLOSE);
+        noFill();
+        stroke(255, 255, 255);
+        beginShape();
+        vertex(174, 184);
+        vertex(226, 184);
+        vertex(226, 224);
+        vertex(266, 224);
+        vertex(266, 275);
+        vertex(226, 275);
+        vertex(226, 318);
+        vertex(174, 318);
+        vertex(174, 275);
+        vertex(134, 275);
+        vertex(134, 224);
+        vertex(174, 224);
+        endShape(CLOSE);
+        popMatrix();
+        stroke(0, 0, 0);
+        fill(255, 170, 0);
+        rect(66, 250, 56, 56);
+        fill(0);
+        rect(56, 242, 10, 10);
+        rect(76, 242, 10, 10);
+        rect(66, 262, 35, 7);
+        textFont(createFont("impact", 30));
+        fill(0, 0, 0);
+        text("MODE", 305, 261);
+        textFont(createFont("impact", 30));
+        fill(255, 170, 0);
+        text("MODE", 303, 259);
+        rectMode(LEFT);
+        fill(255, 170, 0);
+        triangle(185, 216, 232, 249, 185, 284); //center button triangle
+        popMatrix();
+        
+    } else if (page === "select") {
+        
+        background(50, 77, 252);
+        
+        noStroke();
+        
+        fill(0, 0, 0, 100);
+        rect(20, 20, 560, 160);
+        
+        fill(255, 255, 255);
+        textSize(50);
+        
+        if (levelNum === 0) {
+            
+            text("STEREO MADNESS", 120, 120);
+            
+        } else if (levelNum === 1) {
+            
+            text("TEST1", 240, 120);
+            
+        } else if (levelNum === 2) {
+            
+            text("TEST2", 240, 120);
+            
+        }
+        
+        textSize(20);
+        text("click to begin", 230, 271);
+        
+        fill(0, 0, 0, 50);
+        
+        if (mouseX > 500) {
+            
+            rect(500, 0, 100, 400);
+            
+        } else if (mouseX < 100) {
+            
+            rect(0, 0, 100, 400);
+            
+        }
+        
+    } else if (page === "game") {
+        
+        if (first) {
+            
+            background(37,71,255);
+            
+            //goes through for all the ones that are individual
+            for (var i in maps[levelNum]) {
+                
+                for (var j in maps[levelNum][i]) {
+                    
+                    var x = j*40;
+                    var y = i*40;
+                    
+                    var item = maps[levelNum][i][j];
+                    
+                    if (item === "8") {
+                        
+                        blocks.push([x, y, 8]);
+                        
+                    } else if (item === "9") {
+                        
+                        blocks.push([x, y, 9]);
+                        
+                    } else if (item === "c") {
+                        
+                        blocks.push([x, y, 12]);
+                        
+                    } else if (item === "o") {
+                        
+                        blocks.push([x, y, 24]);
+                        
+                    }
+                    
+                }
+                
+            }
+            
+            //goes through for the ones that can be combined
+            for (var i in maps[levelNum]) {
+                
+                for (var j in maps[levelNum][i]) {
+                    
+                    var item = maps[levelNum][i][j];
+                    
+                    var x = j*40;
+                    var y = i*40;
+                    
+                    //x, y, type, width, height
+                    
+                    if (item === "1") {
+                        
+                        org.push([x, y, 1, 40, 40]);
+                        
+                    } else if (item === "2") {
+                        
+                        org.push([x, y, 2, 40, 40]);
+                        
+                    } else if (item === "3") {
+                        
+                        org.push([x, y, 3, 40, 16]);
+                        
+                    } else if (item === "k") {
+                        
+                        org.push([x, y + 24, 20, 40, 16]);
+                        
+                    }
+                    
+                }
+                
+            }
+            
+            for (var k = 0; k < 5; k ++) {
+                
+                for (var i in org) {
+                    
+                    for (var j in org) {
+                        
+                        if (org[i][2] === org[j][2] & org[i][1] === (org[j][1] - org[i][4]) & org[i][0] === org[j][0] & org[i][3] === org[j][3] & i !== j) {
+                            
+                            org[i][4] += org[j][4];
+                            
+                            org.splice(j, 1);
+                            j --;
+                            
+                        }
+                        
+                    }
+                    
+                }
+                
+            }
+            
+            for (var k = 0; k < 10; k ++) {
+            
+                for (var i in org) {
+                    
+                    for (var j in org) {
+                        
+                        if (org[i][2] === org[j][2] & org[i][0] === (org[j][0] - org[i][3]) & org[i][1] === org[j][1] & org[i][4] === org[j][4] & i !== j) {
+                            
+                            org[i][3] += org[j][3];
+                            
+                            org.splice(j, 1);
+                            j --;
+                            
+                        }
+                        
+                    }
+                    
+                }
+                
+            }
+            
+            for (var i in org) {
+                
+                blocks.push(org[i]);
+                
+            }
+            
+            first = false;
+            
+        } else {
+            
+            player[4] = true;
+            //he is not jumping if he is on the ground
+            if (player[1] === 360) {
+                
+                player[4] = false;
+                
+                if (mode === 0) {
+                    
+                    player[3] = 0;
+                    
+                }
+                
+            }
+            
+            //turns the ship to facing forward when it is on the top or bottom of the screen
+            if (mode === 1 & (player[1] === 360 | player[1] === 0)) {
+                
+                player[3] /= 1.5;
+                    
+            }
+            
+            //runs through the blocks array for COLLISION
+            for (var i in blocks) {
+                
+                //all the blocks he can land on
+                if (blocks[i][2] <= 3) {
+                    
+                    //something to the down of the player
+                    if (player[1] > (blocks[i][1] - 40 - player[3]) & player[1] < (blocks[i][1] - 35 + player[3]) & player[0] > (blocks[i][0] - 40) & player[0] < (blocks[i][0] + blocks[i][3])) {
+                        
+                        if (mode === 0) {
+                            
+                            player[3] = 0;
+                            
+                        } else {
+                            
+                            player[3] /= 1.5;
+                            
+                        }
+                        player[4] = false;
+                        player[1] = blocks[i][1] - 40;
+                        
+                    }
+                    
+                    //something to the right of the player
+                    if (player[0] > (blocks[i][0] - 40) & player[0] < (blocks[i][0] - 40 + blocks[i][3]) & player[1] > (blocks[i][1] - 40) & player[1] < (blocks[i][1] + blocks[i][4])) {
+                        
+                        page = "menu";
+                        reset();
+                        
+                    }
+                    
+                } else if (blocks[i][2] === 8) { //up triangle
+                    
+                    if (player[0] > (blocks[i][0] - 20 - (player[1] - blocks[i][1] + 40)/2) & player[0] < (blocks[i][0] + 20 + (player[1] - blocks[i][1] + 40)/2) & player[1] > (blocks[i][1] - 40) & player[1] < (blocks[i][1] + 40)) {
+                        
+                        reset();
+                        
+                    }
+                    
+                } else if (blocks[i][2] === 9) {//down triangle
+                    
+                    if (player[0] < (blocks[i][0] + 20 + (player[1] - blocks[i][1] + 0)/2) & player[0] > (blocks[i][0] - 40 + (player[1] - blocks[i][1] + 0)/2) & player[1] > (blocks[i][1] - 40) & player[1] < (blocks[i][1] + 40)) {
+                        
+                        reset();
+                        
+                    }
+                    
+                } else if (blocks[i][2] === 12) { //short triangle up
+                    
+                    if (player[0] > (blocks[i][0] - 20 - (player[1] - blocks[i][1] + 20)) & player[0] < (blocks[i][0] + 20 + (player[1] - blocks[i][1] + 20)) & player[1] > (blocks[i][1] - 20) & player[1] < (blocks[i][1] + 40)) {
+                        
+                        reset();
+                        
+                    }
+                    
+                } else if (blocks[i][2] === 24) { //portal to flying right
+                    
+                    if (player[0] > (blocks[i][0] - 40) & player[0] < (blocks[i][0] + 40) & player[1] > (blocks[i][1] - 40) & player[1] < (blocks[i][1] + 120)) {
+                        
+                        mode = 1;
+                        
+                    }
+                    
+                }
+                
+            }
+            
+            //rotation
+            if (player[4]) {
+                
+                player[5] += 6;
+                
+            } else if (abs(90 - player[5]%90) > 1){
+                
+                player[5] += (90 - player[5]%90)/1.5;
+                
+                if (abs(player[5] - 90) < 1) {
+                    
+                    player[5] += (90 - player[5]%90);
+                    
+                }
+                
+            }
+            
+            //control jump (or going up)
+            if (clicking) {
+                
+                if (!player[4] & mode === 0) {
+                    
+                    player[3] = -12.1;
+                    player[4] = true;
+                    
+                } else if (mode === 1) {
+                    
+                    player[3] -= 0.6;
+                    
+                }
+                
+            }
+            
+            //controls translate
+            trans[0] = -player[0] + 200; //x
+            
+            //translate y
+            if (mode === 0) {
+                
+                trans[1] = -player[1] + constrain(player[1], 160, 240);
+                
+            } else {
+                
+                trans[1] = 0;
+                
+            }
+            
+            //gravity
+            if (mode === 0) {
+            
+                player[3] += 0.795; //gravity
+                
+            } else {
+                
+                player[3] += 0.3;
+                
+            }
+            
+            //constrain on the y velocity in ship mode    
+            if (mode === 1) {
+                
+                player[3] = constrain(player[3], -7, 10);
+                
+            }
+            
+            player[0] += 6.5; //move the player forward
+            player[1] += player[3]; //move the player by its y velocity
+            
+            //keeping the player from going off the screen
+            if (mode === 0) {
+                
+                player[1] = constrain(player[1], -Infinity, 360); //constrain the player to the screen
+                
+            } else if (mode === 1) {
+                
+                player[1] = constrain(player[1], 0, 360); //constrain the player to the screen
+                
+            }
+            
+            pushMatrix();
+            
+            translate(trans[0], trans[1]); //translate the screen to follow player
+            
+            //starts drawing everything
+            noStroke();
+            
+            background(37,71,255);
+            
+            //draw the blocks
+            for (var i in blocks) {
+                
+                if (blocks[i][0] > (player[0] - 2000) & blocks[i][0] < (player[0] + 400)) {
+                    
+                    noStroke();
+                    
+                    fill(0, 0, 0);
+                    
+                    pushMatrix();
+                    
+                    translate(blocks[i][0], blocks[i][1]);
+                    
+                    if (blocks[i][2] === 1) {
+                        
+                        rect(0, 0, blocks[i][3], blocks[i][4]);
+                        
+                    } else if (blocks[i][2] === 2) {
+                        
+                        rect(0, 0, blocks[i][3], blocks[i][4]);
+                        
+                    } else if (blocks[i][2] === 3) {
+                        
+                        rect(0, 0, blocks[i][3], blocks[i][4]);
+                        
+                    } else if (blocks[i][2] === 8) {
+                        
+                        image(tri, -5, -5);
+                        
+                    } else if (blocks[i][2] === 9) {
+                        
+                        pushMatrix();
+                        
+                        translate(0, 40);
+                        scale(1, -1);
+                        image(tri, -5, -5);
+                        
+                        popMatrix();
+                        
+                    } else if (blocks[i][2] === 12) {
+                        
+                        strokeWeight(1);
+                        for (var i = 0; i < 40; i ++) {
+                            
+                            stroke(0, 0, 0, 255 - i*6);
+                            line(20 - i/2, 20 + i/2, 20 + i/2, 20 + i/2);
+                            
+                        }
+                        
+                        for (var i = 0; i < 3; i ++) {
+                            
+                            stroke(255, 255, 255, 255 - i*80);
+                            line(20, 20 - i, 40 + i, 40);
+                            line(20, 20 - i, -i, 40);
+                            line(40 + i, 40 + i, -i, 40 + i);
+                            
+                        }
+                        
+                    } else if (blocks[i][2] === 24) {
+                        
+                        noFill();
+                        strokeWeight(10);
+                        stroke(255, 0, 247);
+                        
+                        ellipse(20, 60, 40, 100);
+                        
+                    }
+                    
+                    popMatrix();
+                    
+                }
+                
+            }
+            
+            //draw the player
+            noStroke();
+            
+            pushMatrix(); 
+            translate(player[0] + 20, player[1] + 20);
+            
+			var angle_sc = PI/180;
+			
+            if (mode === 0) {
+                
+                rotate((player[5] + 1)*angle_sc);
+                
+                fill(0, 125, 255);
+                rect(-20, -20, 14, 40);
+                rect(-20, -20, 20, 10);
+                rect(-20, 10, 20, 10);
+                
+                fill(0, 0, 255);
+                rect(6, -20, 14, 40);
+                rect(0, -4, 12, 8);
+                
+            } else if (mode === 1) {
+                
+                rotate((player[3] - 1)*5*angle_sc);
+                
+                fill(0, 0, 0);
+                rect(-8, -15, 18, 15);
+                
+                fill(255);
+                triangle(25, 10, 12, 0, 12, 15);
+                rect(-10, 0, 23, 15);
+                quad(-4, 2, -4, 13, -16, 20, -16, -4);
+                
+                fill(255, 0, 0);
+                rect(-12, 0, 28, 4);
+                rect(-12, -6, 4, 8);
+                
+                rect(-20, 2, 4, 11);
+                
+            }
+            
+            popMatrix();
+            
+            popMatrix();
+            
+            //all of the things that always are on the screen in the same place
+            
+            //the line on the ground
+            strokeWeight(2);
+            stroke(255, 255, 255);
+            line(0, 400 + trans[1], 600, 400 + trans[1]);
+            
+            //the fade into darkness :D
+            for (var i = 0; i < 5; i ++) {
+                
+                image(cover, 0, 80*i);
+                
+                pushMatrix();
+                
+                translate(600, 0);
+                scale(-1, 1);
+                image(cover, 0, 80*i);
+                
+                popMatrix();
+                
+            }
+            noStroke();
+            fill(0,25,199);
+            rect(0, 400 + trans[1], width, 400);
+            
+            noStroke();
+            
+            if (player[0] > maps[levelNum][9].length*40) {
+                
+                reset();
+                
+            }
+            
+        }
+        
+        fill(0);
+        rect(15, 15, 35, 35);
+        
+        fill(255);
+        rect(22, 22, 8, 20);
+        rect(34, 22, 8, 20);
+        
+    } else if (page === "pause") {
+        
+        noStroke();
+        
+        fill(0);
+        
+        rect(150, 100, 300, 200);
+        
+        fill(255);
+        
+        textSize(40);
+        text("PAUSE", 253, 166);
+        
+        textSize(20);
+        text("CONTINUE", 220, 230);
+        text("MENU", 330, 230);
+        
+    }
+    
+};
+
+}
+}}
+    // Get the canvas that Processing-js will use
+    var canvas = document.getElementById("mycanvas"); 
+    // Pass the function sketchProc (defined in myCode.js) to Processing's constructor.
+    var processingInstance = new Processing(canvas, sketchProc); 
+ </script>
+</html>
