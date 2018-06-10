@@ -67,7 +67,7 @@
 		
 		<div id="desc" style="width:400px;margin-left:auto;margin-right:auto;">
 
-			<p>Pranav Patil created Gaming Genius in 2016 by Pranav Patil. Gaming Genius aims to spread knowledge through the fun of gaming.</p>
+			<p>Pranav Patil created Gaming Genius in 2016. Gaming Genius aims to spread knowledge through the fun of gaming.</p>
 			<p>Pranav Patil loves to code (JavaScript, HTML, C, Java, Python, and bash) and is fascinated by cybersecurity.</p>
 
 			<span style="text-align: left">
@@ -117,24 +117,8 @@ draw = function() {
 	translate(-100,0);
 	background(0);
 	
-<<<<<<< HEAD
 	var el = "run" + Math.floor((frameCount % amt)/(amt/6)+1);
 	document.getElementById("mycanvas").getContext("2d").drawImage(document.getElementById(el), 10, -20, 400, 300);
-=======
-	if (frameCount % amt < amt/6) {
-		document.getElementById("mycanvas").getContext("2d").drawImage(document.getElementById("run1"), 10, -20, 400, 300);
-	} else if (frameCount % amt < amt/3) {
-		document.getElementById("mycanvas").getContext("2d").drawImage(document.getElementById("run2"), 10, -20, 400, 300);
-	} else if (frameCount % amt < amt/2) {
-		document.getElementById("mycanvas").getContext("2d").drawImage(document.getElementById("run3"), 10, -20, 400, 300);
-	} else if (frameCount % amt < 2*amt/3) {
-		document.getElementById("mycanvas").getContext("2d").drawImage(document.getElementById("run4"), 10, -20, 400, 300);
-	} else if (frameCount % amt < 5*amt/6) {
-		document.getElementById("mycanvas").getContext("2d").drawImage(document.getElementById("run5"), 10, -20, 400, 300);
-	} else {
-		document.getElementById("mycanvas").getContext("2d").drawImage(document.getElementById("run6"), 10, -20, 400, 300);
-	}
->>>>>>> 7c3bef8bfa8a08644a4315ea2a4778618efc1481
 	popMatrix();
 };
 
