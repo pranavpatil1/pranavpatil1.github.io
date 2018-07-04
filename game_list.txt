@@ -1,0 +1,9 @@
+Cyber Champion;Make the right decisions and stay safe online! Will you become the Cyber Champion?;Cyber Champion is an interactive web-based game which teaches kids and teens the importance of cybersecurity.;/games/cyber-champion.html;/photos/cyberchampion.PNG
+World of Engineers;Explore the World of Engineers, hear stories, and collect stars. Can you make it to the end?;The World of Engineers is a web game designed to encourage kids to pursue engineering by demonstrating its impact on our everyday lives.;/games/engineering.html;/photos/engineering.png
+Super Mario Bros.;The original 8-bit NES game recreated for the web! Collect powerups, travel through pipes, and avoid goombas.;All code was written from scratch in a collaboration with Brandon Wang.;/games/supermariobros.html;/photos/super%20mario%20bros.PNG
+Tower Defense;Defend your castle from enemy ships by placing towers in this strategy-based tower defender;Tower Defense was inspired by Rampart, but combined the design with a more modern gameplay;/games/tower-defense.html;/photos/towerdefense.PNG
+Dimensionist;With the power of the Dimensionist, run and jump on platforms and in portals to defeat Dr. Detriment.;;/games/dimensionist.html;/photos/dimensionist.PNG
+Breakout;The classic Atari Breakout has been recreated, with a circular twist! You can play Breakout on the web or mobile.;;/games/breakout.html;/photos/breakout.PNG
+Lunar Landing;Try to land the ship in this challenging space lander remake. How far will you get before running out of fuel?;;/games/lunar-lander.html;/photos/lunarlander.PNG
+Geometry Dash;A remake of the hit mobile game, featuring Stereo Madness. Play in any mode, from classic to ninja.;;/games/geo-dash.html;/photos/geodash.PNG
+Gravity;A simple endless runner with Earth trying to escape asteroids. Switch gravity and dodge asteroids!;;/games/gravity.html;/photos/gravity.png
