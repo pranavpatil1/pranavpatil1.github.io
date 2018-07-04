@@ -29,6 +29,15 @@
 				width: 400px;
 				margin: auto;
 			}
+			#desc {
+				width:50%;
+				margin-left:auto;
+				margin-right:auto;
+				background:#ddd;
+				padding: 20px;
+				padding-top: 5px;
+				border-radius: 15px;
+			}
 			.loader {
 				position: fixed;
 				left: 0px;
@@ -63,32 +72,23 @@
 		
 		<div id="header"></div>
 		
-		<h2>ABOUT GAMING GENIUS</h2>
+		<div id="desc">
+
+			<h2>ABOUT GAMING GENIUS</h2>
 		
-		<div id="desc" style="width:400px;margin-left:auto;margin-right:auto;">
+			<p>Hi! My name is Pranav Patil. I began learning to code in middle school, when I created the Android game FTBL in MIT App Inventor. I was so excited and wanted to make better games. I learned to program in JavaScript, HTML, C, Java, Python, and bash. As I developed more and more games, Gaming Genius was born.</p>
+			
+			<p>I created <a style="color: darkgreen" href="/games/cyber-champion.html">Cyber Champion</a>, a cybersecurity game that helps kids stay safe online. It has won numerous awards, including the Congressional App Challenge and the National STEM Video Game Challenge in the Games for Change category. I also created <a style="color: darkgreen" href="/games/engineering.html">World of Engineers</a> to highlight the impact engineers have on our lives and encourage kids to pursue careers in STEM.</p>
+			
+			<p>Outside of gaming, I've been learning cybersecurity. I compete in CTF challenges, or cybersecurity competitions. I created a cybersecurity resource, <a style="color: darkgreen" href="http://pentahex.tk">PentaHex CTF Website</a>, to enable more students to compete in these competitions.</p>
 
-			<p>Pranav Patil created Gaming Genius in 2016. Gaming Genius aims to spread knowledge through the fun of gaming.</p>
-			<p>Pranav Patil loves to code (JavaScript, HTML, C, Java, Python, and bash) and is fascinated by cybersecurity.</p>
-
-			<span style="text-align: left">
-				<p>Check out his projects!</p>
-				<ul>
-					<li><a style="color: darkgreen" href="/games/cyber-champion.html">Cyber Champion</a></li>
-					<li><a style="color: darkgreen" href="/games/cyber-champion.html">World of Engineers</a></li>
-					<li><a style="color: darkgreen" href="http://pentahex.tk">PentaHex CTF Website</a></li>
-					<li><a style="color: darkgreen" href="https://team3749.org">Team Optix 3749 Website</a></li>
-				</ul>
-			</span>
-		</div>
 		<br>
 		<div id="content">
-			<p> 
-				<!--This draws the Canvas on the webpage -->
-				<canvas id="mycanvas"></canvas> 
-			</p>
+			<canvas id="mycanvas"></canvas> 
 		</div>
 		<br>
 		
+		</div>
 		<div id="footer"></div>
 		
 		<img src="/photos/animation/1.png" style="display:none" id="run1">

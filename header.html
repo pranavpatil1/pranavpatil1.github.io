@@ -7,16 +7,47 @@
 		
 		<link rel="shortcut icon" type="image/icon" href="/favicon.ico"/>
 		
+		<link href="https://fonts.googleapis.com/css?family=Cabin" rel="stylesheet">
 		<link href="https://fonts.googleapis.com/css?family=Unica+One" rel="stylesheet" type="text/css">
 		<link href="https://fonts.googleapis.com/css?family=Share+Tech+Mono" rel="stylesheet" type="text/css">
-		<link href="https://fonts.googleapis.com/css?family=Concert+One" rel="stylesheet" type="text/css">
+		
+		<script>
+		
+			function resizeHeaderOnScroll() {
+				const distanceY = window.pageYOffset || document.documentElement.scrollTop,
+				shrinkOn = 120,
+				headerEl = document.getElementById('title');
+
+				if (distanceY > shrinkOn) {
+					headerEl.classList.add("smaller");
+				} else {
+					headerEl.classList.remove("smaller");
+				}
+			}
+			window.addEventListener('scroll', resizeHeaderOnScroll);
+			
+		</script>
+		
 		<style>
+			h1,h2,h3,h4,h5,h6 {
+				font-family: 'Cabin', monospace;
+				font-weight: bold;
+			}
 			h1 { 
-				font-family: Unica One, Verdana, Tahoma;
+				font-family: 'Unica One', Verdana, Tahoma;
 				text-align: center;
-				font-size: 45px;
+				font-size: 6vw;
 				color: white;
 				text-shadow: 1px 1px 4px grey;
+				margin-left: 0px;
+				margin: 0px;
+				margin-bottom: 0px;
+				
+				-webkit-transition: all 0.3s;
+				-moz-transition: all 0.3s;
+				-ms-transition: all 0.3s;
+				-o-transition: all 0.3s;
+				transition: all 0.3s;
 			}
 			::selection {
 				background: rgb(100, 180, 100); /* WebKit/Blink Browsers */
@@ -28,16 +59,12 @@
 				font-size: 35px;
 			}
 			body {
-				background: rgb(240, 240, 240);
-				font-family: "Concert One", "Share Tech Mono", monospace;
+				background-color: white;
+				background-image: url("/photos/binaryBak.png");
+				font-family: 'Cabin', monospace;
 				color: rgb(30, 30, 30);
 				padding: 0px;
 				margin: 0px;
-			}
-			#menu {
-				height: 30px;
-				width: 100px;
-				background: linear-gradient(to right, white , forestgreen, white);
 			}
 			#menu_table {
 				position: fixed;
@@ -45,59 +72,65 @@
 				margin-right: auto;
 				margin-top: 0px;
 				margin: 0px;
-				height: 30px;
 				width: 100%;
-				background: linear-gradient(to right, darkgreen , #009900, darkgreen);
+				background: #080;
+				background-image: url("https://www.transparenttextures.com/patterns/gplay.png");
 				border-top-color: white;
 				border-top-width: 10px;
 				font-size:16px;
+				z-index: 999;
+				text-align: center;
 			}
 			canvas {
-				outline: darkgreen 9px solid;
+				outline: black 9px solid;
 				border: white 3px solid;
 			}
-			h1 {
-				margin-left: auto;
-				margin-right: auto;
-				margin: 0px;
-				margin-bottom: 0px;
-				width: 100%;
-			}
 			.menu_item {
-				height: 20px;
 				margin-bottom: auto;
 				margin-top: auto;
-				text-align: center;
-				text-align-last: center;
 				border-right-width: 1px;
 				border-right-color: white;
-				font-size:16px;
+				font-size:24px;
+			}
+			.smaller {
+				font-size: 36px;
 			}
 			a {
 				color: azure;
 				text-decoration: none;
+				font-weight: bold;
+				color: darkgreen;
+			}
+			p {
+				font-family: 'Cabin', sans-serif;
+				font-size: 16px;
+			}
+			#title {
+				margin-left:auto;
+				margin-right:auto;
+				width:100%;
+				display:inline;
 			}
 		</style>
 	</head>
 	<body>
 		<span>
-		<!--<h1><br>Gaming Genius</h1>-->
 		<table id="menu_table">
 			<tr>
-				<td class="menu_item" style="width:240px;">
+				<td class="menu_item" style="width:20px;"></td>
+				<td class="menu_item" style="width:90px;"><a href="/"><div style="height:100%;width:100%">GAMES</div></a></td>
+				<td class="menu_item" style="white-space:nowrap;">
 					<a href="/">
-						<img src="/photos/G-covered.png" style="width:50px;float:left;">
+						<h1 id="title">GAMING GENIUS</h1>
 					</a>
 				</td>
-				<td class="menu_item" style="color:white;">
-					
-						<h1 style="">GAMING GENIUS</h1>
-				</td>
-				<td class="menu_item" style="width:60px;"><a href="/games.html"><div style="height:100%;width:100%">GAMES</div></a></td>
-				<td class="menu_item" style="width:60px;"><a href="/about.html"><div style="height:100%;width:100%">ABOUT</div></a></td>
-				<td class="menu_item" style="width:60px;"><a href="/media.html"><div style="height:100%;width:100%">MEDIA</div></a></td>
+				<td class="menu_item" style="width:90px;"><a href="/about.html"><div style="height:100%;width:100%">ABOUT</div></a></td>
+				<td class="menu_item" style="width:20px;"></td>
 			</tr>
 		</table>
+		<br>
+		<br>
+		<br>
 		<br>
 		<br>
 		<br>
