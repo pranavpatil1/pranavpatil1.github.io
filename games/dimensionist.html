@@ -21,11 +21,6 @@
 			body {
 				background-color:black;
 			}
-			#content {
-				text-align: justify;
-				width: 400px;
-				margin: auto;
-			}
 			.loader {
 				position: fixed;
 				left: 0px;
@@ -35,6 +30,11 @@
 				z-index: 9999;
 				background: 50% 50% no-repeat rgb(1, 1, 1);
 			}
+		#content {
+			text-align: justify;
+			width: 400px;
+			margin: auto;
+		}
 		</style>
 	</head>
 	<body>
@@ -48,11 +48,11 @@
 		<div id="header"></div>
 		
 		<div id="content">
-			<h3>DIMENSIONIST</h3>
-			<p> 
-				<!--This draws the Canvas on the webpage -->
-				<canvas id="mycanvas"></canvas> 
-			</p>
+			<h2>DIMENSIONIST</h2>
+			<canvas id="mycanvas"></canvas>
+			<h3>Instructions</h3>
+			<p>Travel through the galaxy to defeat Dr. Detriment using your powers as the Dimensionist. Avoid the lava and don't get stuck in goo!</p>
+			<p>You can use arrow keys to move around but be careful! The Dimensionist moves FAST! There is no easy mode.</p>
 		</div>
 		
 		<div id="footer"></div>
@@ -92,7 +92,7 @@ BETTER WITHOUT 1make the player grow into his speed rather than just one initial
 
 11add a cool background (world 1 = city with fluffy clouds, 2 = volcano with dark clouds, 3 = factory with steam coming out)
 
-12 convert to html and add audio effects: background music for menu, each of the worlds (individual), jumping, going in goo, falling in lava, falling off the screen
+12 convert to html and add audio effects: background music for menu, each of the worlds (individual), ing, going in goo, falling in lava, falling off the screen
 
 13turn the home page buttons to a circle button with a scene shot (city, volcano, factory)
 
@@ -407,14 +407,14 @@ var Player = function(x, y, w, h, color) {
     this.maxSpeed = 5;
     
     this.falling = false;
-    this.gravity = 0.25;
+    this.gravity = 0.2;
     this.color = color;
 };
 //UPDATE PLAYER
 Player.prototype.update = function() {
     if ((keys[UP] || keys[87]) && !this.falling && gooTrue === false) {
-        this.vely = -6.3; //Makes player begin to jump when up key is pressed
-        this.falling = true; //Lets computer know that player is jumping
+        this.vely = -5.635; //Makes player begin to jump when up key is pressed
+        this.falling = true; //Lets computer know that player is ing
     }
     if (keys[DOWN]) {
         
@@ -425,19 +425,19 @@ Player.prototype.update = function() {
         
     if (keys[LEFT] || keys[65]) {
         
-        this.velx = -4;
+        this.velx = -4 * 0.89456869;
         if (gooTrue) {
             
-            this.velx = -2;
+            this.velx = -2 * 0.89456869;
             
         }
     }                   //must be
     if (keys[RIGHT] || keys[68]) {  //opposite
         
-        this.velx = 4;
+        this.velx = 4 * 0.89456869;
         if (gooTrue) {
             
-            this.velx = 2;
+            this.velx = 2 * 0.89456869;
             
         }
     }
@@ -619,7 +619,7 @@ Player.prototype.applyCollision = function(velx, vely) {
                     this.falling = false;
                     this.y = blocks[i].y - this.h;
                 }
-            //if y velocity is less than 0 (player is jumping up) and they hit the block, they hit and go back down
+            //if y velocity is less than 0 (player is ing up) and they hit the block, they hit and go back down
                 if (vely < 0) {
                     this.vely = 0;
                     this.falling = true;

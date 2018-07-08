@@ -23,7 +23,11 @@
 		body {
 			background-color: black;
 		}
-
+		#content {
+			text-align: justify;
+			width: 760px;
+			margin: auto;
+		}
 		.loader {
 			position: fixed;
 			left: 0px;
@@ -45,9 +49,16 @@
 	<div class="loader"></div>
 	<div id="header"></div>
 
-	<p align="center">
+	<div id="content">		
+		<h2>THE WORLD OF ENGINEERS</h2>
 		<canvas data-processing-sources="/games/scripts/engineering.js" id="mycanvas"></canvas>
-	</p>
+		<h3>Instructions</h3>
+		<p>The World of Engineers is a web game designed to encourage kids to pursue engineering by demonstrating its impact on our everyday lives.</p>
+		<p>You can run around with the arrow keys and hold UP to jump. You can talk to engineers by running to them, and pressing ENTER. You can use your power by pressing SPACE.</p>
+		<p>Don't forget to explore on your own and look for the stars hidden around the levels.</p>
+	</div>
+	
+	
 
 	<div id="footer"></div>
 </body>
