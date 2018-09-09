@@ -1,4 +1,4 @@
-// If you have any feedback, please comment it below!
+// If you have any feedback, send me an email!
 // I want to improve this game as much as I can.
 
 frameRate(60);
@@ -76,8 +76,11 @@ var left = false;
 //if a block is at the right
 var right = false;
 
-//is it the first frame, for loading a level?
+//is it the first frame, for (re)loading a level?
 var first = true;
+
+// is it the first frame of a level (not for reloading)
+var levelFirst = true;
 
 //is the player on some door?
 var onDoor = false;
@@ -569,9 +572,9 @@ var peopleSpeech = [
 			["My favorite part about being an engineer is seeing the impact of my work.", "New technology inspires the world, and we're creating solutions that are saving lives!"]
 		], // 3-5
 		[
-			["The world needs people like you to be engineers!"],
-			["Let's make the world a better place, one innovation at a time!"],
-			["Thanks for visiting the World of Engineers!"]
+			["Unbelievable! If you make it to the end, you'll be crowned an engineer.", "The world needs people like you to be engineers!"],
+			["Your curiosity is as powerful as my engineering powers.", "We can change the world!"],
+			["You're so close!", "Thanks for visiting the World of Engineers!"]
 		], // 3-6
 	] // world 3
 ];
@@ -633,6 +636,7 @@ mouseReleased = function() {
 			page = "worlds";
 			levelNum = 0;
 			first = true;
+			levelFirst = true;
 
 			levelTransition = 255;
 
@@ -733,6 +737,7 @@ mouseReleased = function() {
 						levelNum = i + 3 * j;
 						page = "game";
 						first = true;
+						levelFirst = true;
 
 						levelTransition = 255;
 						clouds = [];
@@ -1153,7 +1158,7 @@ mouseReleased = function() {
 
 //function for drawing the player, given the x and y coordinates
 
-var drawPlayer = function (x, y, running, flip, jumping_amt) {
+var drawPlayer = function (x, y, running, flip, jumping_amt, crown) {
     pushMatrix();
     translate(x + (flip ? 20 : 0), y);
     scale(flip ? -0.5 : 0.5, 0.5); // 40 by 80 scaled to 20 by 40
@@ -1260,6 +1265,21 @@ var drawPlayer = function (x, y, running, flip, jumping_amt) {
 		vertex(-2, 14);
     }
     endShape();
+	if (crown) {
+        fill(184, 175, 81);
+        stroke(184, 175, 81);
+        strokeWeight(3);
+        beginShape();
+        vertex(10, 3);
+        vertex(31, 3);
+        vertex(32, -7);
+        vertex(25, -2);
+        vertex(20, -6);
+        vertex(15, -2);
+        vertex(10, -8);
+        vertex(10, 3);
+        endShape();
+    }
     popMatrix();
     
     // arms
@@ -1771,6 +1791,55 @@ var drawCharacter = function(x, y, male, hair, hairColor, skinColor, shirtColor,
 	popMatrix();
 };
 
+/**
+ function drawGSymbol draws a male or female gender symbol
+ x - position
+ y - position
+ male - boolean for which symbol to draw
+ alpha - opacity/transparency of symbol (aka RGBA coloring)
+ */
+var drawGSymbol  = function (x, y, male, alpha) {
+	
+	pushMatrix();
+	translate (x, y);
+	scale(2/3);
+	
+	if (male) {
+		// blue circle
+		stroke (255, 255, 255, alpha);
+		strokeWeight(3);
+		
+		fill(50, 111, 217, alpha);
+		ellipse(35, 35, 60, 60);
+
+		// white male symbol
+		strokeWeight(5);
+		noFill();
+
+		ellipse(30, 40, 22, 22);
+		line(40, 30, 49, 21);
+		line(40, 20, 49, 21);
+		line(50, 29, 49, 21);
+	} else {
+		// pink circle
+		noStroke();
+		stroke (255, 255, 255, alpha);
+		strokeWeight(3);
+		
+		fill(242, 131, 153, alpha);
+		ellipse(35, 35, 60, 60);
+
+		// white female symbol
+		noFill();
+		strokeWeight(5);
+
+		ellipse(35, 28, 22, 22);
+		line(35, 41, 35, 54);
+		line(30, 49, 40, 49);
+	}
+	popMatrix();
+}
+
 var genExplosion = function(x, y, power, color, amt) {
 	for (var i = 0; i < amt; i++) {
 		explosion.push([x, y, random(-1, 1) * power, random(-2.5, -0.5) * power, random(0, 2 * PI), color, 255]);
@@ -2066,14 +2135,10 @@ void draw ()
 		
 		text("Click to switch: ", width * 0.825, height * 0.93);
 		
-		textSize(height/15);
-		fill(255, 255, 255);
 		// boy emoji
-		fill(255, 255, 255, male ? 220 - emojiSwitch : emojiSwitch);
-		text("👦", width * 0.955, height * 0.93);
+		drawGSymbol(width * 0.955 - 20, height * 0.93 - 20, true, male ? 220 - emojiSwitch : emojiSwitch);
 		// girl emoji
-		fill(255, 255, 255, !male ? 220 - emojiSwitch : emojiSwitch);
-		text("👧", width * 0.955, height * 0.93);
+		drawGSymbol(width * 0.955 - 20, height * 0.93 - 20, false, !male ? 220 - emojiSwitch : emojiSwitch);
 
 	} else if (page === "worlds") {
 
@@ -2359,6 +2424,10 @@ void draw ()
 					amt = 0; //RESETS VALUES
 					amt1 = 50;
 					cameraAim = [-x + 300, -y + 200];
+					if (worldNum == 0 && levelNum == 0 && levelFirst) {
+						player[1] -= 400;
+						cameraAim[1] += 120;
+					}
 				} else if (item === "D") { //player end
 					door = [x, y];
 				} else if (item === "c") { //stars
@@ -2513,6 +2582,7 @@ void draw ()
 
 		}
 		first = false;
+		levelFirst = false;
 	} else
 
 		//game page is separate from all the rest so that it goes in the same frame as first
@@ -2892,6 +2962,8 @@ void draw ()
 				}
 
 				first = true;
+				levelFirst = true;
+				
 				levelNum = (levelNum + 1) % maps[worldNum].length;
 				unlocked[worldNum][levelNum] = true;
 
@@ -3200,18 +3272,19 @@ void draw ()
 									var jim = false;
 									if (blocks[i][5] === 0) {
 										blocks[i][4] = false;
-										dialogue = "Hi, I'm " + (male ? "Jim" : "Jill") + ". I think I'm lost, but I'm on a mission. Where am I? What is this place?";
+										// dialogue = "Hi, I'm " + (male ? "Jim" : "Jill") + ". I think I'm lost, but I'm on a mission. Where am I? What is this place?";
+										dialogue = "Woah, what is this place? I'm " + (male ? "Jim" : "Jill") + " by the way.";
 										jim = true;
 									} else if (blocks[i][5] === 1) {
 										blocks[i][4] = true;
-										dialogue = "Hi " + (male ? "Jim" : "Jill") + ". This is the world of engineering! I'm an engineer, and so are all the people here. What's your mission?";
+										dialogue = "Hi " + (male ? "Jim" : "Jill") + ". You've found the World of Engineers, a stronghold for curious minds! I'm an engineer, and so are all the people here.";
 									} else if (blocks[i][5] === 2) {
 										blocks[i][4] = false;
-										dialogue = "I want to learn about engineering. Can you tell me more?";
+										dialogue = "Wow! I want to learn about engineering. Where can I go?";
 										jim = true;
 									} else {
 										blocks[i][4] = true;
-										dialogue = "Engineers are people who solve problems through their creativity. In this world, you'll meet many types of engineers and hear their stories.";
+										dialogue = "Engineers are people who solve problems through their creativity. You'll meet many types of engineers and hear their stories. So be curious, explore!";
 									}
 									//speech bubble
 									pushMatrix();
@@ -3286,7 +3359,7 @@ void draw ()
 
 			if (deathCount % 20 < 10 && health > 0) {
 				//draws the player
-				drawPlayer(player[0], player[1] + 2, Math.abs(player[4]) > 0.1, flip, jumpTime);
+				drawPlayer(player[0], player[1] + 2, Math.abs(player[4]) > 0.1, flip, jumpTime, starRecord[2][5] > 0);
 			}
 
 			popMatrix();
