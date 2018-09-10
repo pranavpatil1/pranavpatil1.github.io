@@ -135,6 +135,8 @@ var clouds = [
 	[parseFloat(random(0, 600).toFixed(2)), parseFloat(random(150, 350).toFixed(2)), parseFloat((random(0, 2) < 1 ? -1 : 1) * random(0.5, 1).toFixed(2)), parseFloat(random(4, 6).toFixed(2))]
 ];
 
+var rockets = [];
+
 var deathMessage = [
 	["You can use the down arrow to slam down", "Engineers do most of their work in teams to solve problems.", "Engineers design and build things that make a difference and solve real world problems", "Engineers have saved lives through inventions like the pacemaker and Omnipod", "Engineers protect our planet by combating issues like global warming", "Chemical engineers use chemistry, physics, and math to solve problems with chemicals", "Biomedical engineers are awesome!", "Computer engineers are awesome!", "Environmental engineers are awesome!", "Mechanical engineers are awesome!", "Electrical engineers are awesome!", "Software engineers are awesome!"],
 	["Mechanical engineering is one of the oldest types of engineering", "Mechanical engineering is solving problems through mechanical devices", "Robotics is a subdiscipline of mechanical engineering", "In the automobile industry, mechanical engineers develop components like gears and engines to make cars more safe and efficient."],
@@ -519,7 +521,7 @@ var peopleSpeech = [
 	[
 		[
 			["Welcome to the next category of engineering, with all things electrical!", "You have a new power here. Whenever you see a switch, you can power it with a zap of electricity by hitting SPACE.", "You need to zap the switch with an electric current so it can communicate with the platform. I bet they use Bluetooth."],
-			["Thomas Edison opened the first power plant in 1882 and began a need for electrical engineering.", "Electrical engineers work with technology and electricity. It's a newer form of engineering."],
+			["Thomas Edison opened the first power plant in 1882 and electrical engineering began.", "Electrical engineers work with technology and electricity. It's a newer form of engineering."],
 			["Electrical engineering is crucial because electronics are everywhere!", "Anything that you plug in or that needs batteries was designed by an electrical engineer.", "The phone, TV, and even parts of video game consoles are created by electrical engineers.", "Are you getting the hang of all these switches and moving platforms?"]
 		], // 2-1
 		[
@@ -548,7 +550,7 @@ var peopleSpeech = [
 	], // world 2
 	[
 		[
-			["Technology helps and hurts the environment. In this sector, you have the power to plant trees!", "Press space to throw a seed and plant a tree. These trees grow instantly and are bouncy!", "This tech is advanced!"],
+			["Technology helps and hurts the environment. In this sector, you have the power to plant super-trees!", "Press space to throw a seed and plant a tree. These trees grow instantly and are bouncy!", "This tech is advanced!"],
 			["Hi! I'm an environmental engineer.", "There's so much awesome tech in our world, but sometimes it hurts the environment.", "I create tech to help the environment."],
 			["Environmental engineering helps to fight issues like global warming, wastewater treatment, and acid rain.", "Existing technology often makes these worse.", "I improve on existing devices or create new things to help this."],
 		], // 3-1
@@ -695,9 +697,10 @@ mouseReleased = function() {
 
 				levelTransition = 255;
 				while (clouds.length > 0) {
-
 					clouds.pop();
-
+				}
+				while (rockets.length > 0) {
+					rockets.pop();
 				}
 
 			} else if (mouseX < 386 * sc & mouseX > 213 * sc & mouseY > 90 * sc & mouseY < 380 * sc) {
@@ -707,9 +710,10 @@ mouseReleased = function() {
 
 				levelTransition = 255;
 				while (clouds.length > 0) {
-
 					clouds.pop();
-
+				}
+				while (rockets.length > 0) {
+					rockets.pop();
 				}
 
 			} else if (mouseX < 479 * sc & mouseX > 406 * sc & mouseY > 90 * sc & mouseY < 380 * sc) {
@@ -719,9 +723,10 @@ mouseReleased = function() {
 
 				levelTransition = 255;
 				while (clouds.length > 0) {
-
 					clouds.pop();
-
+				}
+				while (rockets.length > 0) {
+					rockets.pop();
 				}
 
 			}
@@ -741,6 +746,7 @@ mouseReleased = function() {
 
 						levelTransition = 255;
 						clouds = [];
+                        rockets = [];
 
 					}
 
@@ -910,7 +916,7 @@ mouseReleased = function() {
 	dirt_bmr.endDraw();
 	dirt_bmr = dirt_bmr.get();
 
-	var dirt = createGraphics(20, 20, P2D);
+	var dirt = createGraphics(20, 21, P2D);
 
 	dirt.beginDraw();
 
@@ -919,7 +925,7 @@ mouseReleased = function() {
 	dirt.endDraw();
 	dirt = dirt.get();
 
-	var dark_dirt = createGraphics(20, 20, P2D);
+	var dark_dirt = createGraphics(20, 21, P2D);
 
 	dark_dirt.beginDraw();
 
@@ -928,7 +934,7 @@ mouseReleased = function() {
 	dark_dirt.endDraw();
 	dark_dirt = dark_dirt.get();
 
-	var middle = createGraphics(40, 40, P2D);
+	var middle = createGraphics(40, 41, P2D);
 
 	middle.beginDraw();
 
@@ -942,7 +948,7 @@ mouseReleased = function() {
 	middle.endDraw();
 	middle = middle.get();
 
-	var top_image = createGraphics(40, 40, P2D);
+	var top_image = createGraphics(40, 41, P2D);
 
 	top_image.beginDraw();
 
@@ -955,7 +961,7 @@ mouseReleased = function() {
 	top_image.endDraw();
 	top_image = top_image.get();
 
-	var bottom_image = createGraphics(40, 40, P2D);
+	var bottom_image = createGraphics(40, 41, P2D);
 
 	bottom_image.beginDraw();
 
@@ -969,7 +975,7 @@ mouseReleased = function() {
 	bottom_image.endDraw();
 	bottom_image = bottom_image.get();
 
-	var bottom_left = createGraphics(40, 40, P2D);
+	var bottom_left = createGraphics(40, 41, P2D);
 
 	bottom_left.beginDraw();
 
@@ -983,7 +989,7 @@ mouseReleased = function() {
 	bottom_left.endDraw();
 	bottom_left = bottom_left.get();
 
-	var bottom_right = createGraphics(40, 40, P2D);
+	var bottom_right = createGraphics(40, 41, P2D);
 
 	bottom_right.beginDraw();
 
@@ -997,7 +1003,7 @@ mouseReleased = function() {
 	bottom_right.endDraw();
 	bottom_right = bottom_right.get();
 
-	var Xleft = createGraphics(40, 40, P2D);
+	var Xleft = createGraphics(40, 41, P2D);
 
 	Xleft.beginDraw();
 
@@ -1010,7 +1016,7 @@ mouseReleased = function() {
 	Xleft.endDraw();
 	Xleft = Xleft.get();
 
-	var Xright = createGraphics(40, 40, P2D);
+	var Xright = createGraphics(40, 41, P2D);
 
 	Xright.beginDraw();
 
@@ -1023,7 +1029,7 @@ mouseReleased = function() {
 	Xright.endDraw();
 	Xright = Xright.get();
 
-	var Xmiddle = createGraphics(40, 40, P2D);
+	var Xmiddle = createGraphics(40, 41, P2D);
 
 	Xmiddle.beginDraw();
 
@@ -1036,7 +1042,7 @@ mouseReleased = function() {
 	Xmiddle.endDraw();
 	Xmiddle = Xmiddle.get();
 
-	var alone = createGraphics(40, 40, P2D);
+	var alone = createGraphics(40, 41, P2D);
 
 	alone.beginDraw();
 
@@ -1049,7 +1055,7 @@ mouseReleased = function() {
 	alone.endDraw();
 	alone = alone.get();
 
-	var alone_bottom = createGraphics(40, 40, P2D);
+	var alone_bottom = createGraphics(40, 41, P2D);
 
 	alone_bottom.beginDraw();
 
@@ -1840,6 +1846,40 @@ var drawGSymbol  = function (x, y, male, alpha) {
 	popMatrix();
 }
 
+var drawShip = function (x, y, angle, left) {
+    pushMatrix();
+    
+    translate(x, y);
+    rot(angle + (left ? 0 : 180));
+    
+    translate(35, 0);
+    
+    noStroke();
+    
+    fill(221, 229, 235);
+    beginShape();
+    vertex(-10, 0);
+    vertex(-40, 15);
+    vertex(-40, -15);
+    endShape();
+    
+    fill(58, 72, 82);
+    beginShape();
+    vertex(0, 0);
+    vertex(-15, 10);
+    vertex(-40, 8);
+    vertex(-42, 6);
+    vertex(-42, -6);
+    vertex(-40, -8);
+    vertex(-15, -10);
+    endShape();
+    
+    fill(221, 229, 235);
+    ellipse(-19, 0, 9, 9);
+    
+    popMatrix();
+};
+
 var genExplosion = function(x, y, power, color, amt) {
 	for (var i = 0; i < amt; i++) {
 		explosion.push([x, y, random(-1, 1) * power, random(-2.5, -0.5) * power, random(0, 2 * PI), color, 255]);
@@ -2082,17 +2122,11 @@ void draw ()
 
 			clouds[i][0] += clouds[i][2];
 
-			if (clouds[i][0] < -150 & clouds[i][2] < 0) {
-
+			if (clouds[i][0] < -150 && clouds[i][2] < 0) {
 				clouds[i][2] *= -1;
-				clouds[i][1] = parseFloat(random(150, 350).toFixed(2));
-
 			}
-			if (clouds[i][0] > 600 + 150) {
-
+			if (clouds[i][0] > 600 + 150 && clouds[i][2] > 0) {
 				clouds[i][2] *= -1;
-				clouds[i][1] = parseFloat(random(150, 350).toFixed(2));
-
 			}
 
 		}
@@ -2320,7 +2354,7 @@ void draw ()
 			}
 
 		}
-
+        
 		noStroke();
 
 		textAlign(CENTER, CENTER);
@@ -2502,15 +2536,27 @@ void draw ()
 
 		}
 
+        // if there aren't any clouds (probably level beginning)
 		if (clouds.length === 0) {
+            // add clouds based on length of level
 			for (var i = 0; i < far / 600; i++) {
-				clouds.push([parseFloat(random(0, far).toFixed(2)),
-					parseFloat(random(-200, 200).toFixed(2)),
+                // x, y, direction (+speed), size
+                // y = 400 - (maps[worldNum][levelNum].length - i) * 40
+				clouds.push([
+                    parseFloat(random(0, far).toFixed(2)),
+					parseFloat(random(400 - maps[worldNum][levelNum].length * 40, 300).toFixed(2)),
 					parseFloat((random(0, 2) < 1 ? -1 : 1) * random(0.5, 1).toFixed(2)),
 					parseFloat(random(4, 6).toFixed(2))
 				]);
 			}
 		}
+        while (rockets.length <= far/700) {
+            rockets.push([
+                parseFloat(random(0, far).toFixed(2)),
+                parseFloat(random(250 - maps[worldNum][levelNum].length * 40, 200).toFixed(2)),
+                parseFloat((random(0, 2) < 1 ? -1 : 1) * random(1, 1.5).toFixed(2)),
+            ]);
+        }
 
 		position = [];
 
@@ -2693,6 +2739,22 @@ void draw ()
 				}
 
 			}
+            
+            
+		for (var i in rockets) {
+            rect(rockets[i][0], rockets[1], 1000, 1000);
+			drawShip(rockets[i][0], rockets[i][1], 20 * sine(rockets[i][0] * 2), rockets[i][2] > 0);
+            
+			rockets[i][0] += rockets[i][2];
+
+			if (rockets[i][0] < -250 & rockets[i][2] < 0) {
+				rockets[i][2] *= -1;
+			}
+			if (rockets[i][0] > far + 250 && rockets[i][2] > 0) {
+				rockets[i][2] *= -1;
+			}
+
+		}
 
 			player[6] = true; //up is open
 			player[7] = true; //down is open
@@ -2977,9 +3039,11 @@ void draw ()
 				page = "levels";
 
 				while (clouds.length > 0) {
-
 					clouds.pop();
+				}
 
+				while (rockets.length > 0) {
+					rockets.pop();
 				}
 
 				levelTransition = 255;
