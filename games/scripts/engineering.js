@@ -1,3 +1,4 @@
+
 // If you have any feedback, send me an email!
 // I want to improve this game as much as I can.
 
@@ -28,6 +29,7 @@ var rot = function(input) {
 var page = "menu"; //game, end, menu, settings, achievements, pause?
 
 var player = [240, 280, 18, 40, 0, random(-2, -0.5), false, false, false, false, false]; //0x, 1y, 2w, 3h, 4xvel, 5yvel, 6up 7down 8left 9right (open), 10is jumping
+var jim = false; // if player is in dialogue
 
 //whether or not the player is being controlled by the user and the game is going
 var playing = true;
@@ -582,28 +584,31 @@ var peopleSpeech = [
 ];
 
 for (var i in maps) {
-
 	unlocked.push([]);
 	for (var j = 0; j < maps[i].length; j++) {
-
 		// CHANGE THIS TO === 0 TO >= TO 0
-		unlocked[unlocked.length - 1].push(j >= 0);
-
+		unlocked[unlocked.length - 1].push(j === 0);
 	}
-
 }
 
 var starRecord = [];
 
 for (var i in maps) {
-
 	starRecord.push([]);
 	for (var j in maps[i]) {
-
 		starRecord[starRecord.length - 1].push(0);
-
 	}
+}
 
+if (localStorage.getItem("woeStars") !== null) {
+	starRecord = JSON.parse(localStorage.getItem("woeStars"));
+} else {
+	localStorage.setItem("woeStars", JSON.stringify(starRecord));
+}
+if (localStorage.getItem("woeLevels") !== null) {
+	unlocked = JSON.parse(localStorage.getItem("woeLevels"));
+} else {
+	localStorage.setItem("woeLevels", JSON.stringify(unlocked));
 }
 
 //level count for number of stars
@@ -625,12 +630,13 @@ var t = 0;
 var male = false;
 var emojiSwitch = 0;
 
-//scaling for mouse clicks
+//scaling for mouse clicks, used for mouse clicks
 var sc = width / 600;
+
 mouseReleased = function() {
 
 	if (page === "menu") { //main menu
-
+		
 		//middle button
 		if (dist(mouseX, mouseY, width / 2, height * 0.675) < 110) {
 
@@ -1164,7 +1170,8 @@ mouseReleased = function() {
 
 //function for drawing the player, given the x and y coordinates
 
-var drawPlayer = function (x, y, running, flip, jumping_amt, crown) {
+var drawPlayer = function (x, y, running, flip, jumping_amt, crown, talking) {
+	
     pushMatrix();
     translate(x + (flip ? 20 : 0), y);
     scale(flip ? -0.5 : 0.5, 0.5); // 40 by 80 scaled to 20 by 40
@@ -1185,9 +1192,13 @@ var drawPlayer = function (x, y, running, flip, jumping_amt, crown) {
     rect(22 - offset, 64, 8, 12);
     pushMatrix();
 	// adds a slight movement to the head
+	// adds a slight movement to the head
 	if (running) {
 		translate(cosine(frameCount*11), 1-abs(sine(frameCount*10)));
-    }
+    } else {
+		translate(-0.5 + 0.8 * cosine(frameCount*5), abs(sine(frameCount*5)));
+	}
+	
     fill (hairColor);
     if (!male) {
 		rect(-1, 15, 43, 36);
@@ -1210,7 +1221,9 @@ var drawPlayer = function (x, y, running, flip, jumping_amt, crown) {
 	// adds a slight movement to the head
 	if (running) {
 		translate(cosine(frameCount*11), 1-abs(sine(frameCount*10)));
-    }
+    } else {
+		translate(-0.5 + 0.8 * cosine(frameCount*5), abs(sine(frameCount*5)));
+	}
     
     // draw head
     fill(skinColor);
@@ -1222,7 +1235,12 @@ var drawPlayer = function (x, y, running, flip, jumping_amt, crown) {
     // mouth
     var w = 7 + jumping_amt/10;
     var h = 2 + jumping_amt/2;
-    rect(23 - w/2, 26 - h/3, w, h, 6);
+	
+	if (talking) {
+		w = 2 * sine(frameCount * 14) + 7;
+		h = sine(frameCount * 14) + 3;
+	}
+	rect(23 - w/2, 26 - h/3, w, h, 6);
     
     fill (hairColor);
     beginShape();
@@ -1998,7 +2016,7 @@ void keyReleased ()
 				// otherwise add it
 				if (valid) {
 					// block at x and y, type is 3, and it will last for 200 frames (~4 seconds)
-					blocks.push([lx, ly, 3, 400]);
+					blocks.push([lx, ly, 3, millis()]);
 				} else {
 					lx = Math.floor(player[0] / 40) * 40;
 					// if a block is already there
@@ -2006,7 +2024,7 @@ void keyReleased ()
 					// otherwise add it
 					if (valid) {
 						// block at x and y, type is 3, and it will last for 200 frames (~4 seconds)
-						blocks.push([lx, ly, 3, 400]);
+						blocks.push([lx, ly, 3, millis()]);
 						player[1] -= 40;
 					}
 				}
@@ -2809,7 +2827,7 @@ void draw ()
 								shakeAmt = abs(player[5]) / 3;
 							}
 							if (blocks[i][2] === 3) {
-								blocks[i][3] += 25;
+								blocks[i][3] += 5;
 								if (abs(player[5]) > 10) {
 									blocks[i][3] = 0;
 								}
@@ -3021,6 +3039,7 @@ void draw ()
 
 				if (levelStar > starRecord[worldNum][levelNum]) {
 					starRecord[worldNum][levelNum] = levelStar;
+					localStorage.setItem("woeStars", JSON.stringify(starRecord));
 				}
 
 				first = true;
@@ -3028,6 +3047,7 @@ void draw ()
 				
 				levelNum = (levelNum + 1) % maps[worldNum].length;
 				unlocked[worldNum][levelNum] = true;
+				localStorage.setItem("woeLevels", JSON.stringify(unlocked));
 
 				starDisplay = [0, 0, 0];
 
@@ -3310,6 +3330,8 @@ void draw ()
 			}
 
 			noStroke();
+			// controls if the player is "talking"
+			jim = false;
 			// draw the people speech bubbles
 			for (var i in blocks) {
 				if (blocks[i][2] === 5) { // non-player character
@@ -3333,7 +3355,6 @@ void draw ()
 								// says different things based on how long this person has been talking for
 								if (blocks[i][5] <= 3) {
 									var dialogue = "";
-									var jim = false;
 									if (blocks[i][5] === 0) {
 										blocks[i][4] = false;
 										// dialogue = "Hi, I'm " + (male ? "Jim" : "Jill") + ". I think I'm lost, but I'm on a mission. Where am I? What is this place?";
@@ -3341,6 +3362,7 @@ void draw ()
 										jim = true;
 									} else if (blocks[i][5] === 1) {
 										blocks[i][4] = true;
+										jim = false;
 										dialogue = "Hi " + (male ? "Jim" : "Jill") + ". You've found the World of Engineers, a stronghold for curious minds! I'm an engineer, and so are all the people here.";
 									} else if (blocks[i][5] === 2) {
 										blocks[i][4] = false;
@@ -3348,6 +3370,7 @@ void draw ()
 										jim = true;
 									} else {
 										blocks[i][4] = true;
+										jim = false;
 										dialogue = "Engineers are people who solve problems through their creativity. You'll meet many types of engineers and hear their stories. So be curious, explore!";
 									}
 									//speech bubble
@@ -3423,7 +3446,7 @@ void draw ()
 
 			if (deathCount % 20 < 10 && health > 0) {
 				//draws the player
-				drawPlayer(player[0], player[1] + 2, Math.abs(player[4]) > 0.1, flip, jumpTime, starRecord[2][5] > 0);
+				drawPlayer(player[0], player[1] + 2, Math.abs(player[4]) > 0.1, flip, jumpTime, starRecord[2][5] > 0, jim);
 			}
 
 			popMatrix();
