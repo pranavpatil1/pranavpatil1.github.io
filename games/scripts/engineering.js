@@ -1,6 +1,28 @@
+/*
 
-// If you have any feedback, send me an email!
-// I want to improve this game as much as I can.
+The MIT License
+
+Copyright (c) 2018 Pranav Patil
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+*/
 
 frameRate(60);
 size(760,520);
@@ -557,7 +579,7 @@ var peopleSpeech = [
 			["Environmental engineering helps to fight issues like global warming, wastewater treatment, and acid rain.", "Existing technology often makes these worse.", "I improve on existing devices or create new things to help this."],
 		], // 3-1
 		[
-			["Environmental engineers have designed all sorts of inventions to help the planet.", "They've created rooftop gardens, pollution monitors, and ", "They even figure out how to clean up oil spills so they don't hurt the fish."],
+			["Environmental engineers have designed all sorts of inventions to help the planet.", "They've created rooftop gardens, pollution monitors, and turbines.", "They even figure out how to clean up oil spills so they don't hurt the fish."],
 			["I've studied the atmosphere, and climate change is a growing problem.", "Efficiently producing things like hydrogen fuel cells can help our environment"],
 			["Environmental engineers also work in sustainability, on things like renewable energy.", "Engineers work on making different types of renewable energy make sense on a larger scale.", "Wind energy is a new one. Kites can generate electricity!"]
 		], // 3-2
