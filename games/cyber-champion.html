@@ -41,6 +41,7 @@
 		<script type="text/javascript">
 			$(window).load(function() {
 				$(".loader").fadeOut("slow");
+                document.getElementById('mycanvas').focus();
 			})
 		</script>
 		<div class="loader"></div>
@@ -86,17 +87,6 @@ INSTRUCTIONS:
 Good luck!
 
 Lag issues? Go to settings and turn graphics off (:
-
-*/
-
-// vvv  open that by clicking the blue arrows
-  { //close it again by clicking the down arrow by the 2
-    var awesome = true;
-}
-
-//click on the blue button with arrows to open it, or the little arrow next to the line numbers to open or close it
-
-/**
 
 Resources used:
  - https://heimdalsecurity.com/blog/cyber-security-tips/
@@ -171,7 +161,7 @@ for (var i = -50; i < 650; i += 50) {
     
 }
 
-var font = "Century Gothic";
+var font = "Rockwell";
 //"Century Gothic", "Rockwell", "monospace"
 
 //is it the first frame, for loading a level?
@@ -255,9 +245,11 @@ keyPressed = function() {
 
 keyReleased = function() {
     
+    var controls = [37, 38, 39, 40, 65, 68, 87, 83];
+    
     //if on game page and player is at a door
     //not clicking WASD or arrow keys
-        if (page === "game" & onDoor & !keys[37] & !keys[38] & !keys[39] & !keys[40] & !keys[65] & !keys[68] & !keys[87] & !keys[83]) {
+        if (page === "game" && onDoor && controls.indexOf(keyCode) === -1) {
             
             //checks which door the player is at
             var x = 0;
@@ -1827,7 +1819,9 @@ var stageT = 0; //last stage, timer
 
 var lowGraphics = false; //use simpler graphics
 
-var pmillis = 0;
+var pmillis = millis();
+var delta = 0;
+var totalT = 0;
 var t = 0;
 
 mouseReleased = function() {
@@ -1947,6 +1941,8 @@ mouseReleased = function() {
                     
                 }
                 
+                localStorage.setItem("cyberchampion_font", font);
+                
             } else if (mouseX > 275 & mouseX < 290 & mouseY > 192.5 & mouseY < 207.5) {
                 
                 if (font === "Century Gothic") {
@@ -1962,6 +1958,8 @@ mouseReleased = function() {
                     font = "Rockwell";
                     
                 }
+                
+                localStorage.setItem("cyberchampion_font", font);
                 
             }
             
@@ -2270,16 +2268,23 @@ var drawDoor = function(x, y, dark) {
     
 };
 
-var drawBlock = function(x, y) {
+var drawBlock = function(x, y, w, h) {
     
     //draws the base block
-    image((light ? lblockImage : dblockImage), x, y);
+    var b = (light ? lblockImage : dblockImage);
+    
+    for (var i = x; i < x + w; i += 40) {
+        for (var j = y; j < y + h; j += 40) {
+            image(b, i, j);
+        }
+    }
     
     //only if its the top block it will have the top part (top set true or false elsewhere)
     if (top) {
-        
-        image((light ? ltopImage : dtopImage), x - 5, y - 5);
-    
+        b = (light ? ltopImage : dtopImage);
+        for (var i = x; i < x + w; i += 40) {
+            image(b, i - 5, y - 5);
+        }
     }
     
 };
@@ -2516,14 +2521,21 @@ if (localStorage.getItem("cyberchampion_access") !== null) {
 	
 }
 if (localStorage.getItem("cyberchampion_tutorial") !== null) {
-	
-	tutorial = "true" === localStorage.getItem("cyberchampion_tutorial");
-	
+	tutorial = ("true" === localStorage.getItem("cyberchampion_tutorial"));
 } else {
 	localStorage.setItem("cyberchampion_tutorial", "true");
 }
+if (localStorage.getItem("cyberchampion_font") !== null) {
+	font = localStorage.getItem("cyberchampion_font");
+} else {
+	localStorage.setItem("cyberchampion_font", font);
+}
 
 draw = function() {
+    
+    delta = (millis() - pmillis)/16;
+    totalT = millis() / 16;
+    pmillis = millis();
     
     textFont(createFont(font));
     if (page === "menu") { //main menu page
@@ -2854,18 +2866,19 @@ draw = function() {
             
         }
         
+        var lvlMap = maps[levelNum];
+        
         //go through maps array
-        for (var i = 0; i < maps[levelNum].length; i ++) {
-            
-            for (var j = 0; j < maps[levelNum][i].length; j ++) {
+        for (var i = 0; i < lvlMap.length; i ++) {
+            for (var j = 0; j < lvlMap[i].length; j ++) {
                 
-                var item = maps[levelNum][i][j]; //takes value
+                var item = lvlMap[i][j]; //takes value
                 var x = j*40;
-                var y = 400 - (maps[levelNum].length - i)*40; //reverse y value because of vertically scrolling UP
+                var y = 400 - (lvlMap.length - i)*40; //reverse y value because of vertically scrolling UP
                 
                 if (item === "*") { //normal block
                     
-                    blocks.push([x, y, 40, 40]);
+                    // blocks.push([x, y, 40, 40]);
                     
                 } else if (item === "0") { //player start
                     
@@ -2885,35 +2898,35 @@ draw = function() {
                         
                         case 0:
                             posts[posts.length - 1].push("THE BASICS");
-                            posts[posts.length - 1].push("Each room has a situation and your job is to choose what decision to make. Every choice has a consequence, so be careful!\n\nEach door is a decision. Use the arrow keys to move the player to a door and see what that decision is.\n\nClick any key to enter a door when you are next to it.");
+                            posts[posts.length - 1].push("Each room has a situation and you need to make the right decision and stay safe online. Be careful! Each decision has a consequence. Click any key to enter a door when you are next to it.");
                             break;
                         case 1:
                             posts[posts.length - 1].push("POSTS");
-                            posts[posts.length - 1].push("You'll find these wooden posts around the cyber world. They can give you lots of good tips!\n\nWatch out for them, they can be very helpful.");
+                            posts[posts.length - 1].push("You'll find these wooden posts around the cyber world. They can give you lots of good tips! Watch out for them, they can be very helpful.");
                             break;
                         case 2:
                             posts[posts.length - 1].push("NO COMPUTER");
-                            posts[posts.length - 1].push("You can't be hacked!\n\n\n          |    |\n        \\_____/\n\n\nMaybe you could even play outside...");
+                            posts[posts.length - 1].push("You can't be hacked! Maybe you could even play outside...");
                             break;
                         case 8:
                             posts[posts.length - 1].push("PII");
-                            posts[posts.length - 1].push("PII is any Personally Identifiable Information. Never, ever share it!\n\nTYPES OF PII:\n - Birthday\n - Cell Phone Number\n - Social Security Number\n - Financial information.");
+                            posts[posts.length - 1].push("PII is any Personally Identifiable Information. Never, ever share it!\n\nTYPES OF PII: Birthday, Cell Phone Number, Social Security Number");
                             break;
                         case 11:
                             posts[posts.length - 1].push("ANTIVIRUS");
-                            posts[posts.length - 1].push("Antiviruses (AV) are programs that detect and remove viruses from your computer.\n\nGOOD ANTIVIRUSES:\n - 360 Total Security\n - Windows Defender\n - Malwarebytes");
+                            posts[posts.length - 1].push("Antiviruses (AV) are programs that detect and remove viruses from your computer.\n\nGOOD ANTIVIRUSES: 360 Total Security, Windows Defender, Malwarebytes");
                             break;
                         case 17:
                             posts[posts.length - 1].push("AD BLOCKING");
-                            posts[posts.length - 1].push("Ad blocking help you by blocking intrusive advertisements.\n\nGOOD ADBLOCKS:\n - Adblock Plus\n - HTTPS Everywhere");
+                            posts[posts.length - 1].push("Ad blocking help you by blocking intrusive advertisements.\n\nGOOD ADBLOCKS: Adblock Plus, HTTPS Everywhere");
                             break;
                         case 27:
                             posts[posts.length - 1].push("FIREWALL");
-                            posts[posts.length - 1].push("A firewall is the best way to keep hackers out. It's like building a virtual wall around your computer, hackers can't get in!\n\nAlways make sure your firewall is enabled!");
+                            posts[posts.length - 1].push("A firewall is the best way to keep hackers out. It's like building a virtual wall around your computer, hackers can't get in! Always make sure your firewall is enabled!");
                             break;
                         case 32:
                             posts[posts.length - 1].push("PASSWORDS");
-                            posts[posts.length - 1].push("Putting together a few words and substituting numbers and symbols in for letters is a great way to create passwords.\n\nRemember to update passwords at least every few months. Don't use the same password across accounts.\n\nthis1saGreatp@ssword!! or 3asyT0rem3mber!");
+                            posts[posts.length - 1].push("Good passwords are long and have numbers, symbols, and letters. Update passwords at least every few weeksand don't reuse passwords.\n\nthis1saGreatp@ssword!! or 3asyT0rem3mber!");
                             break;
                         default:
                             posts[posts.length - 1].push("");
@@ -3557,7 +3570,29 @@ draw = function() {
                 }
                 
             }
-            
+        }
+        for (var j = 0; j < lvlMap[0].length; j ++) {
+            for (var i = 0; i < lvlMap.length; i ++) {
+                var item = lvlMap[i][j];
+                var x = j*40;
+                var y = 400 - (lvlMap.length - i)*40; 
+                if (item === "*") {
+                    while (i + 1 < lvlMap.length && lvlMap[i+1][j] === "*") {
+                        i ++;
+                    }
+                    blocks.push([x, y, 40, 400 - (lvlMap.length - i)*40 - y + 40]);
+                }
+            }
+        }
+        
+        for (var i = 0; i < blocks.length; i ++) {
+            for (var j = i + 1; j < blocks.length; j++) {
+                if (blocks[i][3] === blocks[j][3] && blocks[i][1] === blocks[j][1] && blocks[i][0] + blocks[i][2] === blocks[j][0]) {
+                    blocks[i][2] += blocks[j][2];
+                    blocks.splice(j, 1);
+                    j --;
+                }
+            }
         }
         
         //checks which type of door its going into
@@ -3827,8 +3862,8 @@ draw = function() {
                 bkgrd[i][4] = 200 - dist((bkgrd[i][0] + 17.5)*0.66, bkgrd[i][1] + 17.5 - (-constrain(player[1] - 200, -10000, -50) - 50), (player[0] + player[2]/2)*0.66, player[1] + player[3]/2)/1.94;
                 
                 //updates width and height
-                bkgrd[i][2] = 2*cosine(frameCount*3 + i/5);
-                bkgrd[i][3] = 3*sine(frameCount*3.3 + i/1.1);
+                bkgrd[i][2] = 4*cosine(totalT*3 + i/5);
+                bkgrd[i][3] = 6*sine(totalT*3.3 + i/1.1);
                 
                 //draws
                 fill(40, 40, 40, bkgrd[i][4]);
@@ -3872,7 +3907,7 @@ draw = function() {
             
             */
             
-            if (player[0] > (blocks[i][0] - 50) & player[0] < (blocks[i][0] + 50) & player[1] > (blocks[i][1] - 100) & player[1] < (blocks[i][1] + 100)) {
+            if (player[0] > (blocks[i][0] - player[2] - 10) & player[0] < (blocks[i][0] + blocks[i][2] + 10) & player[1] > (blocks[i][1] - 40 - player[3]) & player[1] < (blocks[i][1] + 40 + blocks[i][3])) {
             
                 if (player[1] > (blocks[i][1] - player[3] + 0.5) & player[1] < (blocks[i][1] + blocks[i][3] - 0.5) & player[0] < (blocks[i][0] + blocks[i][2]) & player[0] > (blocks[i][0] + blocks[i][2] - 4)) {
                     
@@ -3895,7 +3930,7 @@ draw = function() {
                     player[1] = blocks[i][1] + blocks[i][3];
                     
                 }
-                if (player[0] > (blocks[i][0] - player[2] + 0.5) & player[0] < (blocks[i][0] + blocks[i][2] - 0.5) & player[1] < (blocks[i][1]) & player[1] > (blocks[i][1] - player[3])) {
+                if (player[0] > (blocks[i][0] - player[2] + 0.5) & player[0] < (blocks[i][0] + blocks[i][2] - 0.5) & player[1] <= (blocks[i][1]) & player[1] >= (blocks[i][1] - player[3] - player[5] * delta)) {
                     
                     player[7] = false; //down is closed
                     player[1] = blocks[i][1] - player[3];
@@ -3920,15 +3955,15 @@ draw = function() {
         //movements are not sudden!
         if (keys[LEFT] & !keys[RIGHT]) {
             
-            player[4] -= 0.3;
+            player[4] -= 0.3 * delta;
             
         } else if (keys[RIGHT] & !keys[LEFT]) {
             
-            player[4] += 0.3;
+            player[4] += 0.3 * delta;
             
         } else if (abs(player[4]) > 0.01) {//doesnt slice for inf
             
-            player[4] /= 1.1;
+            player[4] *= (1 - 0.09 * delta);
             
         } else {
             
@@ -3939,12 +3974,16 @@ draw = function() {
         //constraint on horizontal movement
         player[4] = constrain(player[4], -3, 3);
         
-        //applies gravity!!!
-        player[5] += 0.27;
+        // console.log(player[6] + ',' + player[7] + ',' + player[8] + ',' + player[9]);
+        
+        if (player[7]) {
+            //applies gravity!!!
+            player[5] += 0.27 * delta;
+        }
         
         //moves player
-        player[0] += player[4];
-        player[1] += player[5];
+        player[0] += player[4] * delta;
+        player[1] += player[5] * delta;
         
         //constrains player to be on the screen
         player[0] = constrain(player[0], 0, width - player[2]);
@@ -4080,20 +4119,24 @@ CONFUSING ARRAYS!
             }
             
             //if the block is within the y translate
-            if (blocks[i][1] > -(-constrain(player[1] - 200, -10000, -50) - 50) - 50 & blocks[i][1] < -(-constrain(player[1] - 200, -10000, -50) - 50) + 450) {
+            if (blocks[i][1] > -(-constrain(player[1] - 200, -10000, -50) - 50) - 10 - blocks[i][3] && blocks[i][1] < -(-constrain(player[1] - 200, -10000, -50) - 50) + 450) {
                 
                 if (lowGraphics) {
                     
                     //basic block
                     fill(147, 204, 196); //light blue background
-                    noStroke();
+                    // noStroke();
+                    stroke(255, 0, 0);
+                    strokeWeight(1);
                     
-                    rect(blocks[i][0] - 2, blocks[i][1] - 2, 44, 44);
+                    rect(blocks[i][0] - 2, blocks[i][1] - 2, blocks[i][2] + 4, blocks[i][3] + 4);
+                    
+                    noStroke();
                     
                 } else {
                     
                     //draws a more complex block
-                    drawBlock(blocks[i][0], blocks[i][1]);
+                    drawBlock(blocks[i][0], blocks[i][1], blocks[i][2], blocks[i][3]);
                     
                 }
                 
@@ -4126,11 +4169,11 @@ CONFUSING ARRAYS!
             }
             
             //gravity
-            confetti[i][3] += 0.04;
+            confetti[i][3] += 0.04 * delta;
             
             //increases by x and y velocity
-            confetti[i][0] += confetti[i][2];
-            confetti[i][1] += confetti[i][3];
+            confetti[i][0] += confetti[i][2] * delta;
+            confetti[i][1] += confetti[i][3] * delta;
             
             //if its off the screen
             if (confetti[i][1] > 400 | confetti[i][0] < -100 | confetti[i][0] > 700) {
@@ -4187,8 +4230,7 @@ CONFUSING ARRAYS!
                 if (doors[i][2] === "THE BEGINNING" & frameCount % 3 === 0) {
                     
                     //add confetti going both ways
-                    confetti.push([random(0, 500), -(-constrain(player[1] - 200, -10000, -50) - 50)-100, -random(1, 3), random(0, 4), random(1, 8), colors[floor(random(0, colors.length))]]);
-                    confetti.push([random(100, 600), -(-constrain(player[1] - 200, -10000, -50) - 50)-100, random(1, 3), random(0, 4), random(1, 8), colors[floor(random(0, colors.length))]]);
+                    confetti.push([random(0, 500), -(-constrain(player[1] - 200, -10000, -50) - 50)-100, (random(1) < 0.5 ? -1 : 1) * (random(0, 2) + 1), random(0, 4), random(1, 8), colors[floor(random(0, colors.length))]]);
                     
                 }
                 
@@ -4250,13 +4292,13 @@ CONFUSING ARRAYS!
                     //title
                     fill(255);
                     textSize(25);
-                    text(posts[i][2], 200, 420);
+                    text(posts[i][2], 200, 440);
                     
                     textAlign(LEFT, TOP);
                     
                     //description
                     textSize(15);
-                    text(posts[i][3], 15, 435, 370, 225);
+                    text(posts[i][3], 15, 465, 370, 225);
                     
                 }
                 
@@ -4302,7 +4344,7 @@ CONFUSING ARRAYS!
                     
                     fill(255);
                     textAlign(CENTER, CENTER);
-                    text("Each level has a description of the scenario that you face.\n\nUse the arrow keys to move to a door and see what decision it represents.", 20, 70, 300, 200);
+                    text("Read the description of each scenario. Each door is a decision.\n\nRun to a door using arrow keys!", 30, 70, 290, 200);
                     
                     //once the player goes to a door, move forward in the tutorial
                     if (onDoor) {
@@ -4333,7 +4375,7 @@ CONFUSING ARRAYS!
                     
                     fill(255);
                     textAlign(CENTER, CENTER);
-                    text("When you go to a door, you can see a description of its decision.\n\nIf you think that's the right choice, then click any key to enter that door.", 285, 70, 290, 200);
+                    text("Read the choice and hit SPACE to enter. Or, go to the other door.\n\nPress SPACE.", 285, 70, 290, 200);
                     
                     //if the level changed (from 0 start)
                     if (levelNum !== 0) {
@@ -4398,7 +4440,7 @@ CONFUSING ARRAYS!
                     //actual text on text box 
                     fill(255);
                     textAlign(CENTER, CENTER);
-                    text("You'll come across a few wooden posts while you run around. Go to them to see what they have to tell you! You can also hide them in the settings.", 25, 20, 290, 200);
+                    text("These posts have special cybersecurity tips!", 25, 20, 290, 200);
                     
                     //if player went to the post, next stage
                     if (onPost) {
@@ -4429,13 +4471,9 @@ CONFUSING ARRAYS!
                     
                     fill(255, 255, 255, stageT);
                     textAlign(CENTER, CENTER);
-                    text("When you go to a post, you can see all the information it holds.\n\nYou're ready to go! If you need the tutorial again, go to settings and turn it on.", 85, 70, 290, 200);
+                    text("You're ready to go! You can enable the tutorial again in settings.", 90, 70, 280, 200);
                     
-                    if (!onPost & stageT > 255) { //if you went on the post when the timer was above 255
-                        
-                        stage --; //back a stage
-                        
-                    } else if (stageT < 0) { //timer is 0
+                    if (stageT < 0) { //timer is 0
                         
                         //tutorial ends
                         stage = 0;
@@ -4638,6 +4676,10 @@ CONFUSING ARRAYS!
             
         }
         
+        $(window).blur(function(){
+            page = "pause";
+        });
+        
     }
     
     if (levelTransition > 0) {
@@ -4658,7 +4700,6 @@ CONFUSING ARRAYS!
     fill(255);
     textSize(15);
     //text(t, 20, 15); //uncomment if you want frameRate to appear
-    pmillis = millis();
     
 };
 
