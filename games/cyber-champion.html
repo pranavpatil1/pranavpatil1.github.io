@@ -5,7 +5,8 @@
 		<title>Cyber Champion: Play on Gaming Genius</title>
 		
 		<link href="https://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet" type="text/css">
-		
+		<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+        
 		<script src="//code.jquery.com/jquery-1.10.2.js"></script>
 		<script> 
 			$(function(){
@@ -144,25 +145,19 @@ var amt1 = 0;
 //if he ran so far
 var ran = false;
 
-//if a block is at the top
-var top = false;
-
 //the background "bkgrd"
 var bkgrd = [];
 
 //adds to the bkgrd array
-for (var i = -50; i < 650; i += 50) {
     
-    for (var j = -50; j < 450; j += 50) {
-        
+for (var j = -50; j < 450; j += 50) {
+    for (var i = -50; i < 650; i += 50) {    
         bkgrd.push([i, j, random(-3, 3), random(-3, 3), 155 - dist(i*0.66 + 17.5, j, (player[0] + 17.5)*0.66, player[1])/1.6]);
-        
     }
-    
 }
 
-var font = "Rockwell";
-//"Century Gothic", "Rockwell", "monospace"
+var font = "Open Sans";
+//"Open Sans", "Rockwell", "monospace"
 
 //is it the first frame, for loading a level?
 var first = true;
@@ -496,9 +491,6 @@ var maps = [
         "------2-----0--",
         "---------------",
         "-----***---***-",
-        "---------------",
-        "---------------",
-        "---------------",
         "---------------",
         "---------------",
         "---------------",
@@ -1927,7 +1919,7 @@ mouseReleased = function() {
             //rotates text font
             if (mouseX > 460 & mouseX < 475 & mouseY > 192.5 & mouseY < 207.5) {
                 
-                if (font === "Century Gothic") {
+                if (font === "Open Sans") {
                     
                     font = "Rockwell";
                     
@@ -1937,7 +1929,7 @@ mouseReleased = function() {
                     
                 } else if (font === "monospace") {
                     
-                    font = "Century Gothic";
+                    font = "Open Sans";
                     
                 }
                 
@@ -1945,13 +1937,13 @@ mouseReleased = function() {
                 
             } else if (mouseX > 275 & mouseX < 290 & mouseY > 192.5 & mouseY < 207.5) {
                 
-                if (font === "Century Gothic") {
+                if (font === "Open Sans") {
                     
                     font = "monospace";
                     
                 } else if (font === "Rockwell") {
                     
-                    font = "Century Gothic";
+                    font = "Open Sans";
                     
                 } else if (font === "monospace") {
                     
@@ -2007,7 +1999,7 @@ var drawPlayer = function(x, y) {
     
     pushMatrix();
     
-    if (lowGraphics & 1 !== 1) {
+    if (lowGraphics && 1 !== 1) {
         
         //possibly???
         rect(x - 5, y, player[2] + 10, player[3]);
@@ -2208,84 +2200,60 @@ var drawDoor = function(x, y, dark) {
     
     fill(255); //WHITE
     if (light) {
-        
         fill(0, 225 + 30*sine(frameCount*3), 255); //fluctuating blue
-        
     }
     if (dark) { //player approaches door
-        
         fill(0, 0, 0, door[2]); //darken
-        
     }
     
     //cosine, sine represents curve of door
     noStroke();
     beginShape();
-    if (!lowGraphics) {
-        
-        if (dark) {
-            
-            vertex(30 + 31*cosine(180), 30 + 31*sine(180));
-            vertex(30 + 31*cosine(200), 30 + 31*sine(200));
-            vertex(30 + 31*cosine(220), 30 + 31*sine(220));
-            vertex(30 + 31*cosine(240), 30 + 31*sine(240));
-            vertex(30 + 31*cosine(260), 30 + 31*sine(260));
-            vertex(30 + 31*cosine(280), 30 + 31*sine(280));
-            vertex(30 + 31*cosine(300), 30 + 31*sine(300));
-            vertex(30 + 31*cosine(320), 30 + 31*sine(320));
-            vertex(30 + 31*cosine(340), 30 + 31*sine(340));
-            vertex(30 + 31*cosine(360), 30 + 31*sine(360));
-            
-        } else {
-            
-            //top curve of door, not wanted in low graphics mode
-            vertex(30 + 30*cosine(180), 30 + 30*sine(180));
-            vertex(30 + 30*cosine(200), 30 + 30*sine(200));
-            vertex(30 + 30*cosine(220), 30 + 30*sine(220));
-            vertex(30 + 30*cosine(240), 30 + 30*sine(240));
-            vertex(30 + 30*cosine(260), 30 + 30*sine(260));
-            vertex(30 + 30*cosine(280), 30 + 30*sine(280));
-            vertex(30 + 30*cosine(300), 30 + 30*sine(300));
-            vertex(30 + 30*cosine(320), 30 + 30*sine(320));
-            vertex(30 + 30*cosine(340), 30 + 30*sine(340));
-            vertex(30 + 30*cosine(360), 30 + 30*sine(360));
-            
-        }
-    } else {
-        
-        //simple top
-        vertex(0, 0);
-        vertex(60, 0);
-        
-    }
-    
-    vertex(60, 80);
-    vertex(0, 80); //bottom of door
-    
-    endShape();
+    arc(30, 30, 60, 60, Math.PI, 2 * Math.PI)
+    rect(0, 30, 60, 50)
     
     popMatrix();
     
 };
 
-var drawBlock = function(x, y, w, h) {
+var drawBlock = function(x, y, w, h, simple) {
     
-    //draws the base block
-    var b = (light ? lblockImage : dblockImage);
-    
-    for (var i = x; i < x + w; i += 40) {
-        for (var j = y; j < y + h; j += 40) {
-            image(b, i, j);
+    if (simple) {
+        fill (118, 166, 159);
+        if (light) {
+            fill(147, 204, 196); //light blue background
         }
-    }
-    
-    //only if its the top block it will have the top part (top set true or false elsewhere)
-    if (top) {
+        noStroke();
+        
+        // curved bottom block
+        beginShape();
+        vertex(x + w + 2, y - 2);
+        vertex(x - 2, y - 2);
+        vertex(x - 2, y + h - 2);
+        vertex(x + 2, y + h + 2);
+        vertex(x + w - 2, y + h + 2);
+        vertex(x + w + 2, y + h - 2);
+        endShape();
+        
+        // snow
+        fill (255, 255, 255);
+        rect(x - 3, y - 2, w + 6, 10, 3);
+    } else {
+        
+        //draws the base block
+        var b = (light ? lblockImage : dblockImage);
+
+        for (var i = x; i < x + w; i += 40) {
+            for (var j = y; j < y + h; j += 40) {
+                image(b, i, j);
+            }
+        }
         b = (light ? ltopImage : dtopImage);
         for (var i = x; i < x + w; i += 40) {
             image(b, i - 5, y - 5);
         }
     }
+    
     
 };
 
@@ -2488,48 +2456,40 @@ var flip = function(x, y, size, t) {
 
 noStroke();
 
-// maxDeaths
-
-if (localStorage.getItem("cyberchampion_usePosts") !== null) {
-	
-	usePosts = ("true" === localStorage.getItem("cyberchampion_usePosts"));
-	
-}
-if (localStorage.getItem("cyberchampion_light") !== null) {
-	
-	light = ("true" === localStorage.getItem("cyberchampion_light"));
-	
-}
-if (localStorage.getItem("cyberchampion_lowGraphics") !== null) {
-	
-	lowGraphics = ("true" === localStorage.getItem("cyberchampion_lowGraphics"));
-	
-}
+// these should always be retained
 if (localStorage.getItem("cyberchampion_maxDeaths") !== null) {
-	
-	maxDeaths = parseInt(localStorage.getItem("cyberchampion_maxDeaths"), 10);
-	
+    maxDeaths = parseInt(localStorage.getItem("cyberchampion_maxDeaths"), 10);
 }
 if (localStorage.getItem("cyberchampion_badEnds") !== null) {
-	
-	badEnds = parseInt(localStorage.getItem("cyberchampion_badEnds"), 10);
-	
+    badEnds = parseInt(localStorage.getItem("cyberchampion_badEnds"), 10);
 }
 if (localStorage.getItem("cyberchampion_access") !== null) {
-	
-	access = JSON.parse(localStorage.getItem("cyberchampion_access"));
-	
+    access = JSON.parse(localStorage.getItem("cyberchampion_access"));
 }
-if (localStorage.getItem("cyberchampion_tutorial") !== null) {
-	tutorial = ("true" === localStorage.getItem("cyberchampion_tutorial"));
-} else {
-	localStorage.setItem("cyberchampion_tutorial", "true");
+
+// modify this to force a full reset in game
+var target = "a";    
+if (localStorage.getItem("cyberchampion_update") !== target) {
+    if (localStorage.getItem("cyberchampion_usePosts") !== null) {
+        usePosts = ("true" === localStorage.getItem("cyberchampion_usePosts"));
+    }
+    if (localStorage.getItem("cyberchampion_light") !== null) {
+        light = ("true" === localStorage.getItem("cyberchampion_light"));
+    }
+    if (localStorage.getItem("cyberchampion_lowGraphics") !== null) {
+        lowGraphics = ("true" === localStorage.getItem("cyberchampion_lowGraphics"));
+    }
+    if (localStorage.getItem("cyberchampion_tutorial") !== null) {
+        tutorial = ("true" === localStorage.getItem("cyberchampion_tutorial"));
+    }
+    if (localStorage.getItem("cyberchampion_font") !== null) {
+        font = localStorage.getItem("cyberchampion_font");
+    }
+    localStorage.setItem("cyberchampion_update", target);
 }
-if (localStorage.getItem("cyberchampion_font") !== null) {
-	font = localStorage.getItem("cyberchampion_font");
-} else {
-	localStorage.setItem("cyberchampion_font", font);
-}
+
+localStorage.setItem("cyberchampion_tutorial", tutorial.toString());
+localStorage.setItem("cyberchampion_font", font);
 
 draw = function() {
     
@@ -2679,7 +2639,7 @@ draw = function() {
         
         textSize(25);
         text("FONT", 225, 200);
-        text("REMOVE LAG", 225, 250);
+        text("LOW GRAPHICS", 225, 250);
         text("DISPLAY POSTS", 225, 300);
         text("TUTORIAL", 225, 350);
         
@@ -2839,9 +2799,9 @@ draw = function() {
         fill(0, 0, 0, 100);
         textSize(18);
         
-        if (font !== "Century Gothic") { //others fonts are small
+        if (font === "Open Sans") { //others fonts are small
             
-            textSize(19);
+            textSize(17);
             
         }
         
@@ -2898,7 +2858,7 @@ draw = function() {
                         
                         case 0:
                             posts[posts.length - 1].push("THE BASICS");
-                            posts[posts.length - 1].push("Each room has a situation and you need to make the right decision and stay safe online. Be careful! Each decision has a consequence. Click any key to enter a door when you are next to it.");
+                            posts[posts.length - 1].push("In each room, you face an everyday online situation. You need to make the right decisions to stay safe online. Be careful! Each decision has a consequence. Click any key to enter a door when you are next to it.");
                             break;
                         case 1:
                             posts[posts.length - 1].push("POSTS");
@@ -3777,7 +3737,7 @@ draw = function() {
                 txt = "With these updates, your phone is a little more secure...";
                 break;
             case 69:
-                txt = "A call brings you away from your computer. It's the bank! They need you password and credit card number urgently to reset your account or else you'll lose lots of money!\n\nYou're freaking out. Do you give them your info?";
+                txt = "A call brings you away from your computer. It's the bank! They need your password and credit card number urgently to reset your account or else you'll lose lots of money!\n\nYou're freaking out. Do you give them your info?";
                 break;
             case 71:
                 txt = "You find a BUNCH of old apps on your phone that you haven't used in months!\n\nShould you delete them? You have enough space to leave them and not worry about it.";
@@ -3850,10 +3810,10 @@ draw = function() {
         
         noStroke();
         
-        if (!lowGraphics) {
+        if (!lowGraphics || 1 === 1) {
             
             //draws the background blocks if not low graphics
-            for (var i in bkgrd) {
+            for (var i = 0; i < bkgrd.length; i ++) {
                 
                 noStroke();
                 
@@ -3867,14 +3827,19 @@ draw = function() {
                 
                 //draws
                 fill(40, 40, 40, bkgrd[i][4]);
+                stroke(40, 40, 40, bkgrd[i][4]);
+                strokeWeight(3);
                 
                 if (light) {
                     
                     fill(35, 205, 217, bkgrd[i][4]);
+                    stroke(35, 205, 217, bkgrd[i][4]);
                     
                 }
                 
-                rect(bkgrd[i][0] + bkgrd[i][2], bkgrd[i][1] + bkgrd[i][3], 1.1*bkgrd[i][4]/5.75, 1.1*bkgrd[i][4]/5.75);
+                rect(bkgrd[i][0] + bkgrd[i][2], bkgrd[i][1] + bkgrd[i][3], 1.1*bkgrd[i][4]/5.75 / 2, 1.1*bkgrd[i][4]/5.75 / 2);
+                noStroke();
+                
                 
             }
             
@@ -4105,33 +4070,13 @@ CONFUSING ARRAYS!
         //draws blocks
         for (var i in blocks) {
             
-            top = true;
-            
-            //goes through blocks to see if anything is directly above it
-            for (var j in blocks) {
-                
-                if (i !== j & blocks[i][0] === blocks[j][0] & blocks[i][1] === (blocks[j][1] + 40)) {
-                    
-                    top = false;
-                    
-                }
-                
-            }
-            
             //if the block is within the y translate
             if (blocks[i][1] > -(-constrain(player[1] - 200, -10000, -50) - 50) - 10 - blocks[i][3] && blocks[i][1] < -(-constrain(player[1] - 200, -10000, -50) - 50) + 450) {
                 
                 if (lowGraphics) {
                     
                     //basic block
-                    fill(147, 204, 196); //light blue background
-                    // noStroke();
-                    stroke(255, 0, 0);
-                    strokeWeight(1);
-                    
-                    rect(blocks[i][0] - 2, blocks[i][1] - 2, blocks[i][2] + 4, blocks[i][3] + 4);
-                    
-                    noStroke();
+                    drawBlock(blocks[i][0], blocks[i][1], blocks[i][2], blocks[i][3], true);
                     
                 } else {
                     
@@ -4443,7 +4388,7 @@ CONFUSING ARRAYS!
                     text("These posts have special cybersecurity tips!", 25, 20, 290, 200);
                     
                     //if player went to the post, next stage
-                    if (onPost) {
+                    if (onPost || levelNum > 2) {
                         
                         stage ++;
                         
@@ -4677,7 +4622,9 @@ CONFUSING ARRAYS!
         }
         
         $(window).blur(function(){
-            page = "pause";
+            if (page === "game") {
+                page = "pause";
+            }
         });
         
     }
