@@ -48,10 +48,10 @@
 		<div class="loader"></div>
 		<div id="header"></div>
 		
-		<div id="content">
+		<div id="content" style="width: 1000px;">
 			<h2 style="margin-bottom: 5px;">CYBER CHAMPION</h2>
 			<p style="font-size: 20px; margin-top: 5px;">Please take a <a href="https://goo.gl/forms/A6fDUy8h1j1iFPNq1" style="color:#0645AD">quick survey</a> to help us improve this game!</p>
-			<canvas id="mycanvas" tabindex="0" width="600" height="600" style="image-rendering: -webkit-optimize-contrast !important;"></canvas>
+			<canvas id="mycanvas" tabindex="0" width="1000" height="400" style="image-rendering: -webkit-optimize-contrast !important;"></canvas>
 			<h3>Instructions</h3>
 			<p>Cyber Champion is an interactive web-based game which teaches kids and teens the importance of cybersecurity.</p>
 			<p>In each room, use the arrow keys to move around and press any key to enter a door. Each door corresponds to a decision, so read the scenario before continuing!</p>
@@ -67,7 +67,7 @@
         
         with (processingInstance) {
             
-            size(600, 600);
+            size(1000, 400);
 {
 /**
 
@@ -151,7 +151,7 @@ var bkgrd = [];
 //adds to the bkgrd array
     
 for (var j = -50; j < 450; j += 50) {
-    for (var i = -50; i < 650; i += 50) {    
+    for (var i = -25; i < 600; i += 50) {    
         bkgrd.push([i, j, random(-3, 3), random(-3, 3), 155 - dist(i*0.66 + 17.5, j, (player[0] + 17.5)*0.66, player[1])/1.6]);
     }
 }
@@ -265,6 +265,19 @@ keyReleased = function() {
             
             //changes level, resets
             levelNum = doors[x][3];
+            
+            if (doors[x][2] === "THE BEGINNING") {
+                // access[2][0] & access[10][0] & access[36][0] & access[63][0] & access[73][0] & access[15][0] & access[40][0] & access[45][0] & access[68][0]
+                var winLvls = [2, 10, 36, 63, 73, 15, 40, 45, 68];
+                var count = 0;
+                for (var k in winLvls) {
+                    if (access[winLvls[k]][0]) count ++;
+                }
+                var message = "Congrats! You've found " + count + " endings. " + (9 - count) + " to go.";
+                if (count === 9) message = " All 9 endings? You're the Cyber Champion!";
+                notify.push([message, 500]);
+            }
+            
             first = true;
             levelTransition = 255;
             
@@ -623,10 +636,18 @@ var maps = [
     
     [
         
-        "-1-------------",
-        "------------2--",
-        "***---**-------",
-        "-----------****",
+        "--1------------",
+        "---------------",
+        "-************--",
+        "---------------",
+        "--------------*",
+        "------*********",
+        "---------------",
+        "--**-----------",
+        "---------------",
+        "*-----------2--",
+        "*-----***------",
+        "****-------****",
         "-----------****",
         "--------*******",
         "--------*******",
@@ -1812,16 +1833,18 @@ var stageT = 0; //last stage, timer
 var lowGraphics = false; //use simpler graphics
 
 var pmillis = millis();
-var delta = 0;
-var totalT = 0;
 var t = 0;
+
+var mouseInRect = function(x, y, w, h) {
+    return mouseX >= x && mouseX <= x + w && mouseY >= y && mouseY <= y + h;
+}
 
 mouseReleased = function() {
     
     if (page === "menu") { //main menu
         
         //middle button
-        if (dist(mouseX, mouseY, 300, 370) < 75) {
+        if (dist(mouseX, mouseY, 500, 250) < 75) {
             
             ///game page
             page = "game";
@@ -1832,14 +1855,14 @@ mouseReleased = function() {
             
             levelTransition = 255;
             
-        } else if (dist(mouseX, mouseY, 150, 370) < 50) {
+        } else if (dist(mouseX, mouseY, 350, 250) < 50) {
             //left button
             
             page = "achievements";
             
             levelTransition = 255;
             
-        } else if (dist(mouseX, mouseY, 450, 370) < 50) {
+        } else if (dist(mouseX, mouseY, 650, 250) < 50) {
             //right button
             
             page = "settings";
@@ -1847,7 +1870,7 @@ mouseReleased = function() {
             levelTransition = 255;
             
             //450, 50, 102
-        } else if (mouseX > 470 & mouseX < 568 & mouseY > 550 & mouseY < 584) {
+        } else if (mouseX > 870 & mouseX < 968 & mouseY > 350 & mouseY < 384) {
             
             light = !light;
 			localStorage.setItem("cyberchampion_light", light.toString());
@@ -1856,38 +1879,51 @@ mouseReleased = function() {
         
     } else if (page === "game") {
         
-        if (dist(mouseX, mouseY, 550, 50) < 20) {
+        if (dist(mouseX, mouseY, 950, 50) < 20) {
             
             page = "pause"; //goes to pause page
             
+        } else {
+            for (var i in doors) {
+                if (doors[i][2] !== "end") {
+                    if (player[0] > (doors[i][0] - player[2] - 10) & player[0] < (doors[i][0] + 50) & player[1] > (doors[i][1] - player[3]) & player[1] < (doors[i][1] + 80) && mouseInRect(doors[i][0] - 10, doors[i][1] - constrain(player[1] - 200, -10000, -50) - 50, 60, 80)) {
+                        lastLevel = levelNum; //reset last level
+
+                        //changes level, resets
+                        levelNum = doors[i][3];
+                        first = true;
+                        levelTransition = 255;
+                    }
+                }
+            }
         }
         
     } else if (page === "pause") {
         
         //pause menu, switches pages based on click
-        if (mouseX > 200 & mouseX < 400 & mouseY > 280 & mouseY < 310) {
+        if (mouseInRect(400, 180, 200, 30)) {
             
             page = "game"; //back to game
             levelTransition = 255;
             
-        } else if (mouseX > 200 & mouseX < 400 & mouseY > 325 & mouseY < 355) {
+        } else if (mouseX > 400 & mouseX < 600 & mouseY > 225 & mouseY < 255) {
             
             page = "game"; //back to beginning of game
             levelNum = 0;
             first = true;
             levelTransition = 255;
             
-        } else if (mouseX > 200 & mouseX < 400 & mouseY > 370 & mouseY < 400) {
+        } else if (mouseX > 400 & mouseX < 600 & mouseY > 270 & mouseY < 300) {
             
             page = "menu"; //back to menu
             levelTransition = 255;
             
         }
         
-    } else if (page === "settings" | page === "achievements") {
+    } else if (page === "settings" || page === "achievements") {
         
         //back button for both of them
-        if (mouseX > 20 & mouseX < 60 & mouseY > 20 & mouseY < 60) {
+        if (mouseX > 20 & mouseX < 60 & mouseY > 25 & mouseY < 65) {
             
             page = "menu";
             levelTransition = 255;
@@ -1896,19 +1932,13 @@ mouseReleased = function() {
         if (page === "settings") {
             
             //switches variable values
-            if (mouseX > 330 & mouseX < 420 & mouseY > 235 & mouseY < 265) {
-                
-                lowGraphics = !lowGraphics;
-				localStorage.setItem("cyberchampion_lowGraphics", lowGraphics.toString());
-                
-            }
-            if (mouseX > 330 & mouseX < 420 & mouseY > 285 & mouseY < 315) {
+            if (mouseX > 550 & mouseX < 640 & mouseY > 210 & mouseY < 240) {
                 
                 usePosts = !usePosts;
 				localStorage.setItem("cyberchampion_usePosts", usePosts.toString());
                 
             }
-            if (mouseX > 330 & mouseX < 420 & mouseY > 335 & mouseY < 365) {
+            if (mouseX > 550 & mouseX < 640 & mouseY > 260 & mouseY < 290) {
                 
                 tutorial = !tutorial;
 				localStorage.setItem("cyberchampion_tutorial", tutorial.toString())
@@ -1917,7 +1947,7 @@ mouseReleased = function() {
             }
             
             //rotates text font
-            if (mouseX > 460 & mouseX < 475 & mouseY > 192.5 & mouseY < 207.5) {
+            if (mouseX > 680 & mouseX < 695 & mouseY > 167.5 & mouseY < 182.5) {
                 
                 if (font === "Open Sans") {
                     
@@ -1935,7 +1965,7 @@ mouseReleased = function() {
                 
                 localStorage.setItem("cyberchampion_font", font);
                 
-            } else if (mouseX > 275 & mouseX < 290 & mouseY > 192.5 & mouseY < 207.5) {
+            } else if (mouseX > 495 & mouseX < 510 & mouseY > 167.5 & mouseY < 182.5) {
                 
                 if (font === "Open Sans") {
                     
@@ -1959,7 +1989,12 @@ mouseReleased = function() {
         
     } else if (page === "end") {
         
-        if (mouseX > 100 & mouseX < 200 & mouseY > 550 & mouseY < 580) {
+        /*
+        rect(550, 350, 100, 30); 1
+        rect(860, 350, 100, 30); 3
+        rect(690, 350, 120, 30); 2
+        */
+        if (mouseX > 550 & mouseX < 650 & mouseY > 350 & mouseY < 380) {
             
             page = "game"; //changes to game page
             levelNum = 0; //beginning
@@ -1971,12 +2006,12 @@ mouseReleased = function() {
             
             levelTransition = 255;
             
-        } else if (mouseX > 400 & mouseX < 500 & mouseY > 550 & mouseY < 580) {
+        } else if (mouseX > 860 & mouseX < 960 & mouseY > 350 & mouseY < 380) {
             
             page = "menu"; //goes to main
             levelTransition = 255;
             
-        } else if (mouseX > 240 & mouseX < 360 & mouseY > 550 & mouseY < 580) {
+        } else if (mouseX > 690 & mouseX < 810 & mouseY > 350 & mouseY < 380) {
             
             page = "game"; //game page
             levelNum = lastLevel; //last level (another chance)
@@ -2218,43 +2253,18 @@ var drawDoor = function(x, y, dark) {
 
 var drawBlock = function(x, y, w, h, simple) {
     
-    if (simple) {
-        fill (118, 166, 159);
-        if (light) {
-            fill(147, 204, 196); //light blue background
-        }
-        noStroke();
-        
-        // curved bottom block
-        beginShape();
-        vertex(x + w + 2, y - 2);
-        vertex(x - 2, y - 2);
-        vertex(x - 2, y + h - 2);
-        vertex(x + 2, y + h + 2);
-        vertex(x + w - 2, y + h + 2);
-        vertex(x + w + 2, y + h - 2);
-        endShape();
-        
-        // snow
-        fill (255, 255, 255);
-        rect(x - 3, y - 2, w + 6, 10, 3);
-    } else {
-        
-        //draws the base block
-        var b = (light ? lblockImage : dblockImage);
+    //draws the base block
+    var b = (light ? lblockImage : dblockImage);
 
-        for (var i = x; i < x + w; i += 40) {
-            for (var j = y; j < y + h; j += 40) {
-                image(b, i, j);
-            }
-        }
-        b = (light ? ltopImage : dtopImage);
-        for (var i = x; i < x + w; i += 40) {
-            image(b, i - 5, y - 5);
+    for (var i = x; i < x + w; i += 40) {
+        for (var j = y; j < y + h; j += 40) {
+            image(b, i, j);
         }
     }
-    
-    
+    // snow
+    fill (255, 255, 255);
+    noStroke();
+    rect(x - 3, y - 2, w + 6, 6, 3);
 };
 
 var drawMedal = function(x, y, size, gold, message, i) {
@@ -2267,13 +2277,9 @@ var drawMedal = function(x, y, size, gold, message, i) {
         //simple method of estimating text width when drawn
         var upper = 0;
         for (var i in message) {
-            
             if (message[i] === message[i].toUpperCase()) {
-                
                 upper ++;
-                
             }
-            
         }
         
         var w = message.length*6 + upper*5;
@@ -2282,13 +2288,13 @@ var drawMedal = function(x, y, size, gold, message, i) {
         
         //draws rectangle around message
         fill(0, 0, 0);
-        rect(295 - w/2, 545, w + 10, h + 10);
+        rect(495 - w/2, 345, w + 10, h + 10);
         fill(255, 255, 255);
-        rect(300 - w/2, 550, w, h);
+        rect(500 - w/2, 350, w, h);
         
         fill(0);
         textSize(15);
-        text(message, 300, 550 + h/2);
+        text(message, 500, 350 + h/2);
         
     }
     
@@ -2469,7 +2475,7 @@ if (localStorage.getItem("cyberchampion_access") !== null) {
 
 // modify this to force a full reset in game
 var target = "a";    
-if (localStorage.getItem("cyberchampion_update") !== target) {
+if (localStorage.getItem("cyberchampion_update") === target) {
     if (localStorage.getItem("cyberchampion_usePosts") !== null) {
         usePosts = ("true" === localStorage.getItem("cyberchampion_usePosts"));
     }
@@ -2493,8 +2499,6 @@ localStorage.setItem("cyberchampion_font", font);
 
 draw = function() {
     
-    delta = (millis() - pmillis)/16;
-    totalT = millis() / 16;
     pmillis = millis();
     
     textFont(createFont(font));
@@ -2507,18 +2511,18 @@ draw = function() {
         
         fill(255, 255, 255);
         textSize(47);
-        text("cyber champion", 300, 160); //main title
+        text("cyber champion", 500, 110); //main title
         
         textSize(20);
-        text("LIGHT MODE", 520, 527);
+        text("LIGHT MODE", 920, 327);
         strokeWeight(1);
-        flip(470, 550, 102, light);
+        flip(870, 350, 102, light);
         noStroke();
         
         pushMatrix();
         
-        translate(0, -30);
-        
+        translate(200, -150);
+
         //big circle buttons
         ellipse(300, 400, 150, 150);
         ellipse(150, 400, 100, 100);
@@ -2630,27 +2634,26 @@ draw = function() {
         textAlign(CENTER, CENTER);
         
         textSize(40);
-        text("settings", 300, 80);
+        text("settings", 500, 85);
         
         textSize(16);
-        text(font.toUpperCase(), 375, 200);
+        text(font.toUpperCase(), 595, 175);
         
         textAlign(RIGHT, CENTER);
         
+        // 220, -50
         textSize(25);
-        text("FONT", 225, 200);
-        text("LOW GRAPHICS", 225, 250);
-        text("DISPLAY POSTS", 225, 300);
-        text("TUTORIAL", 225, 350);
+        text("FONT", 445, 175);
+        text("DISPLAY POSTS", 445, 225);
+        text("TUTORIAL", 445, 275);
         
         //arrow buttons to change font
-        arrow(275, 192.5, 15, true);
-        arrow(460, 192.5, 15, true, true);
+        arrow(495, 167.5, 15, true);
+        arrow(680, 167.5, 15, true, true);
         
         //switches for graphics, posts, tutorial
-        flip(330, 235, 90, lowGraphics);
-        flip(330, 285, 90, usePosts);
-        flip(330, 335, 90, tutorial);
+        flip(550, 210, 90, usePosts);
+        flip(550, 260, 90, tutorial);
         
     } else if (page === "achievements") { //main menu page
         
@@ -2662,7 +2665,7 @@ draw = function() {
         
         fill(255, 255, 255);
         textSize(40);
-        text("achievements", 300, 80);
+        text("achievements", 500, 60);
         
         //starts without text
         displayText = false;
@@ -2671,35 +2674,35 @@ draw = function() {
         for (var i = 0; i < 2; i ++) {
         
             //top row
-            drawMedal(100, 175, 18, access[2][0], "ENDING: Easy Way Out");
-            drawMedal(200, 175, 18, access[10][0], "ENDING: Pro Reporter");
+            drawMedal(75, 175, 18, access[2][0], "ENDING: Easy Way Out");
+            drawMedal(175, 175, 18, access[10][0], "ENDING: Pro Reporter");
             
-            drawMedal(300, 175, 18, access[36][0], "ENDING: Well Advised");
+            drawMedal(275, 175, 18, access[36][0], "ENDING: Well Advised");
             
-            drawMedal(400, 175, 18, access[63][0], "ENDING: Antivirus");
-            drawMedal(500, 175, 18, access[73][0], "ENDING: Super Clean");
+            drawMedal(125, 250, 18, access[63][0], "ENDING: Antivirus");
+            drawMedal(225, 250, 18, access[73][0], "ENDING: Super Clean");
             
             //bottom row
-            drawMedal(150, 250, 18, access[15][0], "ENDING: Not So Naive");
+            drawMedal(325, 250, 18, access[15][0], "ENDING: Not So Naive");
             
-            drawMedal(250, 250, 18, access[40][0], "ENDING: Better Safe Than Sorry");
-            drawMedal(350, 250, 18, access[45][0], "ENDING: A True Friend");
+            drawMedal(175, 325, 18, access[40][0], "ENDING: Better Safe Than Sorry");
+            drawMedal(275, 325, 18, access[45][0], "ENDING: A True Friend");
             
-            drawMedal(450, 250, 18, access[68][0], "ENDING: Up To Date!");
+            drawMedal(375, 325, 18, access[68][0], "ENDING: Up To Date!");
             
             //needs all the endings
-            drawMedal(300, 435, 80, access[2][0] & access[10][0] & access[36][0] & access[63][0] & access[73][0] & access[15][0] & access[40][0] & access[45][0] & access[68][0], "CYBER CHAMPION!");
+            drawMedal(500, 235, 80, access[2][0] & access[10][0] & access[36][0] & access[63][0] & access[73][0] & access[15][0] & access[40][0] & access[45][0] & access[68][0], "CYBER CHAMPION!");
             
             
             //next row, for falling off of a level
-            drawMedal(120, 400, 18, (maxDeaths >= 5 ? true : false), "Fall off the same level 5 times");
-            drawMedal(75, 450, 18, (maxDeaths >= 10 ? true : false), "Fall off the same level 10 times");
-            drawMedal(165, 450, 18, (maxDeaths >= 50 ? true : false), "Fall off the same level 50 times");
+            drawMedal(700, 200, 18, (maxDeaths >= 5 ? true : false), "Fall off the same level 5 times");
+            drawMedal(800, 200, 18, (maxDeaths >= 10 ? true : false), "Fall off the same level 10 times");
+            drawMedal(900, 200, 18, (maxDeaths >= 50 ? true : false), "Fall off the same level 50 times");
             
             //next row, for losing
-            drawMedal(480, 400, 18, (badEnds >= 1 ? true : false), "Lose for the first time");
-            drawMedal(435, 450, 18, (badEnds >= 5 ? true : false), "Lose 5 different ways");
-            drawMedal(525, 450, 18, (badEnds >= 20 ? true : false), "Lose 20 different ways");
+            drawMedal(650, 300, 18, (badEnds >= 1 ? true : false), "Lose for the first time");
+            drawMedal(750, 300, 18, (badEnds >= 5 ? true : false), "Lose 5 different ways");
+            drawMedal(850, 300, 18, (badEnds >= 20 ? true : false), "Lose 20 different ways");
             
             displayText = true; //displays text in 2nd loop run
             
@@ -2714,24 +2717,25 @@ draw = function() {
         textSize(40);
         fill(255, 255, 255, (frameCount - endTime)*10);
         textAlign(CENTER, CENTER);
-        text("GAME OVER", 300, 75);
+        text("GAME OVER", 500, 60);
         
         //button backgrounds
-        rect(100, 550, 100, 30);
-        rect(400, 550, 100, 30);
-        rect(240, 550, 120, 30);
+        rect(550, 350, 100, 30);
+        rect(860, 350, 100, 30);
+        rect(690, 350, 120, 30);
         
         //text set on game page when you lose
         textAlign(LEFT, TOP);
         textSize(17);
-        text(endText, 25, 135, 550, 450); //the main text
+        text(endText.substring(0, endText.indexOf("HOW")), 25, 110, 450, 450); //the main text
+        text(endText.substring(endText.indexOf("HOW")), 525, 110, 450, 450); //the main text
         
         textAlign(CENTER, CENTER);
         fill(0, 0, 0);
         textSize(14);
-        text("MAIN MENU", 450, 565);
-        text("PLAY AGAIN", 150, 565);
-        text("BACK ONE STEP", 300, 565);
+        text("MAIN MENU", 910, 365);
+        text("PLAY AGAIN", 600, 365);
+        text("BACK ONE STEP", 750, 365);
         
         //goes through all the notifications
         for (var i in notify) {
@@ -2783,17 +2787,17 @@ draw = function() {
         rect(0, 0, width, height); //covers the entire thing
         
         fill(light ? 28 : 94, 93, 94, 20); //light blue, slowly fades in
-        rect(120, 180, 360, 240);
+        rect(320, 80, 360, 240);
         
         fill(255, 255, 255, 20);
         textAlign(CENTER, CENTER);
         textSize(35);
-        text("PAUSED", 300, 230);
+        text("PAUSED", 500, 130);
         
         //draws buttons
-        rect(200, 280, 200, 30);
-        rect(200, 325, 200, 30);
-        rect(200, 370, 200, 30);
+        rect(400, 180, 200, 30);
+        rect(400, 225, 200, 30);
+        rect(400, 270, 200, 30);
         
         //button text
         fill(0, 0, 0, 100);
@@ -2805,7 +2809,7 @@ draw = function() {
             
         }
         
-        text("CONTINUE\n\nRESTART\n\nMENU", 300, 340);
+        text("CONTINUE\n\nRESTART\n\nMENU", 500, 240);
         
     } else if (first) {
         
@@ -3822,8 +3826,8 @@ draw = function() {
                 bkgrd[i][4] = 200 - dist((bkgrd[i][0] + 17.5)*0.66, bkgrd[i][1] + 17.5 - (-constrain(player[1] - 200, -10000, -50) - 50), (player[0] + player[2]/2)*0.66, player[1] + player[3]/2)/1.94;
                 
                 //updates width and height
-                bkgrd[i][2] = 4*cosine(totalT*3 + i/5);
-                bkgrd[i][3] = 6*sine(totalT*3.3 + i/1.1);
+                bkgrd[i][2] = 4*cosine(frameCount*3 + i/5);
+                bkgrd[i][3] = 6*sine(frameCount*3.3 + i/1.1);
                 
                 //draws
                 fill(40, 40, 40, bkgrd[i][4]);
@@ -3895,7 +3899,7 @@ draw = function() {
                     player[1] = blocks[i][1] + blocks[i][3];
                     
                 }
-                if (player[0] > (blocks[i][0] - player[2] + 0.5) & player[0] < (blocks[i][0] + blocks[i][2] - 0.5) & player[1] <= (blocks[i][1]) & player[1] >= (blocks[i][1] - player[3] - player[5] * delta)) {
+                if (player[0] > (blocks[i][0] - player[2] + 0.5) & player[0] < (blocks[i][0] + blocks[i][2] - 0.5) & player[1] <= (blocks[i][1]) & player[1] >= (blocks[i][1] - player[3] - player[5])) {
                     
                     player[7] = false; //down is closed
                     player[1] = blocks[i][1] - player[3];
@@ -3920,15 +3924,15 @@ draw = function() {
         //movements are not sudden!
         if (keys[LEFT] & !keys[RIGHT]) {
             
-            player[4] -= 0.3 * delta;
+            player[4] -= 0.3;
             
         } else if (keys[RIGHT] & !keys[LEFT]) {
             
-            player[4] += 0.3 * delta;
+            player[4] += 0.3;
             
         } else if (abs(player[4]) > 0.01) {//doesnt slice for inf
             
-            player[4] *= (1 - 0.09 * delta);
+            player[4] /= 1.1;
             
         } else {
             
@@ -3943,15 +3947,15 @@ draw = function() {
         
         if (player[7]) {
             //applies gravity!!!
-            player[5] += 0.27 * delta;
+            player[5] += 0.27;
         }
         
         //moves player
-        player[0] += player[4] * delta;
-        player[1] += player[5] * delta;
+        player[0] += player[4];
+        player[1] += player[5];
         
         //constrains player to be on the screen
-        player[0] = constrain(player[0], 0, width - player[2]);
+        player[0] = constrain(player[0], 0, 600 - player[2]);
         
         //if player fell off
         if (player[1] > 400) {
@@ -4114,11 +4118,11 @@ CONFUSING ARRAYS!
             }
             
             //gravity
-            confetti[i][3] += 0.04 * delta;
+            confetti[i][3] += 0.04;
             
             //increases by x and y velocity
-            confetti[i][0] += confetti[i][2] * delta;
-            confetti[i][1] += confetti[i][3] * delta;
+            confetti[i][0] += confetti[i][2];
+            confetti[i][1] += confetti[i][3];
             
             //if its off the screen
             if (confetti[i][1] > 400 | confetti[i][0] < -100 | confetti[i][0] > 700) {
@@ -4135,14 +4139,16 @@ CONFUSING ARRAYS!
         
         //white background block at bottom
         fill(255);
-        rect(0, 400, 600, 200);
+        rect(600, 200, 400, 200);
+        fill(0);
+        // rect(600, 200, 5, 200);
         
         fill(0, 0, 0);
         textAlign(CENTER, CENTER);
         textSize(15);
         
         //description text
-        text(txt, 25, 400, 350, 200);
+        text(txt, 625, 205, 350, 200);
         
         fill(255, 255, 255, (startTime - frameCount) + 255);
         textSize(30);
@@ -4152,13 +4158,15 @@ CONFUSING ARRAYS!
         
         //pause button
         fill(255, 255, 255, 150);
-        ellipse(550, 50, 40, 40);
-        rect(542, 41, 6, 18);
-        rect(553, 41, 6, 18);
+        ellipse(950, 50, 40, 40);
+        rect(942, 41, 6, 18);
+        rect(953, 41, 6, 18);
         
         //black background at bottom right
         fill(0, 0, 0);
-        rect(400, 400, 200, 200);
+        //rect(600, 0, 400, 200);
+        fill(255, 255, 255);
+        rect(600, 0, 3, 200);
         
         //controls doors
         for (var i in doors) {
@@ -4172,7 +4180,7 @@ CONFUSING ARRAYS!
                 var colors = [color(255, 0, 255, 200), color(255, 0, 0, 200), color(255, 255, 0, 200), color(255, 153, 0, 200), color(0, 255, 0, 200), color(255, 0, 0, 200), color(255, 255, 255, 200)];
                 
                 //if one of the doors goes to beginning (win!)
-                if (doors[i][2] === "THE BEGINNING" & frameCount % 3 === 0) {
+                if (doors[i][2] === "THE BEGINNING" && frameCount % 3 === 0) {
                     
                     //add confetti going both ways
                     confetti.push([random(0, 500), -(-constrain(player[1] - 200, -10000, -50) - 50)-100, (random(1) < 0.5 ? -1 : 1) * (random(0, 2) + 1), random(0, 4), random(1, 8), colors[floor(random(0, colors.length))]]);
@@ -4196,7 +4204,7 @@ CONFUSING ARRAYS!
                     
                     //writes the door's description at bottom
                     fill(255, 255, 255);
-                    text(doors[i][2], 415, 400, 170, 200);
+                    text(doors[i][2] + "\n\nPress ENTER to select.", 675, 0, 270, 200);
                     
                 }
                 
@@ -4212,7 +4220,7 @@ CONFUSING ARRAYS!
             
             textAlign(CENTER, CENTER);
             textSize(15);
-            text("Go to a door to choose what to do next!", 415, 400, 170, 200);
+            text("Go to a door to choose what to do next!", 715, 0, 170, 200);
             
         }
         
@@ -4223,27 +4231,27 @@ CONFUSING ARRAYS!
             for (var i in posts) {
                 
                 //if player is on the post
-                if (player[0] > (posts[i][0] - player[2]) & player[0] < (posts[i][0] + 40) & player[1] > (posts[i][1] - player[3]) & player[1] < (posts[i][1] + 40)) {
+                if (player[0] > (posts[i][0] - player[2]) & player[0] < (posts[i][0] + 40) & player[1] > (posts[i][1] - player[3]) &    player[1] < (posts[i][1] + 40)) {
                     
                     //sets for reference
                     onPost = true;
                     
                     //brown overlay at bottom
                     fill(138, 104, 44, 230);
-                    rect(0, 400, 400, 200);
+                    rect(600, 200, 400, 200);
                     
                     textAlign(CENTER, CENTER);
                     
                     //title
                     fill(255);
                     textSize(25);
-                    text(posts[i][2], 200, 440);
+                    text(posts[i][2], 800, 240);
                     
                     textAlign(LEFT, TOP);
                     
                     //description
                     textSize(15);
-                    text(posts[i][3], 15, 465, 370, 225);
+                    text(posts[i][3], 615, 265, 370, 225);
                     
                 }
                 
@@ -4269,19 +4277,9 @@ CONFUSING ARRAYS!
                     stroke(0);
                     noFill();
                     
-                    //outlines the level description
-                    //(if the post text isnt there!)
-                    if (!onPost) {
-                        
-                        rect(15, 415, 370, 170);
-                        
-                    }
-                    
-                    //line to level description
-                    stroke(255);
-                    line(180, 240, 180, 380);
                     
                     //message box, semi transparent
+                    stroke(255);
                     fill(0, 0, 0, 200);
                     rect(20, 110, 300, 120);
                     
@@ -4302,15 +4300,8 @@ CONFUSING ARRAYS!
                 case 1:
                     
                     strokeWeight(5);
-                    stroke(255, 255, 255);
-                    noFill();
-                    
-                    //outlines door description text
-                    rect(415, 415, 170, 170);
-                    
                     //line to door text
                     stroke(255, 255, 255);
-                    line(480, 240, 480, 380);
                     
                     //message box
                     fill(0, 0, 0, 200);
@@ -4320,7 +4311,7 @@ CONFUSING ARRAYS!
                     
                     fill(255);
                     textAlign(CENTER, CENTER);
-                    text("Read the choice and hit SPACE to enter. Or, go to the other door.\n\nPress SPACE.", 285, 70, 290, 200);
+                    text("Read the choice and hit ENTER to continue. Or, go to the other door.\n\nPress ENTER.", 285, 70, 290, 200);
                     
                     //if the level changed (from 0 start)
                     if (levelNum !== 0) {
@@ -4360,22 +4351,6 @@ CONFUSING ARRAYS!
                     
                     stroke(255, 255, 255);
                     
-                    //arrows to the post on 3 levels
-                    if (levelNum === 0) {
-                        
-                        line(335, 125, 418, 125);
-                        line(420, 265, 420, 127);
-                        
-                    } else if (levelNum === 1) {
-                        
-                        line(335, 90, 380, 90);
-                        
-                    } else if (levelNum === 2) {
-                        
-                        line(180, 305, 180, 195);
-                        
-                    }
-                    
                     //the text box
                     fill(0, 0, 0, 200);
                     rect(20, 60, 300, 120);
@@ -4385,7 +4360,7 @@ CONFUSING ARRAYS!
                     //actual text on text box 
                     fill(255);
                     textAlign(CENTER, CENTER);
-                    text("These posts have special cybersecurity tips!", 25, 20, 290, 200);
+                    text("These posts have special cybersecurity tips!\n\nRun to a post!", 25, 20, 290, 200);
                     
                     //if player went to the post, next stage
                     if (onPost || levelNum > 2) {
@@ -4424,6 +4399,7 @@ CONFUSING ARRAYS!
                         stage = 0;
                         tutorial = false;
 						localStorage.setItem("cyberchampion_tutorial", "false");
+                        console.log(false);
                         
                     } else {
                         
@@ -4477,10 +4453,10 @@ CONFUSING ARRAYS!
             fill(0);
             
             //closes it up
-            for (var i = 570; i >= 0; i -= 30) {
+            for (var i = 420; i >= 0; i -= 30) {
                 
-                rect(600 - endTransition*3 + i, i, endTransition*3 - i, 30);
-                rect(0, i, endTransition*3 - (570 - i), 30);
+                rect(1000 - endTransition*5 + i + 210, i, endTransition*5 - i, 30);
+                rect(0, i, endTransition*5 - (1000 - i - 210), 30);
                 
             }
             
@@ -4495,10 +4471,10 @@ CONFUSING ARRAYS!
                 switch (levelNum) {
             
                     case 7:
-                        endText = "You didn't download the game, you downloaded a virus which took control of your computer! You were on a PHISHING WEBSITE!\n\nYou were a victim of what is known as a phishing website. They pretend to be a real website to lure you in, and when you access their page, there can be dangerous links and viruses!\n\nHOW CAN I PREVENT THIS\n\nYou were supplied with a few clues. Look out for these:\n - The site takes a while to load\n - The site looks weird or suspicious\n - The url doesn't seem right (check for things like a 0 replacing an O)";
+                        endText = "You didn't download the game, you downloaded a virus which took control of your computer! You were on a PHISHING WEBSITE!\n\nYou were a victim of what is known as a phishing website. They pretend to be a real website to lure you in, and when you access their page, there can be dangerous links and viruses!\n\nHOW CAN I PREVENT THIS\n\nYou were supplied with a few clues. Look out for these:\n - The site takes a while to load\n - The site looks weird or suspicious\n - The url doesn't seem right (http://amazonn.com or http://amaz0n.com)";
                         break;
                     case 9:
-                        endText = "Turns out, the spammer was a 24 year old who had nothing better to do with his time. He hacked into your computer and took complete control. After important files were deleted, you couldn't use your computer anymore!\n\nYou were a victim of an internet troll, who is a person who has nothing better to do than to mess with others through the internet. Sadly, they're very common and they mess with people a lot. Just understand that the average age of a gamer is 31 years old, so you can't expect to outsmart them.\n\nHOW CAN I PREVENT THIS\n\n - REPORT THEM!\n - Just ignore them";
+                        endText = "Turns out, the spammer was a 24 year old who had nothing better to do with his time. He hacked into your computer and took complete control. After important files were deleted, you couldn't use your computer anymore!\n\nYou were a victim of an internet troll, who is a person who has nothing better to do than to mess with others through the internet. Sadly, they're very common and they mess with people a lot. Just understand that the average age of a gamer is 31 years old, so you can't expect to outsmart them.\n\nHOW CAN I PREVENT THIS\n\n - REPORT THEM!\n - Just ignore them\n\nASK YOUR TEACHER: discuss how to deal with internet trolls and stay safe in video games";
                         break;
                     case 12:
                         endText = "The website you went for to get the hacks unleashed a virus on your computer. All you did was go to the website!\n\nSites can be made so that a virus is downloaded upon entry! It's hard to know which sites do that, so only go to well known sites that you trust. Website in another language? Stay away. You've never heard of it? Don't even think about going there!\n\nHOW CAN I PREVENT THIS\n\n - If you haven't heard of a site, google them! Something like \"Is iwillhackyou.com trustable?\" can help you a lot!\n - Don't try and do something unethical. If a site helps you hack or use a virus, then it might be trying to hack you!";
@@ -4513,7 +4489,7 @@ CONFUSING ARRAYS!
                         endText = "The cybercriminal who sent you the friend request ended up impersonating you with all the information you had in your \"About.\" He was able to hack a bunch of your friends and ruined your reputation. \n\nIdentity theft is much easier once you are a \"friend\" on Facebook. In addition, that person could have been a stalker. \n\nHOW CAN I PREVENT THIS: \n - Make sure all your Facebook friends are people you know personally. \n - Adding someone on Facebook is like inviting them to your house, make sure you trust them!";
                         break;
                     case 28:
-                        endText = "You saw no harm in putting all phone number and where you live, and for a while it was fine. Eventually, though, some random person found your phone number and started sending you weird and annoying phone calls. A month later, your house was robbed. Your parents may have thought they were just unlucky, but you knew.\n\nPutting information like your phone number and where you live out on the public for anyone to see is always a bad idea! It makes you an easy target for troublemakers and stalkers.\n\nHOW CAN I PREVENT THIS:\n - Just don't put personal information on the internet. It's that simple";
+                        endText = "You saw no harm in putting all phone number and where you live, and for a while it was fine. Eventually, though, some random person found your phone number and started sending you weird and annoying phone calls. A month later, your house was robbed. Your parents may have thought they were just unlucky, but you knew.\n\nPutting information like your phone number and where you live out on the public for anyone to see is always a bad idea! It makes you an easy target for troublemakers and stalkers.\n\nHOW CAN I PREVENT THIS:\n - Just don't put personal information on the internet. It's that simple\n\nASK YOUR TEACHER: discuss geotagging on pictures and what information posting photos publicly can reveal";
                         break;
                     case 30:
                         endText = "When you come home from your vacation, a bunch of things are gone. Your TV, your computer, your router!!! \n\nIf you tell people that you are away from home, and where you live, then you're just inviting burglars to your home! After your posts, your home was just a sitting duck, waiting to be robbed. \n\nAlso, don't post other people's news unless they ask you too. If they didn't post it, there's a reason, and it's your job to respect that.\n\nHOW I CAN PREVENT THIS:\n - Don't post that you're away from home\n - Don't post other people's news";
@@ -4564,7 +4540,7 @@ CONFUSING ARRAYS!
                         endText = "Your bank account starts losing money. The hacker is buying things with your credit card! You cancel that credit card, but you've lost money already.\n\nYou got tricked by social engineering. The people calling you used a sense of urgency to convince you to give them the information without thinking!\n\nHOW CAN I PREVENT THIS:\n - Never make big decisions quickly!\n - NEVER give away passwords or your credit card number";
                         break;
                     case 72:
-                        endText = "The old apps build up and eventually there are a lot of old apps. One of them keeps crashing your phone and you have no idea which! You spend an hour cleaning through the apps.\n\nAnother problem with apps you don't use is that they could have your personal information, or they could have a virus. Less apps means less paths for a hacker to get to your phone.\n\nHOW CAN I PREVENT THIS:\n - Clean out old apps as soon as possible\n - Limit the permissions apps have";
+                        endText = "The old apps build up and eventually there are a lot of old apps. One of them keeps crashing your phone and you have no idea which! You spend an hour cleaning through the apps.\n\nAnother problem with apps you don't use is that they could have your personal information, and if an old app has a security hole, you could get a virus. Less apps means less paths for a hacker to get to your phone.\n\nHOW CAN I PREVENT THIS:\n - Clean out old apps as soon as possible\n - Limit the permissions apps have";
                         break;
                     default:
                         endText = "Bad move...";
