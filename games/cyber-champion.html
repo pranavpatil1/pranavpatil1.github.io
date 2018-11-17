@@ -120,7 +120,11 @@ var rot = function(input) {
 
 var page = "menu"; //game, end, menu, settings, achievements, pause?
 
+// toggles the brighter graphics style or darker graphics style (light blue vs black)
 var light = false;
+    
+// toggles the controls (true = jetpack, low effect of gravity, much easier, while false = normal platformer)
+var easyMode = false;
 
 var player = [240, 280, 25, 64, 0, 0, false, false, false, false, false]; //0x, 1y, 2w, 3h, 4xvel, 5yvel, 6up 7down 8left 9right (open), 10is jumping
 
@@ -1830,8 +1834,6 @@ var tutorial = true; //tutorial?
 var stage = 0; //stage of tutorial
 var stageT = 0; //last stage, timer
 
-var lowGraphics = false; //use simpler graphics
-
 var pmillis = millis();
 var t = 0;
 
@@ -1840,7 +1842,7 @@ var mouseInRect = function(x, y, w, h) {
 }
 
 mouseReleased = function() {
-    
+    // console.log(mouseX + ", " + mouseY);
     if (page === "menu") { //main menu
         
         //middle button
@@ -1869,11 +1871,20 @@ mouseReleased = function() {
             
             levelTransition = 255;
             
-            //450, 50, 102
         } else if (mouseX > 870 & mouseX < 968 & mouseY > 350 & mouseY < 384) {
             
             light = !light;
 			localStorage.setItem("cyberchampion_light", light.toString());
+            
+        } else if (mouseX > 30 & mouseX < 128 & mouseY > 350 & mouseY < 384) {
+            
+            easyMode = !easyMode;
+			localStorage.setItem("cyberchampion_easy", easyMode.toString());
+            
+            if (easyMode === true) {
+                tutorial = true;
+				localStorage.setItem("cyberchampion_tutorial", tutorial.toString())
+            }
             
         }
         
@@ -2034,193 +2045,184 @@ var drawPlayer = function(x, y) {
     
     pushMatrix();
     
-    if (lowGraphics && 1 !== 1) {
-        
-        //possibly???
-        rect(x - 5, y, player[2] + 10, player[3]);
-        
+    if (!player[10] && !(easyMode && player[7])) { //if its NOT jumping (running)
+
+        amt += player[4]/2; //go through running stage based on how fast the player moves left/right 
+
     } else {
-        
-        if (!player[10]) { //if its NOT jumping (running)
-            
-            amt += player[4]/2; //go through running stage based on how fast the player moves left/right 
-            
-        } else {
-            
-            amt = 269; //resets running sequence to start
-            
-        }
-        
-        //moves a little left and up
-        translate(-5, 2);
-        fill(255, 255, 255);
-        
-        if (abs(player[4]) > 0.5 | ((keys[LEFT] & player[8] === false) | (keys[RIGHT] & player[9] === false)) & abs(player[5]) > 0.6) { //if either the player is moving or is going right against a wall to the right or left against a wall to the left (for smoother movement!)
-            
-            pushMatrix();
-            
-            //translate to x and y (with additional movement)
-            translate(-21 + x, -11 + y);
-            scale(0.18); //scales it way down (i first made this WAY bigger)
-            
-            //remember everything is going to be coded significantly bigger than it appears!
-            translate(40, -40);
-            rot(10); //tilted forward to look a little more natural
-            
-            //if the player is facing left
-            if (player[4] < 0 | (keys[LEFT] & player[8] === false)) {
-                
-                //deals with scaling and retranslating everything
-                translate(-80, 80);
-                rot(-20);
-                translate(430, 15);
-                scale(-1, 1);
-                
-            }
-            
-            strokeWeight(18);
-            stroke(255, 255, 255);
-            
-            pushMatrix();
-            
-            translate(-38, 78);
-            
-            //resets arm position (when jumping in place)
-            amt1 = 50;
-            
-            var wow = sine((amt + 90)*7);
-            if (!player[10]) { //not jumping
-                
-                //only draws ONE arm
-                line(250 - 50*cosine(wow*40) + 44, 100, 250 + 70*cosine(90 + wow*60), 100 + 70*sine(90 + wow*60));
-                
-                line(250 + 70*cosine(40 + wow*60) + 10, 
-                100 + 70*sine(40 + wow*60) + 20, 
-                250 + 70*cosine(90 + wow*60), 100 + 70*sine(90 + wow*60));
-                
-            } else { //jumping
-                
-                //draws both arms in a jumping motion
-                line(250, 100, 300, 100);
-                line(330, 50, 300, 100);
-                
-                line(250, 100, 200, 100);
-                line(170, 150, 200, 100);
-                
-            }
-            
-            popMatrix();
-            
-            pushMatrix();
-            
-            translate(-38, 78);
-            
-            //draws the other arm (when not jumping)
-            if (!player[10]) {
-            
-                line(250 - 50*cosine(sine((amt + 270)*7)*40) + 44, 100, 250 + 70*cosine(90 + sine((amt + 270)*7)*60), 100 + 70*sine(90 + sine((amt + 270)*7)*60));
-                
-                line(250 + 70*cosine(40 + sine((amt + 270)*7)*60) + 10, 
-                100 + 70*sine(40 + sine((amt + 270)*7)*60) + 20, 
-                250 + 70*cosine(90 + sine((amt + 270)*7)*60), 100 + 70*sine(90 + sine((amt + 270)*7)*60));
-                
-            }
-            
-            popMatrix();
-            
-            //head
-            ellipse(218 + 70*cosine(sine(amt*7)*40) - 70, 137 - 40, 80, 80);
-            
-            //spine
-            line(218, 261, 218 + 70*cosine(sine(amt*7)*40) - 70, 137);
-            
-            //legs
-            
-            line(218, 261, 218 + 70*cosine(70 - sine(amt*7)*20), 261 + 70*sine(70 - sine(amt*7)*20));
-            
-            line(218 + 70*cosine(70 - sine(amt*7)*20), 261 + 70*sine(70 - sine(amt*7)*20), 
-            218 + 70*cosine(70 - sine(amt*7)*20) + 70*cosine(130 - sine(amt*7)*70), 
-            261 + 70*sine(70 - sine(amt*7)*20) + 70*sine(130 - sine(amt*7)*70));
-            
-            line(218 + 70*cosine(70 - sine(amt*7)*20) + 70*cosine(130 - sine(amt*7)*70 - 10), 
-            261 + 70*sine(70 - sine(amt*7)*20) + 70*sine(130 - sine(amt*7)*70 - 10), 
-            218 + 70*cosine(70 - sine(amt*7)*20) + 70*cosine(130 - sine(amt*7)*70), 
-            261 + 70*sine(70 - sine(amt*7)*20) + 70*sine(130 - sine(amt*7)*70));
-            
-            line(218, 261, 218 + 70*cosine(70 - sine((amt + 180)*7)*20), 261 + 70*sine(70 - sine((amt + 180)*7)*20));
-            
-            line(218 + 70*cosine(70 - sine((amt + 180)*7)*20), 261 + 70*sine(70 - sine((amt + 180)*7)*20), 
-            218 + 70*cosine(70 - sine((amt + 180)*7)*20) + 70*cosine(130 - sine((amt + 180)*7)*70), 
-            261 + 70*sine(70 - sine((amt + 180)*7)*20) + 70*sine(130 - sine((amt + 180)*7)*70));
-            
-            line(218 + 70*cosine(70 - sine((amt + 180)*7)*20) + 70*cosine(130 - sine((amt + 180)*7)*70 - 10), 
-            261 + 70*sine(70 - sine((amt + 180)*7)*20) + 70*sine(130 - sine((amt + 180)*7)*70 - 10), 
-            218 + 70*cosine(70 - sine((amt + 180)*7)*20) + 70*cosine(130 - sine((amt + 180)*7)*70), 
-            261 + 70*sine(70 - sine((amt + 180)*7)*20) + 70*sine(130 - sine((amt + 180)*7)*70));
-            
-            popMatrix();
-            
-            //sets ran to true
-            ran = true;
-            
-        } else { //the case he is still (left/right)
-            
-            //sets the running motion to 0
-            amt = 0;
-            
-            amt1 = 50;
-            
-            if (player[10]) { //arms up if he's jumping
-                
-                amt1 = -30;
-                
-            }
-            
-            pushMatrix();
-            
-            translate(-21 + x, -11 + y); //translate to x and y
-            scale(0.18); //resizing
-            
-            strokeWeight(18);
-            stroke(255, 255, 255);
-            fill(255);
-            
-            //head
-            ellipse(218, 97, 80, 80);
-            
-            //body
-            line(218, 127, 218, 295);
-            
-            //right leg
-            line(248, 338, 218, 295);
-            line(248, 338, 263, 390);
-            
-            //right foot
-            line(275, 390, 263, 390);
-            
-            //left leg
-            line(188, 338, 218, 295);
-            line(188, 338, 173, 390);
-            
-            //left leg
-            line(161, 390, 173, 390);
-            
-            //right arm
-            line(218, 175, 218 + 55*cosine(amt1), 175 + 55*sine(amt1));
-            line(218 + 55*cosine(amt1) + 50*cosine(amt1*1.5), 175 + 55*sine(amt1) + 50*sine(amt1*1.5), 218 + 55*cosine(amt1), 175 + 55*sine(amt1));
-            
-            //left arm
-            line(218, 175, 218 + 55*cosine((180 - amt1)), 175 + 55*sine((180 - amt1)));
-            line(218 + 55*cosine((180 - amt1)) + 50*cosine((180 - amt1*1.5)), 175 + 55*sine((180 - amt1)) + 50*sine((180 - amt1*1.5)), 218 + 55*cosine((180 - amt1)), 175 + 55*sine((180 - amt1)));
-            
-            
-            popMatrix();
-            
-        }
-        noStroke();
-        
+
+        amt = 269; //resets running sequence to start
+
     }
-    
+
+    //moves a little left and up
+    translate(-5, 2);
+    fill(255, 255, 255);
+
+    if (abs(player[4]) > 0.5 | ((keys[LEFT] & player[8] === false) | (keys[RIGHT] & player[9] === false)) & abs(player[5]) > 0.6) { //if either the player is moving or is going right against a wall to the right or left against a wall to the left (for smoother movement!)
+
+        pushMatrix();
+
+        //translate to x and y (with additional movement)
+        translate(-21 + x, -11 + y);
+        scale(0.18); //scales it way down (i first made this WAY bigger)
+
+        //remember everything is going to be coded significantly bigger than it appears!
+        translate(40, -40);
+        rot(10); //tilted forward to look a little more natural
+
+        //if the player is facing left
+        if (player[4] < 0 | (keys[LEFT] & player[8] === false)) {
+
+            //deals with scaling and retranslating everything
+            translate(-80, 80);
+            rot(-20);
+            translate(430, 15);
+            scale(-1, 1);
+
+        }
+
+        strokeWeight(18);
+        stroke(255, 255, 255);
+
+        pushMatrix();
+
+        translate(-38, 78);
+
+        //resets arm position (when jumping in place)
+        amt1 = 50;
+
+        var wow = sine((amt + 90)*7);
+        if (!player[10]) { //not jumping
+
+            //only draws ONE arm
+            line(250 - 50*cosine(wow*40) + 44, 100, 250 + 70*cosine(90 + wow*60), 100 + 70*sine(90 + wow*60));
+
+            line(250 + 70*cosine(40 + wow*60) + 10, 
+            100 + 70*sine(40 + wow*60) + 20, 
+            250 + 70*cosine(90 + wow*60), 100 + 70*sine(90 + wow*60));
+
+        } else { //jumping
+
+            //draws both arms in a jumping motion
+            line(250, 100, 300, 100);
+            line(330, 50, 300, 100);
+
+            line(250, 100, 200, 100);
+            line(170, 150, 200, 100);
+
+        }
+
+        popMatrix();
+
+        pushMatrix();
+
+        translate(-38, 78);
+
+        //draws the other arm (when not jumping)
+        if (!player[10]) {
+
+            line(250 - 50*cosine(sine((amt + 270)*7)*40) + 44, 100, 250 + 70*cosine(90 + sine((amt + 270)*7)*60), 100 + 70*sine(90 + sine((amt + 270)*7)*60));
+
+            line(250 + 70*cosine(40 + sine((amt + 270)*7)*60) + 10, 
+            100 + 70*sine(40 + sine((amt + 270)*7)*60) + 20, 
+            250 + 70*cosine(90 + sine((amt + 270)*7)*60), 100 + 70*sine(90 + sine((amt + 270)*7)*60));
+
+        }
+
+        popMatrix();
+
+        //head
+        ellipse(218 + 70*cosine(sine(amt*7)*40) - 70, 137 - 40, 80, 80);
+
+        //spine
+        line(218, 261, 218 + 70*cosine(sine(amt*7)*40) - 70, 137);
+
+        //legs
+
+        line(218, 261, 218 + 70*cosine(70 - sine(amt*7)*20), 261 + 70*sine(70 - sine(amt*7)*20));
+
+        line(218 + 70*cosine(70 - sine(amt*7)*20), 261 + 70*sine(70 - sine(amt*7)*20), 
+        218 + 70*cosine(70 - sine(amt*7)*20) + 70*cosine(130 - sine(amt*7)*70), 
+        261 + 70*sine(70 - sine(amt*7)*20) + 70*sine(130 - sine(amt*7)*70));
+
+        line(218 + 70*cosine(70 - sine(amt*7)*20) + 70*cosine(130 - sine(amt*7)*70 - 10), 
+        261 + 70*sine(70 - sine(amt*7)*20) + 70*sine(130 - sine(amt*7)*70 - 10), 
+        218 + 70*cosine(70 - sine(amt*7)*20) + 70*cosine(130 - sine(amt*7)*70), 
+        261 + 70*sine(70 - sine(amt*7)*20) + 70*sine(130 - sine(amt*7)*70));
+
+        line(218, 261, 218 + 70*cosine(70 - sine((amt + 180)*7)*20), 261 + 70*sine(70 - sine((amt + 180)*7)*20));
+
+        line(218 + 70*cosine(70 - sine((amt + 180)*7)*20), 261 + 70*sine(70 - sine((amt + 180)*7)*20), 
+        218 + 70*cosine(70 - sine((amt + 180)*7)*20) + 70*cosine(130 - sine((amt + 180)*7)*70), 
+        261 + 70*sine(70 - sine((amt + 180)*7)*20) + 70*sine(130 - sine((amt + 180)*7)*70));
+
+        line(218 + 70*cosine(70 - sine((amt + 180)*7)*20) + 70*cosine(130 - sine((amt + 180)*7)*70 - 10), 
+        261 + 70*sine(70 - sine((amt + 180)*7)*20) + 70*sine(130 - sine((amt + 180)*7)*70 - 10), 
+        218 + 70*cosine(70 - sine((amt + 180)*7)*20) + 70*cosine(130 - sine((amt + 180)*7)*70), 
+        261 + 70*sine(70 - sine((amt + 180)*7)*20) + 70*sine(130 - sine((amt + 180)*7)*70));
+
+        popMatrix();
+
+        //sets ran to true
+        ran = true;
+
+    } else { //the case he is still (left/right)
+
+        //sets the running motion to 0
+        amt = 0;
+
+        amt1 = 50;
+
+        if (player[10]) { //arms up if he's jumping
+
+            amt1 = -30;
+
+        }
+
+        pushMatrix();
+
+        translate(-21 + x, -11 + y); //translate to x and y
+        scale(0.18); //resizing
+
+        strokeWeight(18);
+        stroke(255, 255, 255);
+        fill(255);
+
+        //head
+        ellipse(218, 97, 80, 80);
+        3
+        //body
+        line(218, 127, 218, 295);
+        
+        //right leg
+        line(248, 338, 218, 295);
+        line(248, 338, 263, 390);
+
+        //right foot
+        line(275, 390, 263, 390);
+
+        //left leg
+        line(188, 338, 218, 295);
+        line(188, 338, 173, 390);
+
+        //left leg
+        line(161, 390, 173, 390);
+
+        //right arm
+        line(218, 175, 218 + 55*cosine(amt1), 175 + 55*sine(amt1));
+        line(218 + 55*cosine(amt1) + 50*cosine(amt1*1.5), 175 + 55*sine(amt1) + 50*sine(amt1*1.5), 218 + 55*cosine(amt1), 175 + 55*sine(amt1));
+
+        //left arm
+        line(218, 175, 218 + 55*cosine((180 - amt1)), 175 + 55*sine((180 - amt1)));
+        line(218 + 55*cosine((180 - amt1)) + 50*cosine((180 - amt1*1.5)), 175 + 55*sine((180 - amt1)) + 50*sine((180 - amt1*1.5)), 218 + 55*cosine((180 - amt1)), 175 + 55*sine((180 - amt1)));
+
+
+        popMatrix();
+
+    }
+    noStroke();
+
     popMatrix();
     
 };
@@ -2474,16 +2476,16 @@ if (localStorage.getItem("cyberchampion_access") !== null) {
 }
 
 // modify this to force a full reset in game
-var target = "a";    
-if (localStorage.getItem("cyberchampion_update") === target) {
+var target = "a";
+if (localStorage.getItem("cyberchampion_update") !== null && localStorage.getItem("cyberchampion_update") === target) {
     if (localStorage.getItem("cyberchampion_usePosts") !== null) {
         usePosts = ("true" === localStorage.getItem("cyberchampion_usePosts"));
     }
     if (localStorage.getItem("cyberchampion_light") !== null) {
         light = ("true" === localStorage.getItem("cyberchampion_light"));
     }
-    if (localStorage.getItem("cyberchampion_lowGraphics") !== null) {
-        lowGraphics = ("true" === localStorage.getItem("cyberchampion_lowGraphics"));
+    if (localStorage.getItem("cyberchampion_easy") !== null) {
+        easyMode = ("true" === localStorage.getItem("cyberchampion_easy"));
     }
     if (localStorage.getItem("cyberchampion_tutorial") !== null) {
         tutorial = ("true" === localStorage.getItem("cyberchampion_tutorial"));
@@ -2491,9 +2493,16 @@ if (localStorage.getItem("cyberchampion_update") === target) {
     if (localStorage.getItem("cyberchampion_font") !== null) {
         font = localStorage.getItem("cyberchampion_font");
     }
-    localStorage.setItem("cyberchampion_update", target);
 }
 
+localStorage.setItem("cyberchampion_update", target);
+localStorage.setItem("cyberchampion_maxDeaths", maxDeaths.toString());
+localStorage.setItem("cyberchampion_badEnds", badEnds.toString());
+localStorage.setItem("cyberchampion_access", JSON.stringify(access));
+
+localStorage.setItem("cyberchampion_usePosts", usePosts.toString());
+localStorage.setItem("cyberchampion_light", light.toString());
+localStorage.setItem("cyberchampion_easy", easyMode.toString());
 localStorage.setItem("cyberchampion_tutorial", tutorial.toString());
 localStorage.setItem("cyberchampion_font", font);
 
@@ -2517,6 +2526,12 @@ draw = function() {
         text("LIGHT MODE", 920, 327);
         strokeWeight(1);
         flip(870, 350, 102, light);
+        
+        textSize(20);
+        text("EASY MODE", 80, 327);
+        strokeWeight(1);
+        flip(30, 350, 102, easyMode);
+        
         noStroke();
         
         pushMatrix();
@@ -2537,38 +2552,38 @@ draw = function() {
         //code for the settings gear
         
         //definitely didn't write this by hand, I wrote code to output this
-        vertex(450 + 25*cosine(0.00), 400 + 25*sine(0.00));
-        vertex(450 + 25*cosine(11.25), 400 + 25*sine(11.25));
-        vertex(450 + 32*cosine(22.50), 400 + 32*sine(22.50));
-        vertex(450 + 32*cosine(33.75), 400 + 32*sine(33.75));
-        vertex(450 + 25*cosine(45.00), 400 + 25*sine(45.00));
-        vertex(450 + 25*cosine(56.25), 400 + 25*sine(56.25));
-        vertex(450 + 32*cosine(67.50), 400 + 32*sine(67.50));
-        vertex(450 + 32*cosine(78.75), 400 + 32*sine(78.75));
-        vertex(450 + 25*cosine(90.00), 400 + 25*sine(90.00));
-        vertex(450 + 25*cosine(101.25), 400 + 25*sine(101.25));
-        vertex(450 + 32*cosine(112.50), 400 + 32*sine(112.50));
-        vertex(450 + 32*cosine(123.75), 400 + 32*sine(123.75));
-        vertex(450 + 25*cosine(135.00), 400 + 25*sine(135.00));
-        vertex(450 + 25*cosine(146.25), 400 + 25*sine(146.25));
-        vertex(450 + 32*cosine(157.50), 400 + 32*sine(157.50));
-        vertex(450 + 32*cosine(168.75), 400 + 32*sine(168.75));
-        vertex(450 + 25*cosine(180.00), 400 + 25*sine(180.00));
-        vertex(450 + 25*cosine(191.25), 400 + 25*sine(191.25));
-        vertex(450 + 32*cosine(202.50), 400 + 32*sine(202.50));
-        vertex(450 + 32*cosine(213.75), 400 + 32*sine(213.75));
-        vertex(450 + 25*cosine(225.00), 400 + 25*sine(225.00));
-        vertex(450 + 25*cosine(236.25), 400 + 25*sine(236.25));
-        vertex(450 + 32*cosine(247.50), 400 + 32*sine(247.50));
-        vertex(450 + 32*cosine(258.75), 400 + 32*sine(258.75));
-        vertex(450 + 25*cosine(270.00), 400 + 25*sine(270.00));
-        vertex(450 + 25*cosine(281.25), 400 + 25*sine(281.25));
-        vertex(450 + 32*cosine(292.50), 400 + 32*sine(292.50));
-        vertex(450 + 32*cosine(303.75), 400 + 32*sine(303.75));
-        vertex(450 + 25*cosine(315.00), 400 + 25*sine(315.00));
-        vertex(450 + 25*cosine(326.25), 400 + 25*sine(326.25));
-        vertex(450 + 32*cosine(337.50), 400 + 32*sine(337.50));
-        vertex(450 + 32*cosine(348.75), 400 + 32*sine(348.75));
+vertex(475.0000, 400.0000);
+vertex(474.5196, 404.8773);
+vertex(479.5641, 412.2459);
+vertex(476.6070, 417.7782);
+vertex(467.6777, 417.6777);
+vertex(463.8893, 420.7867);
+vertex(462.2459, 429.5641);
+vertex(456.2429, 431.3851);
+vertex(450.0000, 425.0000);
+vertex(445.1227, 424.5196);
+vertex(437.7541, 429.5641);
+vertex(432.2218, 426.6070);
+vertex(432.3223, 417.6777);
+vertex(429.2133, 413.8893);
+vertex(420.4359, 412.2459);
+vertex(418.6149, 406.2429);
+vertex(425.0000, 400.0000);
+vertex(425.4804, 395.1227);
+vertex(420.4359, 387.7541);
+vertex(423.3930, 382.2218);
+vertex(432.3223, 382.3223);
+vertex(436.1107, 379.2133);
+vertex(437.7541, 370.4359);
+vertex(443.7571, 368.6149);
+vertex(450.0000, 375.0000);
+vertex(454.8773, 375.4804);
+vertex(462.2459, 370.4359);
+vertex(467.7782, 373.3930);
+vertex(467.6777, 382.3223);
+vertex(470.7867, 386.1107);
+vertex(479.5641, 387.7541);
+vertex(481.3851, 393.7571);
         
         endShape(CLOSE);
         
@@ -2576,26 +2591,26 @@ draw = function() {
         
         beginShape();
         
-        vertex(150 + 15*cosine(15), 390 + 15*sine(15));
-        vertex(150 + 20*cosine(33), 390 + 20*sine(33));
-        vertex(150 + 15*cosine(51), 390 + 15*sine(51));
-        vertex(150 + 20*cosine(69), 390 + 20*sine(69));
-        vertex(150 + 15*cosine(87), 390 + 15*sine(87));
-        vertex(150 + 20*cosine(105), 390 + 20*sine(105));
-        vertex(150 + 15*cosine(123), 390 + 15*sine(123));
-        vertex(150 + 20*cosine(141), 390 + 20*sine(141));
-        vertex(150 + 15*cosine(159), 390 + 15*sine(159));
-        vertex(150 + 20*cosine(177), 390 + 20*sine(177));
-        vertex(150 + 15*cosine(195), 390 + 15*sine(195));
-        vertex(150 + 20*cosine(213), 390 + 20*sine(213));
-        vertex(150 + 15*cosine(231), 390 + 15*sine(231));
-        vertex(150 + 20*cosine(249), 390 + 20*sine(249));
-        vertex(150 + 15*cosine(267), 390 + 15*sine(267));
-        vertex(150 + 20*cosine(285), 390 + 20*sine(285));
-        vertex(150 + 15*cosine(303), 390 + 15*sine(303));
-        vertex(150 + 20*cosine(321), 390 + 20*sine(321));
-        vertex(150 + 15*cosine(339), 390 + 15*sine(339));
-        vertex(150 + 20*cosine(357), 390 + 20*sine(357));
+vertex(164.49, 393.88);
+vertex(166.77, 400.89);
+vertex(159.44, 401.66);
+vertex(157.17, 408.67);
+vertex(150.79, 404.98);
+vertex(144.82, 409.32);
+vertex(141.83, 402.58);
+vertex(134.46, 402.59);
+vertex(136.00, 395.38);
+vertex(130.03, 391.05);
+vertex(135.51, 386.12);
+vertex(133.23, 379.11);
+vertex(140.56, 378.34);
+vertex(142.83, 371.33);
+vertex(149.21, 375.02);
+vertex(155.18, 370.68);
+vertex(158.17, 377.42);
+vertex(165.54, 377.41);
+vertex(164.00, 384.62);
+vertex(169.97, 388.95);
         
         endShape(CLOSE);
         
@@ -2944,11 +2959,11 @@ draw = function() {
                             
                             if (item === "1") {
                                 
-                                doors.push([x, y, "YEAH!!", 50]);
+                                doors.push([x, y, "Yeah! Let's browse.", 50]);
                                 
                             } else {
                                 
-                                doors.push([x, y, "Sounds dangerous... I'm out.", 1]);
+                                doors.push([x, y, "No, I'd like to do something else.", 1]);
                                 
                             }
                             
@@ -2957,11 +2972,11 @@ draw = function() {
                             
                             if (item === "1") {
                                 
-                                doors.push([x, y, "Sign me up!", 25]);
+                                doors.push([x, y, "Let's get started!", 25]);
                                 
                             } else {
                                 
-                                doors.push([x, y, "Social life? No thanks.", 1]);
+                                doors.push([x, y, "Social media? No thanks.", 1]);
                                 
                             }
                             
@@ -2970,7 +2985,7 @@ draw = function() {
                             
                             if (item === "1") {
                                 
-                                doors.push([x, y, "Get out of there!", 8]);
+                                doors.push([x, y, "Close the page. Get out of there!", 8]);
                                 
                             } else {
                                 
@@ -3005,7 +3020,7 @@ draw = function() {
                                 
                             } else if (item === "2") {
                                 
-                                doors.push([x, y, "What could go wrong? Everybody else will thank you after he leaves!", 9]);
+                                doors.push([x, y, "Take care of the problem yourself. Everybody else will thank you after he leaves!", 9]);
                                 
                             } else {
                                 
@@ -3131,11 +3146,11 @@ draw = function() {
                             
                             if (item === "1") {
                                 
-                                doors.push([x, y, "Your phone number, where you live... Your friends need to know!", 28]);
+                                doors.push([x, y, "Your phone number, your school... Your friends need to know!", 28]);
                                 
                             } else {
                                 
-                                doors.push([x, y, "Things you like, maybe where you go to school...", 29]);
+                                doors.push([x, y, "Things you like, maybe your catchphrase...", 29]);
                                 
                             }
                             
@@ -3149,11 +3164,11 @@ draw = function() {
                             
                             if (item === "1") {
                                 
-                                doors.push([x, y, "Where you are, your address (for a party you're planning), other people's news.", 30]);
+                                doors.push([x, y, "Where you are (all day everyday), your address (for a party you're planning), maybe even your friend's big news.", 30]);
                                 
                             } else if (item === "2") {
                                 
-                                doors.push([x, y, "Only the important stuff: Selfies with your new credit card, Social Security Number, if it's not personal, then why would you post it?!", 31]);
+                                doors.push([x, y, "Only the important stuff: selfies with your new credit card, Social Security Number, if it's not personal, then why would you post it?!", 31]);
                                 
                             } else {
                                 
@@ -3630,7 +3645,7 @@ draw = function() {
                 txt = "The internet is a dangerous place, even if you're just browsing. Do you accept the challenge?";
                 break;
             case 4:
-                txt = "Technology has the power to strengthen your social life. Do you set up an email and facebook page? This will allow you to you can send messages to your friends and post things.";
+                txt = "You want to send messages to your friends and be able to post. Do you set up Gmail and Facebook accounts?";
                 break;
             case 5:
                 txt = "You decide to download this awesome game your friend was talking about. You have no idea where to get it, so you just google it.\n\nYou click on the first result. You notice it's taking a long time to load. What do you do?";
@@ -3642,7 +3657,7 @@ draw = function() {
                 txt = "The download happens surprisingly fast and your computer sends you to a weird site. You close that, but when you try and run the game. ";
                 break;
             case 8:
-                txt = "You find an online multiplayer game with different teams and a chat so you can talk to each other to strategize.\n\nSoon, a new player joins the game, and he's starts spamming the chats with randomness!\n\nYou realize he might go away if you spam back, give him a taste of his own medicine! What do you do?";
+                txt = "You find an online multiplayer game with teams and a text chat.\n\nA new player joins the game, and starts sending random messages!\n\nHe might go away if you do the same to him and give him a taste of his own medicine! What do you do?";
                 break;
             case 10:
                 txt = "Reporting him is the best thing you can do. You could also politely ask that person to stop. Remember, there's a person on the other side of this game.";
@@ -3814,7 +3829,7 @@ draw = function() {
         
         noStroke();
         
-        if (!lowGraphics || 1 === 1) {
+        if (1 === 1) {
             
             //draws the background blocks if not low graphics
             for (var i = 0; i < bkgrd.length; i ++) {
@@ -3913,12 +3928,29 @@ draw = function() {
         }
         
         //controls
-        if (keys[UP] & !player[7] & player[6]) {
-            
-            player[5] = -7;
-            player[10] = true;
-            ran = false;
-            
+        if (keys[UP]) {
+            if (easyMode) {
+                if (!player[7]) {
+
+                    player[5] = -7;
+                    player[10] = true;
+                    ran = false;
+
+                } else if (player[6]) {
+
+                    player[5] -= 0.3;
+                    player[5] = constrain(player[5], -3, 1);
+
+                }
+            } else {
+                if (!player[7] & player[6]) {
+
+                    player[5] = -7;
+                    player[10] = true;
+                    ran = false;
+
+                }
+            }
         }
         
         //movements are not sudden!
@@ -3947,7 +3979,10 @@ draw = function() {
         
         if (player[7]) {
             //applies gravity!!!
-            player[5] += 0.27;
+            if (easyMode)
+                player[5] += 0.1;
+            else
+                player[5] += 0.27;
         }
         
         //moves player
@@ -4076,19 +4111,8 @@ CONFUSING ARRAYS!
             
             //if the block is within the y translate
             if (blocks[i][1] > -(-constrain(player[1] - 200, -10000, -50) - 50) - 10 - blocks[i][3] && blocks[i][1] < -(-constrain(player[1] - 200, -10000, -50) - 50) + 450) {
-                
-                if (lowGraphics) {
-                    
-                    //basic block
-                    drawBlock(blocks[i][0], blocks[i][1], blocks[i][2], blocks[i][3], true);
-                    
-                } else {
-                    
-                    //draws a more complex block
-                    drawBlock(blocks[i][0], blocks[i][1], blocks[i][2], blocks[i][3]);
-                    
-                }
-                
+                //draws a more complex block
+                drawBlock(blocks[i][0], blocks[i][1], blocks[i][2], blocks[i][3]);
             }
             
         }
@@ -4281,13 +4305,20 @@ CONFUSING ARRAYS!
                     //message box, semi transparent
                     stroke(255);
                     fill(0, 0, 0, 200);
-                    rect(20, 110, 300, 120);
+                    rect(350, 90, 300, 120);
+                    
+                    // line down
+                    line(450, 210, 450, 280);
+                    line(490, 280, 450, 280);
+                    // arrow head
+                    line(490, 280, 480, 270);
+                    line(490, 280, 480, 290);
                     
                     noStroke();
                     
                     fill(255);
                     textAlign(CENTER, CENTER);
-                    text("Read the description of each scenario. Each door is a decision.\n\nRun to a door using arrow keys!", 30, 70, 290, 200);
+                    text("Read the description of each scenario (bottom right). Each door is a decision.\n\nRun to a door using the arrow keys. " + (easyMode ? "Hold UP to fly" : "Use UP to jump."), 360, 50, 290, 200);
                     
                     //once the player goes to a door, move forward in the tutorial
                     if (onDoor) {
@@ -4306,6 +4337,12 @@ CONFUSING ARRAYS!
                     //message box
                     fill(0, 0, 0, 200);
                     rect(280, 110, 300, 120);
+                    
+                    line (520, 110, 520, 85);
+                    line (670, 85, 520, 85);
+                    
+                    line (670, 85, 660, 75);
+                    line (670, 85, 660, 95);
                     
                     noStroke();
                     
@@ -4355,6 +4392,11 @@ CONFUSING ARRAYS!
                     fill(0, 0, 0, 200);
                     rect(20, 60, 300, 120);
                     
+                    //arrow
+                    line(320, 90, 376, 90);
+                    line(366, 80, 376, 90);
+                    line(366, 100, 376, 90);
+                    
                     noStroke();
                     
                     //actual text on text box 
@@ -4380,18 +4422,15 @@ CONFUSING ARRAYS!
                     stroke(255, 255, 255, stageT);
                     noFill();
                     
-                    //line to post info
-                    line(180, 240, 180, 390);
-                    
                     //textbox, with outline
                     fill(0, 0, 0, constrain(stageT, 0, 200));
-                    rect(80, 110, 300, 120);
+                    rect(350, 140, 300, 120);
                     
                     noStroke();
                     
                     fill(255, 255, 255, stageT);
                     textAlign(CENTER, CENTER);
-                    text("You're ready to go! You can enable the tutorial again in settings.", 90, 70, 280, 200);
+                    text("Good luck on your journey! You can enable the tutorial again in settings.", 360, 100, 280, 200);
                     
                     if (stageT < 0) { //timer is 0
                         
@@ -4404,7 +4443,7 @@ CONFUSING ARRAYS!
                     } else {
                         
                         //counts down the timer
-                        stageT -= 4;
+                        stageT -= 3;
                         
                     }
                     
