@@ -86,8 +86,13 @@ for (var i = 1; i <= 2; i ++) {
 
 //x, y, xvel, yvel, left open, right open, down open, up open
 var player = [50, 325, 0.01, 0, true, true, true, true];
+var marioSizeSm = [25, 25];
+var marioSizeBg = [33 * 5/4, 40 * 5/4];
+
 var hasDiabetes = false;
 var shockTimer = -1;
+var msgTimer = -1;
+var messageOut = [];
 
 //is dead? how long until alive?
 var death = [false, 0];
@@ -869,6 +874,9 @@ var npcImages = [[], [], []];
 var doctorImages = [];
 var speechBubble;
 
+// 0 = ground theme, game over theme
+var gameSounds = {};
+
 noStroke ();
 pushMatrix ();
 scale (25 / 16);
@@ -1310,7 +1318,7 @@ for (i = 0; i < 23; i ++) {
     
     }
     
-    bkgrdImage.push (get (0, 0, 25, 25));
+    bkgrdImage.push (get (0, 0, marioSizeSm[0], marioSizeSm[1]));
 
 }//Background
 
@@ -1359,7 +1367,7 @@ for (i = 0; i < 2; i ++) {
     rect (15, 6, 1, 9);
     rect (14, 14, 1, 1);
     
-    blockImage[0].push (get (0, 0, 25, 25));
+    blockImage[0].push (get (0, 0, marioSizeSm[0], marioSizeSm[1]));
     
     background (0, 0, 0, 0);//2 and 6
     
@@ -1378,7 +1386,7 @@ for (i = 0; i < 2; i ++) {
         
     }
     
-    blockImage[1].push (get (0, 0, 25, 25));
+    blockImage[1].push (get (0, 0, marioSizeSm[0], marioSizeSm[1]));
     
     background (0, 0, 0, 0);//3 and 7
     
@@ -1402,7 +1410,7 @@ for (i = 0; i < 2; i ++) {
     fill (color2);
     rect (0, 0, 16, 1);
     
-    blockImage[3].push (get (0, 0, 25, 25));
+    blockImage[3].push (get (0, 0, marioSizeSm[0], marioSizeSm[1]));
     
     background (0, 0, 0, 0);//4 and 8
     
@@ -1423,7 +1431,7 @@ for (i = 0; i < 2; i ++) {
     rect (3, 12, 1, 3);
     rect (11, 12, 1, 3);
     
-    blockImage[4].push (get (0, 0, 25, 25));
+    blockImage[4].push (get (0, 0, marioSizeSm[0], marioSizeSm[1]));
 
 }//Blocks
 
@@ -1462,7 +1470,7 @@ for (i = 0; i < 2; i ++) {
     rect (14, 14, 1, 1);
     rect (15, 13, 1, 1);
     
-    blockImage[5].push (get (0, 0, 25, 25));
+    blockImage[5].push (get (0, 0, marioSizeSm[0], marioSizeSm[1]));
     
     background (0, 0, 0, 0);//10 and 13
     
@@ -1485,7 +1493,7 @@ for (i = 0; i < 2; i ++) {
     rect (14, 14, 1, 1);
     rect (15, 13, 1, 1);
     
-    blockImage[6].push (get (0, 0, 25, 25));
+    blockImage[6].push (get (0, 0, marioSizeSm[0], marioSizeSm[1]));
     
     background (0, 0, 0, 0);//11 and 14
     
@@ -1508,7 +1516,7 @@ for (i = 0; i < 2; i ++) {
     rect (10, 15, 4, 1);
     rect (14, 14, 1, 1);
     
-    blockImage[7].push (get (0, 0, 25, 25));
+    blockImage[7].push (get (0, 0, marioSizeSm[0], marioSizeSm[1]));
     
 }//Mushrooms
 
@@ -1567,7 +1575,7 @@ for (i = 0; i < 4; i ++) {
         rect (7, 8, 2, 2);
         rect (7, 11, 2, 2);
         
-        blockImage[2][j].push (get (0, 0, 25, 25));
+        blockImage[2][j].push (get (0, 0, marioSizeSm[0], marioSizeSm[1]));
         
         background (0, 0, 0, 0);
         
@@ -1597,7 +1605,7 @@ for (i = 0; i < 4; i ++) {
         rect (11, 3, 1, 11);
         rect (10, 14, 1, 2);
         
-        powerImage[0][j].push (get (0, 0, 25, 25));
+        powerImage[0][j].push (get (0, 0, marioSizeSm[0], marioSizeSm[1]));
         
     }
     
@@ -1616,7 +1624,7 @@ for (i = 0; i < 4; i ++) {
     rect (13, 2, 1, 1);
     rect (13, 13, 1, 1);
     
-    blockImage[2][3].push (get (0, 0, 25, 25));
+    blockImage[2][3].push (get (0, 0, marioSizeSm[0], marioSizeSm[1]));
     
 }//Question Mark Blocks and Coins
 
@@ -1848,15 +1856,16 @@ for (i = 0; i < 6; i ++) {
         
     }
     
-    marioImage[0][0].push (get (0, 0, 25, 25));
+    marioImage[0][0].push (get (0, 0, marioSizeSm[0], marioSizeSm[1]));
     
 }//Small Mario
 
-marioImage[0][0][0] = loadImage("imgs/maria-standing.png");
-marioImage[0][0][1] = loadImage("imgs/maria-running-1.png");
-marioImage[0][0][2] = loadImage("imgs/maria-running-2.png");
-marioImage[0][0][3] = loadImage("imgs/maria-running-3.png");
-marioImage[0][0][4] = loadImage("imgs/maria-jumping.png");
+marioImage[0][0][0] = loadImage("imgs/princess-big-1.png");
+marioImage[0][0][1] = loadImage("imgs/princess-big-1.png");
+marioImage[0][0][2] = loadImage("imgs/princess-big-2.png");
+marioImage[0][0][3] = loadImage("imgs/princess-big-2.png");
+marioImage[0][0][4] = loadImage("imgs/princess-big-2.png");
+
 
 for (i = 0; i < 5; i ++) {
     
@@ -2180,11 +2189,25 @@ for (i = 0; i < 5; i ++) {
     
 }//Big Mario
 
-marioImage[1][0][0] = loadImage("imgs/chemist-1.png");
-marioImage[1][0][1] = loadImage("imgs/chemist-running-1.png");
-marioImage[1][0][2] = loadImage("imgs/chemist-running-2.png");
-marioImage[1][0][3] = loadImage("imgs/chemist-running-3.png");
-marioImage[1][0][4] = loadImage("imgs/chemist-jumping.png");
+// marioImage[1][0][0] = loadImage("imgs/chemist-1.png");
+// marioImage[1][0][1] = loadImage("imgs/chemist-running-1.png");
+// marioImage[1][0][2] = loadImage("imgs/chemist-running-2.png");
+// marioImage[1][0][3] = loadImage("imgs/chemist-running-3.png");
+// marioImage[1][0][4] = loadImage("imgs/chemist-jumping.png");
+
+marioImage[1][0][0] = loadImage("imgs/princess-chemist-big-1.png");
+marioImage[1][0][1] = loadImage("imgs/princess-chemist-big-1.png");
+marioImage[1][0][2] = loadImage("imgs/princess-chemist-big-2.png");
+marioImage[1][0][3] = loadImage("imgs/princess-chemist-big-2.png");
+marioImage[1][0][4] = loadImage("imgs/princess-chemist-big-1.png");
+
+gameSounds['main theme'] = new Audio("imgs/ground_theme.mp3");
+gameSounds['game over'] = new Audio("imgs/game_over.mp3");
+gameSounds['coin'] = new Audio("imgs/coin.wav");
+gameSounds['jump'] = new Audio("imgs/smb_jump-super.wav");
+gameSounds['powerup appears'] = new Audio("imgs/smb_powerup_appears.wav");
+gameSounds['powerup'] = new Audio("imgs/smb_powerup.wav");
+gameSounds['powerdown'] = new Audio("imgs/smb_pipe.wav");
 
 for (i = 0; i < 40; i ++) {
     
@@ -3222,11 +3245,11 @@ for (i = 0; i < 2; i ++) {
     
     if (i === 0) {
         
-        powerImage[2].push (get (0, 0, 25, 25));
+        powerImage[2].push (get (0, 0, marioSizeSm[0], marioSizeSm[1]));
         
     } else {
         
-        powerImage[5].push (get (0, 0, 25, 25));
+        powerImage[5].push (get (0, 0, marioSizeSm[0], marioSizeSm[1]));
         
     }
 
@@ -3312,7 +3335,7 @@ for (i = 0; i < 2; i ++) {
             
         }
         
-        powerImage[i + 3].push (get (0, 0, 25, 25));
+        powerImage[i + 3].push (get (0, 0, marioSizeSm[0], marioSizeSm[1]));
         
     }
     
@@ -3380,7 +3403,7 @@ for (i = 0; i < 4; i ++) {
 
     }
     
-    powerImage[1].push (get (0, 0, 25, 25));
+    powerImage[1].push (get (0, 0, marioSizeSm[0], marioSizeSm[1]));
     
 }//Coin States
 
@@ -3436,7 +3459,7 @@ for (i = 0; i < 4; i ++) {
         
     }
     
-    extra.push (get (0, 0, 25, 25));
+    extra.push (get (0, 0, marioSizeSm[0], marioSizeSm[1]));
     
 }//Mini Icons
 
@@ -3699,7 +3722,7 @@ rect (6, 8, 1, 7);
 rect (8, 14, 7, 1);
 rect (14, 8, 1, 7);
 
-blockImage[8].push (get (0, 0, 25, 25));
+blockImage[8].push (get (0, 0, marioSizeSm[0], marioSizeSm[1]));
 
 //casel lava
 background(0, 0, 0, 0);
@@ -3738,7 +3761,7 @@ rect (10, 6, 1, 2);
 rect (13, 7, 2, 1);
 rect (15, 6, 1, 1);
 
-blockImage[8].push (get (0, 0, 25, 25));
+blockImage[8].push (get (0, 0, marioSizeSm[0], marioSizeSm[1]));
 
 //casel lava
 background(0, 0, 0, 0);
@@ -3746,7 +3769,7 @@ background(0, 0, 0, 0);
 fill (177, 52, 37);
 rect (0, 0, 16, 16);
 
-blockImage[8].push (get (0, 0, 25, 25));
+blockImage[8].push (get (0, 0, marioSizeSm[0], marioSizeSm[1]));
 
 npcImages[0].push(loadImage("imgs/npc-journalist-1.png"));
 npcImages[0].push(loadImage("imgs/npc-journalist-2.png"));
@@ -3762,6 +3785,16 @@ speechBubble = loadImage("imgs/speech-bubble.png");
 
 popMatrix();
 
+}
+
+// whether the music is already playing...
+var playingMusic = false;
+
+mousePressed = function() {
+    if (!playingMusic) {
+        playingMusic = true;
+        gameSounds['main theme'].play();
+    }
 }
 
 keyPressed = function() {
@@ -4234,8 +4267,6 @@ for (var i = 0; i < 16; i ++) {
     
 }
 
-image(marioImage[0][0][0], 50, 325, 25, 25);
-
 image(titleImage, 62.5, 50);
 
 txt ("©1974 NIXON HMO ACT", 100, 187.5, true);
@@ -4273,6 +4304,8 @@ draw = function() {
         //draws the title screen image background
         image(drawTitle, 0, 0);
 
+        image(marioImage[0][0][0], 50, 325, marioSizeSm[0], marioSizeSm[1]);
+
         // draw "The Price To Live" onto title screen
         image(titleScreenImg, 63.5, 51, 174 * 1.56, 86 * 1.56);
 
@@ -4286,7 +4319,7 @@ draw = function() {
             
             txt("WORLD 1-" + (levelNum + 1), 125, 125);
             
-            image(marioImage[0][0][1], 150, 187.5, 25, 25);
+            image(marioImage[0][0][1], 150, 187.5, marioSizeSm[0], marioSizeSm[1]);
             
             txt("×  " + lives, 187.5, 200);
             
@@ -4296,7 +4329,7 @@ draw = function() {
 
             pushMatrix();
             scale(0.8);
-            txt("HEALTHCARE IS A RIGHT NOT A GAME", 50, 230);
+            txt("HEALTHCARE IS NOT A GAME", 100, 230);
             txt("NORMAL LIFE CHANGES SHOULDNT AFFECT", 37.5, 260);
             txt("WHETHER A MEDICAL DIAGNOSIS MEANS", 45, 275);
             
@@ -4316,7 +4349,7 @@ draw = function() {
         
         if (death[1] > 0) { //if timer has not gone off
             
-            death[1] --; //timer!
+            // death[1] --; //timer!
             
         } else { //once timer is at 0
             
@@ -4501,11 +4534,11 @@ draw = function() {
         }
         
         //x, y, xvel, yvel, type, active?, type of that specific enemy, addition variable > various uses
-        //not many enemies, so enemies are added manually!
+        //not many enemies, so enemies are added manualldy!
         if (levelNum === 0 & lvlStage === 0) {
             
             //goombas have type 0, starting type 0
-            enemy = [[550, 325, -1, 0, 0, false, 0, 0], [975, 325, -1, 0, 0, false, 0, 0], [1250, 325, -1, 0, 0, false, 0, 0], [1290, 325, -1, 0, 0, false, 0, 0], [1950, 125, -1, 0, 0, false, 0, 0], [2000, 125, -1, 0, 0, false, 0, 0], [2375, 325, -1, 0, 0, false, 0, 0], [2415, 325, -1, 0, 0, false, 0, 0], [2650, 325, -1, 0, 1, false, 0, 0], [2800, 325, -1, 0, 0, false, 0, 0], [2840, 325, -1, 0, 0, false, 0, 0], [2900, 325, -1, 0, 0, false, 0, 0], [2940, 325, -1, 0, 0, false, 0, 0], [4300, 325, -1, 0, 0, false, 0, 0], [4340, 325, -1, 0, 0, false, 0, 0]];
+            enemy = [[975, 325, -1, 0, 0, false, 0, 0], [1250, 325, -2, 0, 0, false, 0, 0], [1290, 325, -1, 0, 0, false, 0, 0], [1950, 125, -1, 0, 0, false, 0, 0], [2000, 125, -1, 0, 0, false, 0, 0], [2375, 325, -1, 0, 0, false, 42, 0], [2650, 325, -1, 0, 1, false, 42, 0], [2800, 325, -1, 0, 0, false, 42, 0], [2840, 325, -1, 0, 0, false, 42, 0], [2900, 325, -1, 0, 0, false, 42, 0], [2940, 325, -1, 0, 0, false, 42, 0], [4300, 325, -1, 0, 0, false, 42, 0], [4340, 325, -1, 0, 0, false, 42, 0]];
             
         } else { //if level isnt given, there are no enemies
             
@@ -4912,10 +4945,24 @@ draw = function() {
             if (enemy[j][4] === 0) {
                 
                 //normal goomba
-                if (enemy[j][6] === 0) {
+                if (enemy[j][6] === 0 || enemy[j][6] === 42) {
                     
                     //is it moving??
                     if (enemy[j][5]) {
+
+                        // advanced goomba, will chase the player!!
+                        if (enemy[j][6] === 42) {
+                            if (player[1] < enemy[j][1] && Math.abs(player[0] - enemy[j][0]) < 25) {
+                                // enemy[j][3] = -8;
+                                if (enemy[j][2] < 0) {
+                                    enemy[j][2] = -8;
+                                } else {
+                                    enemy[j][2] = 8;
+                                }
+                            } else if ((Math.abs(player[0] - enemy[j][0]) > 100) && (Math.abs(enemy[j][2]) > 2)) {
+                                enemy[j][2] /= 4; 
+                            }
+                        }
                         
                         //goes through blocks array to see if there is movement anywhere
                         for (var i = 0; i < blocks.length; i ++) {
@@ -4961,7 +5008,7 @@ draw = function() {
                         } //end of going through blocks array
                         
                         //established gravity for the goomba!
-                        enemy[j][3] += 0.2;
+                        enemy[j][3] += 0.3165;
                         
                         enemy[j][0] += enemy[j][2]; //change x by xvel
                         enemy[j][1] += enemy[j][3]; //change y by yvel
@@ -5026,6 +5073,8 @@ draw = function() {
                                     player[1] += 25;
                                     yInc = 0;
                                     recover = 50;
+
+                                    gameSounds['powerdown'].play();
                                     
                                 } else if (recover === 0) {
                                     
@@ -5399,7 +5448,7 @@ draw = function() {
                     if (enemy[j]) {
                         
                         fill(255, 0, 0);
-                        rect(enemy[j][0], enemy[j][1], 25, 25);
+                        rect(enemy[j][0], enemy[j][1], marioSizeSm[0], marioSizeSm[1]);
                         
                     }
                     
@@ -6049,7 +6098,14 @@ draw = function() {
                     qAnimation[i] = false; //get rid of it
                     
                     score += 200;
-                    coin ++; //increases amount of coins
+                    //increases amount of coins
+                    if (state === 2) {
+                        coin += 100;
+                    } else {
+                        coin ++;
+                    }
+
+                    gameSounds['coin'].play();
                     
                 }
                 
@@ -6067,7 +6123,7 @@ draw = function() {
                 
                 if (!qAnimation[i][6]) { //going up!
                     
-                    rect(qAnimation[i][0], qAnimation[i][5], 25, 25); //cover the space under the q block when it bounces up
+                    rect(qAnimation[i][0], qAnimation[i][5], marioSizeSm[0], marioSizeSm[1]); //cover the space under the q block when it bounces up
                     
                 }
                 
@@ -6169,7 +6225,8 @@ draw = function() {
                     if (player[0] > (qAnimation[i][0] - 25) & player[0] < (qAnimation[i][0] + 25) & player[1] > (qAnimation[i][1] - 25 - yInc) & player[1] < (qAnimation[i][1] + 25)) {
                         
                         if (!powerups[0]) {
-                            
+                            gameSounds['powerup'].play();
+    
                             powerups[0] = true; //big mario
                             yInc = 25;
                             player[1] -= yInc; //moves him up to avoid being stuck in the ground
@@ -6181,7 +6238,7 @@ draw = function() {
                         //deletes
                         qAnimation[i] = false; //get rid of the specific enemy
                         score += 1000;
-                        
+
                     }
                     
                 }
@@ -6200,7 +6257,7 @@ draw = function() {
                 
                 if (!qAnimation[i][6]) { //going up!
                     
-                    rect(qAnimation[i][0], qAnimation[i][5], 25, 25); //cover the space under the q block when it bounces up
+                    rect(qAnimation[i][0], qAnimation[i][5], marioSizeSm[0], marioSizeSm[1]); //cover the space under the q block when it bounces up
                     
                 }
                 
@@ -6365,6 +6422,9 @@ draw = function() {
             if (!hasDiabetes && player[0] > doctor[0] - 100) {
                 hasDiabetes = true;
                 shockTimer = 50;
+                gameSounds['powerdown'].play();
+                msgTimer = 0;
+                messageOut = [];
             }
             if (hasDiabetes) {
                 // flips the speech bubble around
@@ -6560,6 +6620,14 @@ draw = function() {
                 
                 //initial upward velocity is 8
                 player[3] = -8;
+
+                gameSounds['jump'].play();
+
+                for (var goombai = 0; goombai < enemy.length; goombai ++) {
+                    if (enemy[goombai][6] === 42 && Math.abs(enemy[goombai][3]) < 0.5) {
+                        enemy[goombai][3] = -8;
+                    }
+                }
                 
                 //sets jump to true for spriting purposes
                 jump = true;
@@ -6644,11 +6712,11 @@ draw = function() {
             }
             
             
-            if (powerups[0] & !dying[0]) {
+            if (powerups[0] && !dying[0]) {
                 
                 //not in the castle
                 if (player[0] < (endX + 150)) {
-                    
+
                     //passed the flag!
                     if (endLevel) {
                         
@@ -6660,51 +6728,51 @@ draw = function() {
                             //5 frames of a sequence of sprites: 2324
                             if (runningFrame === 0) {
                                 
-                                image (marioImage[1][0][1], 0, 0, 36, 50);
+                                image (marioImage[1][0][1], 0, 0, marioSizeBg[0], marioSizeBg[1]);
                                 
                             } else if (runningFrame === 1) {
                                 
-                                image (marioImage[1][0][2], 0, 0, 36, 50);
+                                image (marioImage[1][0][2], 0, 0, marioSizeBg[0], marioSizeBg[1]);
                                 
                             } else if (runningFrame === 2) {
                                 
-                                image (marioImage[1][0][1], 0, 0, 36, 50);
+                                image (marioImage[1][0][1], 0, 0, marioSizeBg[0], marioSizeBg[1]);
                                 
                             } else {
                                 
-                                image (marioImage[1][0][3], 0, 0, 36, 50);
+                                image (marioImage[1][0][3], 0, 0, marioSizeBg[0], marioSizeBg[1]);
                                 
                             }
                             
                         } else if (player[0] < endX) { //going down the flag
                             
-                            image (marioImage[1][0][3], 0, 0, 36, 50);
+                            image (marioImage[1][0][3], 0, 0, marioSizeBg[0], marioSizeBg[1]);
                             
                         } else if (player[1] < 325) { //falling of the block
                             
-                            image (marioImage[1][0][3], 0, 0, 36, 50);
+                            image (marioImage[1][0][3], 0, 0, marioSizeBg[0], marioSizeBg[1]);
                             
                         } else { //just standing there
                             
-                            image (marioImage[1][0][0], 0, 0, 36, 50);
+                            image (marioImage[1][0][0], 0, 0, marioSizeBg[0], marioSizeBg[1]);
                             
                         }
                         
                     } else if (pipeMov[0]) { //going down a pipe means he isnt moving, just standing there
                         
-                        image (marioImage[1][0][0], 0, 0, 36, 50);
+                        image (marioImage[1][0][0], 0, 0, marioSizeBg[0], marioSizeBg[1]);
                         
                     } else if (jump) { //if he is in the middle of a jump
                         
-                        image (marioImage[1][0][4], 0, 0, 36, 50);
+                        image (marioImage[1][0][4], 0, 0, marioSizeBg[0], marioSizeBg[1]);
                         
                     } else if (abs(player[3]) > 0.1) { //falling from a non-jump
                         
-                        image (marioImage[1][0][0], 0, 0, 36, 50);
+                        image (marioImage[1][0][0], 0, 0, marioSizeBg[0], marioSizeBg[1]);
                         
                     } else if (abs(player[2]) < 0.05 | (keys[88] & abs(player[2]) < 0.5)) { //standing still (basically)
                         
-                        image (marioImage[1][0][0], 0, 0, 36, 50);
+                        image (marioImage[1][0][0], 0, 0, marioSizeBg[0], marioSizeBg[1]);
                         
                     } else { //running!
                         
@@ -6713,19 +6781,19 @@ draw = function() {
                         //5 frames in sequence 2324
                         if (runningFrame === 0) {
                             
-                            image (marioImage[1][0][1], 0, 0, 36, 50);
+                            image (marioImage[1][0][1], 0, 0, marioSizeBg[0], marioSizeBg[1]);
                             
                         } else if (runningFrame === 1) {
                             
-                            image (marioImage[1][0][2], 0, 0, 36, 50);
+                            image (marioImage[1][0][2], 0, 0, marioSizeBg[0], marioSizeBg[1]);
                             
                         } else if (runningFrame === 2) {
                             
-                            image (marioImage[1][0][1], 0, 0, 36, 50);
+                            image (marioImage[1][0][1], 0, 0, marioSizeBg[0], marioSizeBg[1]);
                             
                         } else {
                             
-                            image (marioImage[1][0][3], 0, 0, 36, 50);
+                            image (marioImage[1][0][3], 0, 0, marioSizeBg[0], marioSizeBg[1]);
                             
                         }
                         
@@ -6747,29 +6815,29 @@ draw = function() {
                             //5 frames of a sequence of sprites: 2324
                             if (timer%24 < 6) {
                                 
-                                image (marioImage[0][0][1], 0, 0, 25, 25);
+                                image (marioImage[0][0][1], 0, 0, marioSizeSm[0], marioSizeSm[1]);
                                 
                             } else if (timer%24 < 12) {
                                 
-                                image (marioImage[0][0][2], 0, 0, 25, 25);
+                                image (marioImage[0][0][2], 0, 0, marioSizeSm[0], marioSizeSm[1]);
                                 
                             } else if (timer%24 < 18) {
                                 
-                                image (marioImage[0][0][1], 0, 0, 25, 25);
+                                image (marioImage[0][0][1], 0, 0, marioSizeSm[0], marioSizeSm[1]);
                                 
                             } else {
                                 
-                                image (marioImage[0][0][3], 0, 0, 25, 25);
+                                image (marioImage[0][0][3], 0, 0, marioSizeSm[0], marioSizeSm[1]);
                                 
                             }
                             
                         } else if (player[0] < endX) { //going down the flag
                             
-                            image (marioImage[0][0][3], 0, 0, 25, 25);
+                            image (marioImage[0][0][3], 0, 0, marioSizeSm[0], marioSizeSm[1]);
                             
                         } else if (player[1] < 325) { //falling of the block
                             
-                            image (marioImage[0][0][3], 0, 0, 25, 25);
+                            image (marioImage[0][0][3], 0, 0, marioSizeSm[0], marioSizeSm[1]);
                             
                         } else { //just standing there
                             
@@ -6779,38 +6847,38 @@ draw = function() {
                         
                     } else if (pipeMov[0]) { //going down a pipe means he isnt moving, just standing there
                         
-                        image (marioImage[0][0][0], 0, 0, 25, 25);
+                        image (marioImage[0][0][0], 0, 0, marioSizeSm[0], marioSizeSm[1]);
                         
                     } else if (jump) { //if he is in the middle of a jump
                         
-                        image (marioImage[0][0][4], 0, 0, 25, 25);
+                        image (marioImage[0][0][4], 0, 0, marioSizeSm[0], marioSizeSm[1]);
                         
                     } else if (abs(player[3]) > 0.1) { //falling from a non-jump
                         
-                        image (marioImage[0][0][3], 0, 0, 25, 25);
+                        image (marioImage[0][0][3], 0, 0, marioSizeSm[0], marioSizeSm[1]);
                         
                     } else if (abs(player[2]) < 0.05 | (keys[88] & abs(player[2]) < 0.5)) { //standing still (basically)
                         
-                        image (marioImage[0][0][0], 0, 0, 25, 25);
+                        image (marioImage[0][0][0], 0, 0, marioSizeSm[0], marioSizeSm[1]);
                         
                     } else { //running!
                         
                         //5 frames in sequence 2324
                         if (timer%24 < 6) {
                             
-                            image (marioImage[0][0][1], 0, 0, 25, 25);
+                            image (marioImage[0][0][1], 0, 0, marioSizeSm[0], marioSizeSm[1]);
                             
                         } else if (timer % 24 < 12) {
                             
-                            image (marioImage[0][0][2], 0, 0, 25, 25);
+                            image (marioImage[0][0][2], 0, 0, marioSizeSm[0], marioSizeSm[1]);
                             
                         } else if (timer%24 < 18) {
                             
-                            image (marioImage[0][0][1], 0, 0, 25, 25);
+                            image (marioImage[0][0][1], 0, 0, marioSizeSm[0], marioSizeSm[1]);
                             
                         } else {
                             
-                            image (marioImage[0][0][3], 0, 0, 25, 25);
+                            image (marioImage[0][0][3], 0, 0, marioSizeSm[0], marioSizeSm[1]);
                             
                         }
                         
@@ -7242,7 +7310,7 @@ draw = function() {
         
         if (dying[0]) {
             
-            image (marioImage[0][0][5], player[0], player[1], 25, 25);
+            image (marioImage[0][0][5], player[0], player[1], marioSizeSm[0], marioSizeSm[1]);
         
         }
         
@@ -7322,6 +7390,9 @@ draw = function() {
                 
                 //turns on the death screen
                 death = [true, 500];
+
+                gameSounds['main theme'].pause();
+                gameSounds['game over'].play();
                 
                 //decreases number of lives (bc mario died)
                 lives --;
@@ -7382,44 +7453,130 @@ draw = function() {
         if (state === 0) { // didn't do anything
             if (player[0] > 100) {
                 state ++;
+                messageOut = [];
                 stateClock = 0;
 
                 qAnimation.push([300, 345, 0.75, 0, 2, 350, false]);
             }
         } else if (state === 1) { // no job, mushroom not collected
             if (stateClock < 200) {
-                txt("WOOHOO", 50, 180);
                 pushMatrix();
-                var scaleDown = 0.7;
+                translate(50, 120);
+                scale(1);
+                txt("WOOHOO!", 0, 0);
+                popMatrix();
+
+                pushMatrix();
+                var scaleDown = 1;
                 scale(scaleDown);
-                txt("GO GET THAT MUSHROOM", 50 / scaleDown, 200 / scaleDown);
-                txt("LOOKS LIKE A JOB OFFER", 50 / scaleDown, 215 / scaleDown);
+
+                var messages = ["GO GET THAT MUSHROM".split(" "), "LOOKS LIKE A JOB OFFER".split(" ")];
+                // show only some element at a time
+                if (stateClock % 3 === 1) {
+                    var addIndex = Math.floor(stateClock / 3);
+                    var msgIndex = 0;
+                    while (msgIndex < messages.length && addIndex >= messages[msgIndex].length) {
+                        addIndex -= messages[msgIndex].length;
+                        msgIndex ++;
+                    }
+                    if (msgIndex < messages.length) {
+                        if (addIndex === 0) {
+                            messageOut.push(messages[msgIndex][0]);
+                        } else {
+                            messageOut[messageOut.length-1] += " " + messages[msgIndex][addIndex];
+                        }
+                    }
+                }
+                for (var texti = 0, texty = 140; texti < messageOut.length; texti ++, texty += 15) {
+                    txt(messageOut[texti], 50 / scaleDown, texty / scaleDown);
+                }
                 popMatrix();
             }
 
             if (powerups[0]) {
                 state ++;
+                messageOut = [];
                 stateClock = 0;
             }
         } else if (state === 2) { // mushroom collected, has job
-            if (stateClock < 100) {
-                txt("JOB ACQUIRED", 50, 180);
+            if (stateClock < 200) {
+                pushMatrix();
+                scale(1);
+                txt("YOURE A CHEMIST!", 40, 120);
+                popMatrix();
 
                 pushMatrix();
-                var scaleDown = 0.7;
+                var scaleDown = 1;
                 scale(scaleDown);
-                txt("YOU ARE A CHEMIST", 50 / scaleDown, 200 / scaleDown);
+
+                var messages = ["- 6000 PER MONTH SALARY", "- INSURANCE", "- STABILITY", "", "GET COINS FROM BLOCKS"].map(x => x.split(" "));
+
+                // show only some element at a time
+                if (stateClock % 3 === 1) {
+                    var addIndex = Math.floor(stateClock / 3);
+                    var msgIndex = 0;
+                    while (msgIndex < messages.length && addIndex >= messages[msgIndex].length) {
+                        addIndex -= messages[msgIndex].length;
+                        msgIndex ++;
+                    }
+                    if (msgIndex < messages.length) {
+                        if (addIndex === 0) {
+                            messageOut.push(messages[msgIndex][0]);
+                        } else {
+                            messageOut[messageOut.length-1] += " " + messages[msgIndex][addIndex];
+                        }
+                    }
+                }
+                for (var texti = 0, texty = 140; texti < messageOut.length; texti ++, texty += 15) {
+                    txt(messageOut[texti], 40 / scaleDown, texty / scaleDown);
+                }
                 popMatrix();
             }
+            if (shockTimer > 0) {
+                noStroke();
+                fill(255, 100, 100, (100 + 100 * Math.sin(shockTimer / 2)) * shockTimer / 100);
+                rect(0, 0, 400, 400);
+                shockTimer --;
+            }
+            if (stateClock >=  200 && msgTimer != -1 && msgTimer < 200) {
+                msgTimer ++;
+
+                pushMatrix();
+                scale(1);
+                txt("NEW EXPENSES", 40, 150);
+                popMatrix();
+
+                pushMatrix();
+                var scaleDown = 1;
+                scale(scaleDown);
+
+                var messages = ["- JUST COPAY! LUCKY YOU!"].map(x => x.split(" "));
+                
+                // show only some element at a time
+                if (msgTimer % 3 === 1) {
+                    var addIndex = Math.floor(msgTimer / 3);
+                    var msgIndex = 0;
+                    while (msgIndex < messages.length && addIndex >= messages[msgIndex].length) {
+                        addIndex -= messages[msgIndex].length;
+                        msgIndex ++;
+                    }
+                    if (msgIndex < messages.length) {
+                        if (addIndex === 0) {
+                            messageOut.push(messages[msgIndex][0]);
+                        } else {
+                            messageOut[messageOut.length-1] += " " + messages[msgIndex][addIndex];
+                        }
+                    }
+                }
+                for (var texti = 0, texty = 170; texti < messageOut.length; texti ++, texty += 15) {
+                    txt(messageOut[texti], 40 / scaleDown, texty / scaleDown);
+                }
+                popMatrix();
+            }
+
         }
 
-        if (shockTimer > 0) {
-            noStroke();
-            fill(255, 100, 100, (100 + 100 * Math.sin(shockTimer / 2)) * shockTimer / 100);
-            rect(0, 0, 400, 400);
-            shockTimer --;
-        }
-    }
+           }
 
     //all the text at the top
     txt("MARIA", 37.5, 25);
