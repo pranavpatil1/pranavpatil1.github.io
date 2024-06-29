@@ -5145,59 +5145,59 @@ draw = function() {
                     //is it moving around?
                     if (enemy[j][5]) {
                         
-                        //goes through blocks array to see if there is movement anywhere
-                        for (var i = 0; i < blocks.length; i ++) {
-                            
-                            if (!endLevel & blocks[i][0] > (enemy[j][0] - 30) & blocks[i][0] < (enemy[j][0] + 30) & blocks[i][1] > (enemy[j][1] - 30) & blocks[i][1] < (enemy[j][1] + 30)) { //if the level has not ended and he is close enough to the block
+                        if (powerups[0]) {
+                            enemy[j][1] = player[1] + 25;
+                            enemy[j][3] = player[3];
+                        } else {
+                            //goes through blocks array to see if there is movement anywhere
+                            for (var i = 0; i < blocks.length; i ++) {
                                 
-                                //begins collision
+                                if (!endLevel & blocks[i][0] > (enemy[j][0] - 30) & blocks[i][0] < (enemy[j][0] + 30) & blocks[i][1] > (enemy[j][1] - 30) & blocks[i][1] < (enemy[j][1] + 30)) { //if the level has not ended and he is close enough to the block
+                                    
+                                    //begins collision
+                                    
+                                    //if either the block is less than 20 or doesnt have a units digit of one (units digit of one means invisible question until hit from bottom)
+                                    if ((blocks[i][2]%10 !== 1 | blocks[i][2] === 21) | blocks[i][2] < 20) {
+                                        
+                                        //checks if something is to the left
+                                        
+                                        //if x is between 2.5 inside the right side and just outside the right side
+                                        //y pos from way above to way below
+                                        if (enemy[j][0] <= (blocks[i][0] + 25) & enemy[j][0] >= (blocks[i][0] + 20) & (enemy[j][1] > (blocks[i][1] - 20) & enemy[j][1] < (blocks[i][1] + 25))) {
+                                            
+                                            enemy[j][2] = 1;//sets x vel to be 1 (goes in opposite direction)
+                                            
+                                        }
+                                        
+                                        //if x is between 2.5 inside the left side and just outside the left side
+                                        //y pos from way above to way below
+                                        if (enemy[j][0] <= (blocks[i][0] - 20) & enemy[j][0] >= (blocks[i][0] - 25) & (enemy[j][1] > (blocks[i][1] - 25) & enemy[j][1] < (blocks[i][1] + 25))) {
+                                            
+                                            enemy[j][2] = -1;//sets x vel to be -1 (goes in the opposite direction)
+                                            
+                                        }
+                                        
+                                        //x is way to left or way to right
+                                        //y is a block above to 8.5 inside the block (yvel gets up to 7.5!!!)
+                                        if (enemy[j][1] >= (blocks[i][1] - 25 - enemy[j][3]) & enemy[j][1] <= (blocks[i][1] - 17.5) & enemy[j][0] > (blocks[i][0] - 25) & enemy[j][0] < (blocks[i][0] + 25)) {
+                                            
+                                            enemy[j][1] = blocks[i][1] - 25;//y is just outside (remember that huge 8.5 gap?)
+                                            enemy[j][3] = 0;//sets yvel to 0
+                                            
+                                        }
+                                    
+                                    } //end of the not invisible if statement
+                                    
+                                } //ends collision
                                 
-                                //if either the block is less than 20 or doesnt have a units digit of one (units digit of one means invisible question until hit from bottom)
-                                if ((blocks[i][2]%10 !== 1 | blocks[i][2] === 21) | blocks[i][2] < 20) {
-                                    
-                                    //checks if something is to the left
-                                    
-                                    //if x is between 2.5 inside the right side and just outside the right side
-                                    //y pos from way above to way below
-                                    if (enemy[j][0] <= (blocks[i][0] + 25) & enemy[j][0] >= (blocks[i][0] + 20) & (enemy[j][1] > (blocks[i][1] - 20) & enemy[j][1] < (blocks[i][1] + 25))) {
-                                        
-                                        enemy[j][2] = 1;//sets x vel to be 1 (goes in opposite direction)
-                                        
-                                    }
-                                    
-                                    //if x is between 2.5 inside the left side and just outside the left side
-                                    //y pos from way above to way below
-                                    if (enemy[j][0] <= (blocks[i][0] - 20) & enemy[j][0] >= (blocks[i][0] - 25) & (enemy[j][1] > (blocks[i][1] - 25) & enemy[j][1] < (blocks[i][1] + 25))) {
-                                        
-                                        enemy[j][2] = -1;//sets x vel to be -1 (goes in the opposite direction)
-                                        
-                                    }
-                                    
-                                    //x is way to left or way to right
-                                    //y is a block above to 8.5 inside the block (yvel gets up to 7.5!!!)
-                                    if (enemy[j][1] >= (blocks[i][1] - 25 - enemy[j][3]) & enemy[j][1] <= (blocks[i][1] - 17.5) & enemy[j][0] > (blocks[i][0] - 25) & enemy[j][0] < (blocks[i][0] + 25)) {
-                                        
-                                        enemy[j][1] = blocks[i][1] - 25;//y is just outside (remember that huge 8.5 gap?)
-                                        enemy[j][3] = 0;//sets yvel to 0
-                                        
-                                    }
-                                
-                                } //end of the not invisible if statement
-                                
-                            } //ends collision
-                            
-                        } //end of going through blocks array
-                        
+                            } //end of going through blocks array
+                        }
+
                         //established gravity for the koopa troopa!
                         enemy[j][3] += 0.2;
                         
                         enemy[j][0] += enemy[j][2]; //change x by xvel
                         enemy[j][1] += enemy[j][3]; //change y by yvel
-                        
-                        if (powerups[0]) {
-                            enemy[j][1] = player[1] + 25;
-                            enemy[j][3] = player[3];
-                        }
                         
                         if (enemy[j]) { //only displays if it isnt dead
                             
