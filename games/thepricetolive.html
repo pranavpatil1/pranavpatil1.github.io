@@ -2,61 +2,45 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-		<title>Super Mario Bros: Play on Gaming Genius</title>
+		<title>The Price To Live</title>
 		
 		<link href="https://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet" type="text/css">
 		
 		<script src="/games/scripts/jquery-1.10.2.js"></script>
-		<script> 
-			$(function(){
-				$("#header").load("/header.html");
-				$("#footer").load("/footer.html");
-			});
-		</script>
 		<style>
 			p {
 				font-family: Inconsolata, sans-serif;
 				font-size: 14px;
 			}
+            h1, h2, h3 {
+                font-family: Inconsolata, sans-serif;
+            }
 			body {
-				background-color:black;
+				background-color: rgb(107, 140, 255);
 			}
 			#content {
 				text-align: justify;
 				width: 400px;
 				margin: auto;
+                background-color: white;
+                padding: 20px 40px;
 			}
-			.loader {
-				position: fixed;
-				left: 0px;
-				top: 0px;
-				width: 100%;
-				height: 100%;
-				z-index: 9999;
-				background: 50% 50% no-repeat rgb(1, 1, 1);
-			}
+            b {
+                font-weight: bold;
+            }
 		</style>
 	</head>
 	<body>
-		<script type="text/javascript">
-			$(window).load(function() {
-				$(".loader").fadeOut("slow");
-			})
-		</script>
-		<div class="loader"></div>
-		<div id="header"></div>
-		
 		<div id="content">
 			<h3>The Price To Live</h3>
 			<p> 
 				<!--This draws the Canvas on the webpage -->
 				<canvas id="mycanvas"></canvas> 
 			</p>
-			<p>Adapted from the original Super Mario Bros.</p>
-			<p>Original game credit to Nintendo.</p>
+            <p><b>Controls:</b> Click on game and press SPACE to start, arrow keys for movement, X to sprint.
+            </p>
+            <p>Adapted from the original Super Mario Bros.</p>
 		</div>
-		
-		<div id="footer"></div>
 	</body>
 	<script src="/games/scripts/processing.min.js"></script> 
  
@@ -4538,7 +4522,7 @@ draw = function() {
         if (levelNum === 0 & lvlStage === 0) {
             
             //goombas have type 0, starting type 0
-            enemy = [[975, 325, -1, 0, 0, false, 0, 0], [1250, 325, -2, 0, 0, false, 0, 0], [1290, 325, -1, 0, 0, false, 0, 0], [1950, 125, -1, 0, 0, false, 0, 0], [2000, 125, -1, 0, 0, false, 0, 0], [2375, 325, -1, 0, 0, false, 42, 0], [2650, 325, -1, 0, 1, false, 42, 0], [2800, 325, -1, 0, 0, false, 42, 0], [2840, 325, -1, 0, 0, false, 42, 0], [2900, 325, -1, 0, 0, false, 42, 0], [2940, 325, -1, 0, 0, false, 42, 0], [4300, 325, -1, 0, 0, false, 42, 0], [4340, 325, -1, 0, 0, false, 42, 0]];
+            enemy = [[975, 325, -1, 0, 0, false, 0, 0], [1250, 325, -1, 0, 0, false, 0, 0], [1290, 325, -1, 0, 0, false, 0, 0], [1950, 125, -1, 0, 0, false, 0, 0], [2000, 125, -1, 0, 0, false, 0, 0], [2375, 325, -3, 0, 1, false, 0, 0], [2800, 325, -2, 0, 0, false, 42, 0], [2840, 325, -1, 0, 0, false, 42, 0], [2900, 325, -1, 0, 0, false, 42, 0], [2940, 325, -1, 0, 0, false, 42, 0], [4300, 325, -1, 0, 0, false, 42, 0], [4340, 325, -1, 0, 0, false, 42, 0]];
             
         } else { //if level isnt given, there are no enemies
             
@@ -4772,6 +4756,9 @@ draw = function() {
         for (var i = 0; i < maps[levelNum][lvlStage].length; i ++) {
             
             for (var j = 0; j < maps[levelNum][lvlStage][i].length; j ++) {
+                if (maps[levelNum][lvlStage][i][j] === 9) {
+                    maps[levelNum][lvlStage][i][j] = 5;
+                }
                 /*
                 //if it is a pipe that is plain (greater than or equal to 100)
                 if (levelNum === 3) {
@@ -4952,15 +4939,21 @@ draw = function() {
 
                         // advanced goomba, will chase the player!!
                         if (enemy[j][6] === 42) {
-                            if (player[1] < enemy[j][1] && Math.abs(player[0] - enemy[j][0]) < 25) {
+                            // if its close by, sprint towards player
+                            if (Math.abs(player[0] - enemy[j][0]) < 25) {
                                 // enemy[j][3] = -8;
                                 if (enemy[j][2] < 0) {
                                     enemy[j][2] = -8;
                                 } else {
                                     enemy[j][2] = 8;
                                 }
-                            } else if ((Math.abs(player[0] - enemy[j][0]) > 100) && (Math.abs(enemy[j][2]) > 2)) {
-                                enemy[j][2] /= 4; 
+                            } else if ((player[0] - enemy[j][0]) * enemy[j][2] < 0 && Math.abs(player[0] - enemy[j][0]) > 100) {
+                                enemy[j][2] *= -1;
+                            }
+
+                            if ((Math.abs(player[0] - enemy[j][0]) > 100) && (Math.abs(enemy[j][2]) > 3)) {
+                                // make it +/- 3 based on current sign (its not 0 based on if-statement so no edge case)
+                                enemy[j][2] = (enemy[j][2] / enemy[j][2]) * 3; 
                             }
                         }
                         
@@ -4978,17 +4971,17 @@ draw = function() {
                                     
                                     //if x is between 2.5 inside the right side and just outside the right side
                                     //y pos from way above to way below
-                                    if (enemy[j][0] <= (blocks[i][0] + 25) & enemy[j][0] >= (blocks[i][0] + 20) & (enemy[j][1] > (blocks[i][1] - 20) & enemy[j][1] < (blocks[i][1] + 25))) {
+                                    if (enemy[j][0] <= (blocks[i][0] + 25) & enemy[j][0] >= (blocks[i][0] + 20) & (enemy[j][1] > (blocks[i][1] - 20) & enemy[j][1] < (blocks[i][1] + 25)) & (enemy[j][2] < 0)) {
                                         
-                                        enemy[j][2] = 1;//sets x vel to be 1 (goes in opposite direction)
+                                        enemy[j][2] *= -1;//sets x vel to be 1 (goes in opposite direction)
                                         
                                     }
                                     
                                     //if x is between 2.5 inside the left side and just outside the left side
                                     //y pos from way above to way below
-                                    if (enemy[j][0] <= (blocks[i][0] - 20) & enemy[j][0] >= (blocks[i][0] - 25) & (enemy[j][1] > (blocks[i][1] - 25) & enemy[j][1] < (blocks[i][1] + 25))) {
+                                    if (enemy[j][0] <= (blocks[i][0] - 20) & enemy[j][0] >= (blocks[i][0] - 25) & (enemy[j][1] > (blocks[i][1] - 25) & enemy[j][1] < (blocks[i][1] + 25)) & enemy[j][2] > 0) {
                                         
-                                        enemy[j][2] = -1;//sets x vel to be -1 (goes in the opposite direction)
+                                        enemy[j][2] *= -1;//sets x vel to be -1 (goes in the opposite direction)
                                         
                                     }
                                     
@@ -5201,6 +5194,11 @@ draw = function() {
                         enemy[j][0] += enemy[j][2]; //change x by xvel
                         enemy[j][1] += enemy[j][3]; //change y by yvel
                         
+                        if (powerups[0]) {
+                            enemy[j][1] = player[1] + 25;
+                            enemy[j][3] = player[3];
+                        }
+                        
                         if (enemy[j]) { //only displays if it isnt dead
                             
                             if (enemy[j][2] < 0) {
@@ -5258,6 +5256,8 @@ draw = function() {
                                     player[1] += 25;
                                     yInc = 0;
                                     recover = 50;
+
+                                    enemy[j][6] = 0;
                                     
                                 } else if (recover === 0) {
                                     
@@ -6099,12 +6099,8 @@ draw = function() {
                     
                     score += 200;
                     //increases amount of coins
-                    if (state === 2) {
-                        coin += 100;
-                    } else {
-                        coin ++;
-                    }
-
+                    coin += 100;
+                    
                     gameSounds['coin'].play();
                     
                 }
@@ -7450,6 +7446,8 @@ draw = function() {
 
         // state management code
         stateClock ++;
+
+        const MESSAGE_STICK_TIME = 300;
         if (state === 0) { // didn't do anything
             if (player[0] > 100) {
                 state ++;
@@ -7459,9 +7457,11 @@ draw = function() {
                 qAnimation.push([300, 345, 0.75, 0, 2, 350, false]);
             }
         } else if (state === 1) { // no job, mushroom not collected
-            if (stateClock < 200) {
+            if (stateClock < MESSAGE_STICK_TIME) {
+                const START_Y = 150;
+
                 pushMatrix();
-                translate(50, 120);
+                translate(50, START_Y);
                 scale(1);
                 txt("WOOHOO!", 0, 0);
                 popMatrix();
@@ -7470,7 +7470,7 @@ draw = function() {
                 var scaleDown = 1;
                 scale(scaleDown);
 
-                var messages = ["GO GET THAT MUSHROM".split(" "), "LOOKS LIKE A JOB OFFER".split(" ")];
+                var messages = ["THAT MUSHROOM LOOKS", "LIKE A JOB"].map(x => x.split(' '));
                 // show only some element at a time
                 if (stateClock % 3 === 1) {
                     var addIndex = Math.floor(stateClock / 3);
@@ -7487,10 +7487,12 @@ draw = function() {
                         }
                     }
                 }
-                for (var texti = 0, texty = 140; texti < messageOut.length; texti ++, texty += 15) {
+                for (var texti = 0, texty = START_Y+20; texti < messageOut.length; texti ++, texty += 15) {
                     txt(messageOut[texti], 50 / scaleDown, texty / scaleDown);
                 }
                 popMatrix();
+            } else {
+                state = 3;
             }
 
             if (powerups[0]) {
@@ -7499,7 +7501,16 @@ draw = function() {
                 stateClock = 0;
             }
         } else if (state === 2) { // mushroom collected, has job
-            if (stateClock < 200) {
+            // job = get coins
+            if (stateClock % 200 === 0) {
+                coin += 600;
+                // diabetes = lose coins
+                if (hasDiabetes) {
+                    coin -= 400;
+                }
+            }
+            // show pop up for some amount of time after state starts
+            if (stateClock < MESSAGE_STICK_TIME) {
                 pushMatrix();
                 scale(1);
                 txt("YOURE A CHEMIST!", 40, 120);
@@ -7509,7 +7520,7 @@ draw = function() {
                 var scaleDown = 1;
                 scale(scaleDown);
 
-                var messages = ["- 6000 PER MONTH SALARY", "- INSURANCE", "- STABILITY", "", "GET COINS FROM BLOCKS"].map(x => x.split(" "));
+                var messages = ["- 600 PER MONTH SALARY", "- INSURANCE", "- STABILITY", "", "GET COINS FROM BLOCKS"].map(x => x.split(" "));
 
                 // show only some element at a time
                 if (stateClock % 3 === 1) {
@@ -7538,7 +7549,7 @@ draw = function() {
                 rect(0, 0, 400, 400);
                 shockTimer --;
             }
-            if (stateClock >=  200 && msgTimer != -1 && msgTimer < 200) {
+            if (stateClock >= MESSAGE_STICK_TIME && msgTimer != -1 && msgTimer < MESSAGE_STICK_TIME) {
                 msgTimer ++;
 
                 pushMatrix();
@@ -7550,7 +7561,7 @@ draw = function() {
                 var scaleDown = 1;
                 scale(scaleDown);
 
-                var messages = ["- JUST COPAY! LUCKY YOU!"].map(x => x.split(" "));
+                var messages = ["- JUST COPAY! LUCKY YOU!", "- 300 PER MONTH DIABETES POD", "- 100 PER MONTH INSULIN"].map(x => x.split(" "));
                 
                 // show only some element at a time
                 if (msgTimer % 3 === 1) {
@@ -7574,9 +7585,112 @@ draw = function() {
                 popMatrix();
             }
 
+            if (!powerups[0]) {
+                state ++;
+                messageOut = [];
+                stateClock = 0;
+            }
+        } else if (state === 3) {
+            if (stateClock % 200 === 0) {
+                if (hasDiabetes) {
+                    coin -= 800;
+                }
+                if (coin < 0) {
+                    coin = 0;
+                    dying = [true, -10, 0];
+                }
+            }
+
+            // show pop up for some amount of time after state starts
+            if (stateClock < MESSAGE_STICK_TIME) {
+                const MESSAGE_X = 20;
+                const MESSAGE_Y = 140;
+
+                pushMatrix();
+                scale(1);
+                txt("JOB LOST!", MESSAGE_X, MESSAGE_Y);
+                popMatrix();
+
+                pushMatrix();
+                var scaleDown = 1;
+                scale(scaleDown);
+
+                var messages = (!hasDiabetes ? ["- NO INSURANCE"] : ["- NO INSURANCE", "- 600 PER MONTH DIABETES POD", "- 200 PER MONTH INSULIN"]).map(x => x.split(" "));
+
+                // show only some element at a time
+                if (stateClock % 3 === 1) {
+                    var addIndex = Math.floor(stateClock / 3);
+                    var msgIndex = 0;
+                    while (msgIndex < messages.length && addIndex >= messages[msgIndex].length) {
+                        addIndex -= messages[msgIndex].length;
+                        msgIndex ++;
+                    }
+                    if (msgIndex < messages.length) {
+                        if (addIndex === 0) {
+                            messageOut.push(messages[msgIndex][0]);
+                        } else {
+                            messageOut[messageOut.length-1] += " " + messages[msgIndex][addIndex];
+                        }
+                    }
+                }
+                for (var texti = 0, texty = MESSAGE_Y+20; texti < messageOut.length; texti ++, texty += 15) {
+                    txt(messageOut[texti], MESSAGE_X / scaleDown, texty / scaleDown);
+                }
+                popMatrix();
+            }
+            
+            if (shockTimer > 0) {
+                noStroke();
+                fill(255, 100, 100, (100 + 100 * Math.sin(shockTimer / 2)) * shockTimer / 100);
+                rect(0, 0, 400, 400);
+                shockTimer --;
+            }
+            if (stateClock >= MESSAGE_STICK_TIME && msgTimer != -1 && msgTimer < MESSAGE_STICK_TIME) {
+                msgTimer ++;
+
+                pushMatrix();
+                scale(1);
+                txt("NEW EXPENSES", 30, 150);
+                popMatrix();
+
+                pushMatrix();
+                var scaleDown = 1;
+                scale(scaleDown);
+
+                var messages = ["- NO INSURANCE", "- 600 PER MONTH DIABETES POD", "- 200 PER MONTH INSULIN"].map(x => x.split(" "));
+                
+                // show only some element at a time
+                if (msgTimer % 3 === 1) {
+                    var addIndex = Math.floor(msgTimer / 3);
+                    var msgIndex = 0;
+                    while (msgIndex < messages.length && addIndex >= messages[msgIndex].length) {
+                        addIndex -= messages[msgIndex].length;
+                        msgIndex ++;
+                    }
+                    if (msgIndex < messages.length) {
+                        if (addIndex === 0) {
+                            messageOut.push(messages[msgIndex][0]);
+                        } else {
+                            messageOut[messageOut.length-1] += " " + messages[msgIndex][addIndex];
+                        }
+                    }
+                }
+                for (var texti = 0, texty = 170; texti < messageOut.length; texti ++, texty += 15) {
+                    txt(messageOut[texti], 30 / scaleDown, texty / scaleDown);
+                }
+                popMatrix();
+            }
+
+            
+
+            if (powerups[0]) {
+                state --;
+                messageOut = [];
+                stateClock = 0;
+            }
         }
 
-           }
+    }
 
     //all the text at the top
     txt("MARIA", 37.5, 25);
