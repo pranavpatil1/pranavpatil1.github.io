@@ -37,4 +37,16 @@
 	<script src="https://cdn.jsdelivr.net/processing.js/1.4.8/processing.min.js"></script> 
  
  <script src="./scripts/pricetolive.js"></script>
+ <script>
+    // Get the scale parameter from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const scale = parseFloat(urlParams.get('scale')) || 1; // Default to 1 if not specified
+
+    // Get the canvas and apply scaling
+    const canvas2 = document.getElementById('mycanvas');
+    if (canvas2) {
+      canvas2.style.transformOrigin = 'top left';
+      canvas2.style.transform = `scale(${scale})`;
+    }
+ </script>
 </html>
