@@ -38,15 +38,32 @@
  
  <script src="./scripts/pricetolive.js"></script>
  <script>
-    // Get the scale parameter from URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const scale = parseFloat(urlParams.get('scale')) || 1; // Default to 1 if not specified
-
-    // Get the canvas and apply scaling
-    const canvas2 = document.getElementById('mycanvas');
-    if (canvas2) {
-      canvas2.style.transformOrigin = 'top left';
-      canvas2.style.transform = `scale(${scale})`;
+    // Scale the canvas to fit the screen
+    function resizeCanvas() {
+      const canvas2 = document.getElementById('mycanvas');
+      if (canvas2) {
+        const windowWidth = window.innerWidth;
+        const windowHeight = window.innerHeight;
+        
+        // Original canvas size is 400x400
+        const originalSize = 400;
+        
+        // Calculate scale factors for width and height
+        const widthScale = windowWidth / originalSize;
+        const heightScale = windowHeight / originalSize;
+        
+        // Use the smaller scale to ensure it fits completely
+        const scale = Math.min(widthScale, heightScale);
+        
+        canvas2.style.transformOrigin = 'top left';
+        canvas2.style.transform = `scale(${scale})`;
+      }
     }
+    
+    // Initial resize
+    resizeCanvas();
+    
+    // Resize on window size change
+    window.addEventListener('resize', resizeCanvas);
  </script>
 </html>
