@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pranav Patil</title>
+    <title>Pranav Patil - Cybersecurity Expert & AI Engineer</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
@@ -245,6 +245,7 @@
             padding: 25px;
             transition: transform 0.3s;
             border-left: 4px solid var(--highlight-color);
+            cursor: pointer;
         }
 
         .project-card:hover {
@@ -261,6 +262,18 @@
         .project-description {
             color: var(--dark-gray);
             font-size: 0.95rem;
+        }
+
+        .project-link {
+            color: var(--highlight-color);
+            text-decoration: none;
+            font-weight: 500;
+            margin-top: 10px;
+            display: inline-block;
+        }
+
+        .project-link:hover {
+            text-decoration: underline;
         }
 
         /* Skills Section */
@@ -418,8 +431,8 @@
                 <img src="/photos/pranav.png" alt="Pranav Patil" class="profile-image">
             </div>
             <h1>Pranav Patil</h1>
-            <p class="subtitle">Codepoint Fellow • AI & Security Expert</p>
-            <p class="bio">Passionate about building AI for education and AI safety. Currently working at Sutter Hill Ventures portfolio companies. Caltech CS graduate with expertise in cybersecurity and software engineering.</p>
+            <p class="subtitle">2x CyberPatriot National Champion • Caltech CS '24 • Sutter Hill Ventures Fellow</p>
+            <p class="bio">Cybersecurity expert turned AI engineer, passionate about building secure AI systems for education. 2x National CyberPatriot Champion, 3x Congressional App Challenge winner, and creator of educational games reaching 6000+ students worldwide.</p>
         </div>
         <button id="highFiveBtn" class="nav-high-five-btn">
             <span id="counter">Loading...</span>
@@ -441,37 +454,37 @@
     <!-- Experience Section -->
     <section id="experience" class="section">
         <div class="container">
-            <h2 class="section-title">Experience</h2>
+            <h2 class="section-title">Professional Experience</h2>
             <div class="experience-grid">
-                <div class="experience-card" data-link="">
+                <div class="experience-card" data-link="https://www.observe.com">
                     <div class="card-header">
                         <div class="company-icon">O</div>
                         <div>
                             <div class="card-title">Codepoint Fellow - Observe, Inc.</div>
-                            <div class="card-company">Sutter Hill Ventures</div>
+                            <div class="card-company">Sutter Hill Ventures Portfolio</div>
                         </div>
                     </div>
                     <div class="card-duration">Feb 2025 - Present</div>
                     <div class="card-description">
-                        Working at observability startup to help customers see more data for way cheaper. Decreased data ingestion time by 20% through distributed system optimizations across Go/C++/TypeScript services.
+                        Building next-generation observability platform to help customers analyze massive datasets at scale. Optimized distributed systems across Go/C++/TypeScript services, reducing data ingestion time by 20% and improving query performance for enterprise customers.
                     </div>
                 </div>
 
-                <div class="experience-card" data-link="">
+                <div class="experience-card" data-link="https://www.sensei.com">
                     <div class="card-header">
                         <div class="company-icon">S</div>
                         <div>
                             <div class="card-title">Codepoint Fellow - Sensei</div>
-                            <div class="card-company">Sutter Hill Ventures</div>
+                            <div class="card-company">Sutter Hill Ventures Portfolio</div>
                         </div>
                     </div>
                     <div class="card-duration">Oct 2024 - Jan 2025</div>
                     <div class="card-description">
-                        Built AI for sales in a team of 6. Created frontend from scratch using Vercel, Remix, React, and TypeScript with focus on performance and maintainability.
+                        Developed AI-powered sales intelligence platform in a team of 6 engineers. Built responsive frontend from scratch using Vercel, Remix, React, and TypeScript, focusing on performance optimization and maintainable architecture for enterprise sales teams.
                     </div>
                 </div>
 
-                <div class="experience-card" data-link="">
+                <div class="experience-card" data-link="https://stripe.com">
                     <div class="card-header">
                         <div class="company-icon">S</div>
                         <div>
@@ -481,21 +494,21 @@
                     </div>
                     <div class="card-duration">Jun 2023 - Sep 2023</div>
                     <div class="card-description">
-                        Worked on Apiori, Stripe's magic that pre-processes requests and replaces PII. Combined 3 similar endpoints, handled 50M daily payment volume migration across multiple teams.
+                        Worked on Apiori, Stripe's critical PII preprocessing system handling 50M+ daily payment transactions. Successfully consolidated 3 similar endpoints and led cross-team migration efforts, improving system efficiency and reducing maintenance overhead.
                     </div>
                 </div>
 
-                <div class="experience-card" data-link="">
+                <div class="experience-card" data-link="https://salesforce.com">
                     <div class="card-header">
                         <div class="company-icon">SF</div>
                         <div>
-                            <div class="card-title">SWE Intern (Security)</div>
+                            <div class="card-title">Security Engineering Intern</div>
                             <div class="card-company">Salesforce</div>
                         </div>
                     </div>
                     <div class="card-duration">Jun 2021 - Sep 2022</div>
                     <div class="card-description">
-                        Worked in Threat Detection team developing security automation tools, exploring Apache Flink capabilities, and implementing custom Python filters for Kafka streams.
+                        Developed advanced threat detection systems in the Security team. Built custom Python filters for Kafka streams, explored Apache Flink for real-time security analytics, and created automation tools that enhanced the company's cybersecurity posture.
                     </div>
                 </div>
             </div>
@@ -505,47 +518,51 @@
     <!-- Projects Section -->
     <section id="projects" class="section" style="background: var(--light-gray);">
         <div class="container">
-            <h2 class="section-title">Featured Projects</h2>
+            <h2 class="section-title">Featured Projects & Games</h2>
             <div class="projects-grid">
-                <div class="project-card">
+                <div class="project-card" onclick="window.open('/games/cyber-champion.html', '_blank')">
                     <div class="project-title">🎮 Cyber Champion</div>
                     <div class="project-description">
-                        Interactive game teaching kids online safety. Won National STEM Video Game Challenge and Congressional App Challenge. Reached 6000+ students through Udemy course.
+                        Award-winning educational cybersecurity game that won the National STEM Video Game Challenge (Games for Change category) and 2017 Congressional App Challenge. Teaches online safety through interactive platformer gameplay, reaching 6000+ students through Udemy courses.
                     </div>
+                    <a href="/games/cyber-champion.html" class="project-link" target="_blank">Play Game →</a>
                 </div>
 
-                <div class="project-card">
+                <div class="project-card" onclick="window.open('/games/engineering.html', '_blank')">
                     <div class="project-title">🌍 World of Engineers</div>
                     <div class="project-description">
-                        Video game encouraging kids to pursue engineering by showing real-world impact. Won Congressional App Challenge with strategic thinking gameplay.
+                        Educational game encouraging kids to pursue engineering careers by showcasing real-world impact. Won Congressional App Challenge with strategic thinking gameplay that demonstrates how engineering solves everyday problems.
                     </div>
+                    <a href="/games/engineering.html" class="project-link" target="_blank">View Games →</a>
+                </div>
+
+                <div class="project-card" onclick="window.open('https://ctftime.org/team/39346/', '_blank')">
+                    <div class="project-title">🏆 PentaHex CTF Team</div>
+                    <div class="project-description">
+                        Founded and led PentaHex, a top-20 ranked high school CTF team in the US. Created educational resources and tutorials that helped students learn cybersecurity through Capture The Flag competitions. Team consistently ranked in top 200 globally.
+                    </div>
+                    <a href="https://ctftime.org/team/39346/" class="project-link" target="_blank">View Team →</a>
+                </div>
+
+                <div class="project-card" onclick="window.open('https://github.com/pranavpatil1/pdf-splitter-vertical', '_blank')">
+                    <div class="project-title">📄 PDF Formatter with OpenCV</div>
+                    <div class="project-description">
+                        Flask webapp using OpenCV to intelligently split OneNote PDFs for better Gradescope formatting. Solved submission formatting issues for hundreds of students and TAs at Caltech, improving academic workflow efficiency.
+                    </div>
+                    <a href="https://github.com/pranavpatil1/pdf-splitter-vertical" class="project-link" target="_blank">View Code →</a>
                 </div>
 
                 <div class="project-card">
                     <div class="project-title">⚽ Blockchain P2P Games</div>
                     <div class="project-description">
-                        Built peer-to-peer realtime soccer game using WebRTC. Explored blockchain synchronization and smart contracts to prevent cheating in P2P games.
-                    </div>
-                </div>
-
-                <div class="project-card">
-                    <div class="project-title">📄 PDF Formatter with OpenCV</div>
-                    <div class="project-description">
-                        Flask webapp using OpenCV to split OneNote PDFs for better Gradescope formatting. Solved submission formatting issues for students and TAs.
+                        Built peer-to-peer realtime soccer game using WebRTC for low-latency multiplayer. Explored blockchain synchronization and smart contracts to prevent cheating in decentralized gaming environments.
                     </div>
                 </div>
 
                 <div class="project-card">
                     <div class="project-title">🤖 RAG System for Documents</div>
                     <div class="project-description">
-                        Designed RAG system with entity graph representation, named entity resolution, and dynamic knowledge understanding over time.
-                    </div>
-                </div>
-
-                <div class="project-card">
-                    <div class="project-title">🏆 CyberPatriot Champion</div>
-                    <div class="project-description">
-                        2-time National Champion, team MVP and Captain. Started 20th-ranked CTF team in US (PentaHex). Led cybersecurity competitions and education.
+                        Designed advanced RAG system with entity graph representation, named entity resolution, and dynamic knowledge understanding over time. Implemented for improved document analysis and information retrieval.
                     </div>
                 </div>
             </div>
@@ -555,10 +572,10 @@
     <!-- Skills Section -->
     <section id="skills" class="section">
         <div class="container">
-            <h2 class="section-title">Skills & Technologies</h2>
+            <h2 class="section-title">Technical Skills & Expertise</h2>
             <div class="skills-container">
                 <div class="skill-category">
-                    <h3>💻 Programming</h3>
+                    <h3>💻 Programming Languages</h3>
                     <div class="skill-tags">
                         <span class="skill-tag">Go</span>
                         <span class="skill-tag">JavaScript/TypeScript</span>
@@ -570,9 +587,10 @@
                     </div>
                 </div>
                 <div class="skill-category">
-                    <h3>🛠️ Technologies</h3>
+                    <h3>🛠️ Technologies & Frameworks</h3>
                     <div class="skill-tags">
                         <span class="skill-tag">React</span>
+                        <span class="skill-tag">Remix</span>
                         <span class="skill-tag">WebRTC</span>
                         <span class="skill-tag">Apache Flink</span>
                         <span class="skill-tag">Docker</span>
@@ -582,23 +600,25 @@
                     </div>
                 </div>
                 <div class="skill-category">
-                    <h3>🔒 Security</h3>
+                    <h3>🔒 Cybersecurity</h3>
                     <div class="skill-tags">
-                        <span class="skill-tag">Cybersecurity</span>
                         <span class="skill-tag">Threat Detection</span>
-                        <span class="skill-tag">CTF</span>
+                        <span class="skill-tag">CTF Competitions</span>
                         <span class="skill-tag">Penetration Testing</span>
                         <span class="skill-tag">Vulnerability Assessment</span>
+                        <span class="skill-tag">Security Automation</span>
+                        <span class="skill-tag">Incident Response</span>
                     </div>
                 </div>
                 <div class="skill-category">
-                    <h3>🎯 Specialties</h3>
+                    <h3>🎯 Specializations</h3>
                     <div class="skill-tags">
                         <span class="skill-tag">AI Safety</span>
-                        <span class="skill-tag">Educational Games</span>
+                        <span class="skill-tag">Educational Technology</span>
                         <span class="skill-tag">Distributed Systems</span>
                         <span class="skill-tag">Observability</span>
-                        <span class="skill-tag">Leadership</span>
+                        <span class="skill-tag">Team Leadership</span>
+                        <span class="skill-tag">Game Development</span>
                     </div>
                 </div>
             </div>
@@ -608,36 +628,42 @@
     <!-- Achievements Section -->
     <section id="achievements" class="section" style="background: var(--light-gray);">
         <div class="container">
-            <h2 class="section-title">Achievements & Recognition</h2>
+            <h2 class="section-title">Awards & Recognition</h2>
             <div class="projects-grid">
                 <div class="project-card">
                     <div class="project-title">🏆 2x CyberPatriot National Champion</div>
                     <div class="project-description">
-                        High School National Champion (2019-20), Middle School National Champion (2015-16). Team Captain and MVP with 4x National Finalist appearances.
+                        High School National Champion (2019-20) as team captain of CyberAegis Strange Quark II, and Middle School National Champion (2015-16). Led Del Norte High School to multiple national finals with 4x National Finalist appearances and team MVP recognition.
                     </div>
                 </div>
                 <div class="project-card">
                     <div class="project-title">🎮 National STEM Video Game Challenge Winner</div>
                     <div class="project-description">
-                        Won Games for Change category out of 3000+ entries with Cyber Champion educational cybersecurity game.
+                        Won Games for Change category out of 3000+ entries with Cyber Champion educational cybersecurity game. Recognized by Joan Ganz Cooney Center for innovative approach to cybersecurity education through gaming.
                     </div>
                 </div>
                 <div class="project-card">
                     <div class="project-title">🏛️ 3x Congressional App Challenge Winner</div>
                     <div class="project-description">
-                        2016 (Cyber Champion), 2017 (PentaHex CTF), 2018 (World of Engineers). Later served as Congressional App Challenge Ambassador.
+                        2016 (Cyber Champion), 2017 (PentaHex CTF), 2018 (World of Engineers). Later served as Congressional App Challenge Ambassador, mentoring other students in app development and cybersecurity education.
                     </div>
                 </div>
                 <div class="project-card">
-                    <div class="project-title">🧠 AIME Qualifier (2x)</div>
+                    <div class="project-title">🎓 Caltech Computer Science Graduate</div>
                     <div class="project-description">
-                        Qualified for American Invitational Mathematics Examination in 2016 and 2018, demonstrating strong mathematical problem-solving skills.
+                        Bachelor's in Computer Science from California Institute of Technology (2020-2024). Specialized in distributed systems, AI safety, and cybersecurity research while maintaining academic excellence.
                     </div>
                 </div>
                 <div class="project-card">
-                    <div class="project-title">🎓 Perfect Test Scores</div>
+                    <div class="project-title">🧠 AIME Qualifier & National Merit Scholar</div>
                     <div class="project-description">
-                        ACT: 36, SAT: 1570, SAT Subject Tests: 800 (Math II, Physics, Chemistry). National Merit Scholar recognition.
+                        Qualified for American Invitational Mathematics Examination (2016, 2018). Perfect test scores: ACT 36, SAT 1570, SAT Subject Tests 800 (Math II, Physics, Chemistry). National Merit Scholar recognition.
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="project-title">👨‍🏫 Cybersecurity Educator</div>
+                    <div class="project-description">
+                        Created Udemy courses reaching 6000+ students worldwide. Taught cybersecurity classes at local elementary schools using self-developed games and curricula. Mentored dozens of students in CTF competitions.
                     </div>
                 </div>
             </div>
@@ -648,11 +674,13 @@
     <footer class="footer">
         <div class="container">
             <div class="footer-content">
-                <a href="https://linkedin.com/in/pranavpatil1" class="footer-link">LinkedIn</a>
-                <a href="https://github.com/pranavpatil1" class="footer-link">GitHub</a>
-                <a href="/games/" class="footer-link">My Games</a>
+                <a href="https://linkedin.com/in/pranavpatil1" class="footer-link" target="_blank">LinkedIn</a>
+                <a href="https://github.com/pranavpatil1" class="footer-link" target="_blank">GitHub</a>
+                <a href="/games/" class="footer-link" target="_blank">My Games</a>
+                <a href="https://ctftime.org/team/39346/" class="footer-link" target="_blank">PentaHex CTF</a>
+                <a href="https://www.udemy.com/course/cybersecurity-for-kids/" class="footer-link" target="_blank">Udemy Course</a>
             </div>
-            <p>&copy; 2025 Pranav Patil. Built with AI.</p>
+            <p>&copy; 2025 Pranav Patil. 2x CyberPatriot National Champion • Caltech CS '24 • Building the future of AI safety.</p>
         </div>
     </footer>
 
@@ -711,7 +739,7 @@
     </script>
     
     <script>
-        // Supabase configuration - replace with your actual values
+        // Supabase configuration
         const SUPABASE_URL = 'https://hsutdnzstxllbptqvzjh.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhzdXRkbnpzdHhsbGJwdHF2empoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkxMDg5MDIsImV4cCI6MjA2NDY4NDkwMn0.S_15Mi0n0IomIar7hMSuPDcyt-K_VyQcGqDfrnPiL8E';
         
