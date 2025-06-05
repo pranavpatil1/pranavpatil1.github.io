@@ -1,193 +1,819 @@
-
 <!DOCTYPE html>
-<html>
-	<head>
-		<meta charset="utf-8">
-		<title>Gaming Genius</title>
-		
-		<meta property="og:image" content="https://games.pranavpatil.com/photos/cyberchampion.PNG">
-		<meta property="og:title" content="Play fun games at Gaming Genius">
-		<meta property="og:description" content="Gaming Genius has tower defense games, platformers, endless runners, and educational games about cybersecurity or engineering.">
-		
-		<script src="//code.jquery.com/jquery-1.10.2.js"></script>
-		
-		<script>
-			function setup() {
-				var rawFile = new XMLHttpRequest();
-				var allText = "";
-				rawFile.open("GET", "game_list.txt", false);
-				rawFile.onreadystatechange = function ()
-				{
-					if(rawFile.readyState === 4)
-					{
-						if(rawFile.status === 200 || rawFile.status == 0)
-						{
-							allText = rawFile.responseText;
-						}
-					}
-				}
-				rawFile.send(null);
-				var data = allText.split('\n');
-				var gallery = document.getElementById("gallery");
-				
-				/*
-				OKOK this is what this implements
-				<a href="/link">
-				<div class="column">
-					<div class="content">
-					  <img src="/photos/cyberchampion.PNG" alt="Cyber" style="width:100%">
-					  <h3 class="label">My Work</h3>
-					  <p>Lorem ipsum dolor sit amet, tempor prodesset eos.</p>
-					</div>
-				  </div>
-				 </a>
-				 */
-				for (var i = 0; i < data.length; i ++) {
-					var subdata = data[i].split(';');
-					var link = document.createElement("a");
-					var col = document.createElement("div");
-					var cont = document.createElement("div");
-					var image = document.createElement("img");
-					var label = document.createElement("h3");
-					var desc = document.createElement("p");
-					
-					link.href = subdata[3];
-					col.className = 'column';
-					cont.className = 'content';
-					image.src = subdata[4];
-					image.alt = subdata[0];
-					image.style='width:100%';
-					image.className = 'images';
-					label.innerHTML = subdata[0];
-					label.className = 'label';
-					desc.innerHTML = subdata[1];
-					
-					col.appendChild(cont);
-					link.appendChild(image);
-					cont.appendChild(link);
-					cont.appendChild(label);
-					cont.appendChild(desc);
-					
-					gallery.appendChild(col);
-				}
-			}
-			window.onload = setup;
-		</script>
-		<style>
-			body {
-				text-align: center;
-				align-self: center;
-				padding: 20px;
-			}
-			.images:hover {
-				filter: brightness(50%);
-				transition-duration: 0.4s;
-			}
-			.loader {
-				position: fixed;
-				left: 0px;
-				top: 0px;
-				width: 100%;
-				height: 100%;
-				z-index: 9998;
-				background: 50% 50% no-repeat rgb(1, 1, 1);
-			}
-			.dude {
-				position: fixed;
-				left: 0px;
-				top: 30%;
-				width: 100%;
-				height: 100%;
-				z-index: 9999;
-				background: url(photos/G-gif.gif) 50% 50% no-repeat;
-			}
-			
-			* {
-				box-sizing: border-box;
-			}
-			#gallery {
-				width: 80%;
-				margin-left: 10%;
-				margin-right: 10%;
-			}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pranav Patil</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --highlight-color: #e67e22;
+            --light-gray: #f8f9fa;
+            --medium-gray: #6c757d;
+            --dark-gray: #343a40;
+        }
 
-			/* Add padding BETWEEN each column */
-			#gallery,
-			#gallery > .column {
-				padding: 8px;
-			}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-			/* Create four equal columns that floats next to each other */
-			.column {
-				float: left;
-				width: 33.33%;
-			}
+        body {
+            font-family: 'Inter', serif;
+            line-height: 1.6;
+            color: var(--primary-color);
+            background-color: white;
+        }
 
-			/* Clear floats after rows */ 
-			#gallery:after {
-				content: "";
-				display: table;
-				clear: both;
-			}
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
 
-			/* Content */
-			.content {
-				background-color: #e0e0e0;
-				border: 8px solid darkgreen;
-				border-radius: 15px;
-				padding: 15px;
-			}
-			.images {
-				border-radius: 7px;
-			}
-			p,h3 {
-				margin: 5px;
-			}
-			h3 {
-				margin-top: 15px;
-			}
-			/* Responsive layout - makes a two column-layout instead of four columns */
-			@media screen and (max-width: 900px) {
-				.column {
-					width: 50%;
-				}
-			}
+        /* Header Section */
+        .header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--dark-gray) 100%);
+            color: white;
+            padding: 80px 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
 
-			/* Responsive layout - makes the two columns stack on top of each other instead of next to each other */
-			@media screen and (max-width: 600px) {
-				.column {
-					width: 100%;
-				}
-			}
-			
-			@media only screen and (max-device-width: 480px) {
-				.column {
-					width: 100%;
-				}
-			}
-		</style>
-	</head>
-	<body oncontextmenu="return false">
-		<script> 
-			$(function(){
-				$("#header").load("/header.html");
-				$("#footer").load("/footer.html");
-			});
-		</script>
-		<script type="text/javascript">
-			$(window).load(function() {
-				$(".loader").fadeOut("slow");
-				$(".dude").fadeOut("slow");
-			})
-		</script>
-		<div class="loader"></div>
-		<div class="dude"></div>
-		<div id="header"></div>
-		<h2>Play games!</h2>
-		
-		<div id="gallery"></div>
-		
-		<div id="footer"></div>
-		
-	</body>
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="2" fill="rgba(255,255,255,0.1)"/></svg>');
+            animation: float 20s infinite linear;
+        }
+
+        @keyframes float {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        .profile-photo {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            border: 4px solid var(--highlight-color);
+            margin: 0 auto 30px;
+            background: var(--light-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            color: var(--medium-gray);
+            position: relative;
+            z-index: 2;
+            overflow: hidden;
+        }
+
+        .header h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .header .subtitle {
+            font-size: 1.3rem;
+            color: var(--highlight-color);
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .header .bio {
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+            opacity: 0.9;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Navigation */
+        .nav {
+            background: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+        }
+
+        .nav a {
+            text-decoration: none;
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: color 0.3s;
+        }
+
+        .nav a:hover {
+            color: var(--highlight-color);
+        }
+
+        /* Sections */
+        .section {
+            padding: 80px 0;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 50px;
+            color: var(--primary-color);
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: var(--highlight-color);
+        }
+
+        /* Experience Cards */
+        .experience-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .experience-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .experience-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--highlight-color);
+        }
+
+        .experience-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .company-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            background: var(--highlight-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .card-company {
+            color: var(--medium-gray);
+            font-size: 1rem;
+        }
+
+        .card-duration {
+            color: var(--highlight-color);
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        .card-description {
+            color: var(--dark-gray);
+            line-height: 1.6;
+        }
+
+        /* Projects Section */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 50px;
+        }
+
+        .project-card {
+            background: var(--light-gray);
+            border-radius: 12px;
+            padding: 25px;
+            transition: transform 0.3s;
+            border-left: 4px solid var(--highlight-color);
+        }
+
+        .project-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .project-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .project-description {
+            color: var(--dark-gray);
+            font-size: 0.95rem;
+        }
+
+        /* Skills Section */
+        .skills-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-top: 50px;
+        }
+
+        .skill-category {
+            text-align: center;
+        }
+
+        .skill-category h3 {
+            font-size: 1.3rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        .skill-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .skill-tag {
+            background: var(--highlight-color);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--primary-color);
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+
+        .footer-link {
+            color: var(--highlight-color);
+            text-decoration: none;
+            font-size: 1.1rem;
+            transition: opacity 0.3s;
+        }
+
+        .footer-link:hover {
+            opacity: 0.8;
+        }
+        
+        .high-five-btn {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            border: none;
+            border-radius: 50px;
+            padding: 30px 50px;
+            font-size: 3rem;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+        
+        .high-five-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+        }
+        
+        .high-five-btn:active {
+            transform: translateY(-2px);
+        }
+        
+        .counter {
+            margin-top: 20px;
+            font-size: 1rem;
+            color: #333;
+        }
+        
+        .loading {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .nav-high-five-btn {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            border: none;
+            border-radius: 25px;
+            padding: 12px 24px;
+            font-size: 1.0rem;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            margin-top: 2em;
+        }
+
+        .nav-high-five-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .nav-high-five-btn:active {
+            transform: translateY(0px);
+        }
+
+        .nav-high-five-btn.loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .nav ul {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .section {
+                padding: 60px 0;
+            }
+            
+            .experience-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .profile-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <section class="header">
+        <div class="container">
+            <div class="profile-photo">
+                <img src="/photos/pranav.png" alt="Pranav Patil" class="profile-image">
+            </div>
+            <h1>Pranav Patil</h1>
+            <p class="subtitle">Codepoint Fellow • AI & Security Expert</p>
+            <p class="bio">Passionate about building AI for education and AI safety. Currently working at Sutter Hill Ventures portfolio companies. Caltech CS graduate with expertise in cybersecurity and software engineering.</p>
+        </div>
+        <button id="highFiveBtn" class="nav-high-five-btn">
+            <span id="counter">Loading...</span>
+        </button>
+    </section>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="container">
+            <ul>
+                <li><a href="#experience">Experience</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#skills">Skills</a></li>
+                <li><a href="#achievements">Achievements</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Experience Section -->
+    <section id="experience" class="section">
+        <div class="container">
+            <h2 class="section-title">Experience</h2>
+            <div class="experience-grid">
+                <div class="experience-card" data-link="">
+                    <div class="card-header">
+                        <div class="company-icon">O</div>
+                        <div>
+                            <div class="card-title">Codepoint Fellow - Observe, Inc.</div>
+                            <div class="card-company">Sutter Hill Ventures</div>
+                        </div>
+                    </div>
+                    <div class="card-duration">Feb 2025 - Present</div>
+                    <div class="card-description">
+                        Working at observability startup to help customers see more data for way cheaper. Decreased data ingestion time by 20% through distributed system optimizations across Go/C++/TypeScript services.
+                    </div>
+                </div>
+
+                <div class="experience-card" data-link="">
+                    <div class="card-header">
+                        <div class="company-icon">S</div>
+                        <div>
+                            <div class="card-title">Codepoint Fellow - Sensei</div>
+                            <div class="card-company">Sutter Hill Ventures</div>
+                        </div>
+                    </div>
+                    <div class="card-duration">Oct 2024 - Jan 2025</div>
+                    <div class="card-description">
+                        Built AI for sales in a team of 6. Created frontend from scratch using Vercel, Remix, React, and TypeScript with focus on performance and maintainability.
+                    </div>
+                </div>
+
+                <div class="experience-card" data-link="">
+                    <div class="card-header">
+                        <div class="company-icon">S</div>
+                        <div>
+                            <div class="card-title">Software Engineering Intern</div>
+                            <div class="card-company">Stripe</div>
+                        </div>
+                    </div>
+                    <div class="card-duration">Jun 2023 - Sep 2023</div>
+                    <div class="card-description">
+                        Worked on Apiori, Stripe's magic that pre-processes requests and replaces PII. Combined 3 similar endpoints, handled 50M daily payment volume migration across multiple teams.
+                    </div>
+                </div>
+
+                <div class="experience-card" data-link="">
+                    <div class="card-header">
+                        <div class="company-icon">SF</div>
+                        <div>
+                            <div class="card-title">SWE Intern (Security)</div>
+                            <div class="card-company">Salesforce</div>
+                        </div>
+                    </div>
+                    <div class="card-duration">Jun 2021 - Sep 2022</div>
+                    <div class="card-description">
+                        Worked in Threat Detection team developing security automation tools, exploring Apache Flink capabilities, and implementing custom Python filters for Kafka streams.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="section" style="background: var(--light-gray);">
+        <div class="container">
+            <h2 class="section-title">Featured Projects</h2>
+            <div class="projects-grid">
+                <div class="project-card">
+                    <div class="project-title">🎮 Cyber Champion</div>
+                    <div class="project-description">
+                        Interactive game teaching kids online safety. Won National STEM Video Game Challenge and Congressional App Challenge. Reached 6000+ students through Udemy course.
+                    </div>
+                </div>
+
+                <div class="project-card">
+                    <div class="project-title">🌍 World of Engineers</div>
+                    <div class="project-description">
+                        Video game encouraging kids to pursue engineering by showing real-world impact. Won Congressional App Challenge with strategic thinking gameplay.
+                    </div>
+                </div>
+
+                <div class="project-card">
+                    <div class="project-title">⚽ Blockchain P2P Games</div>
+                    <div class="project-description">
+                        Built peer-to-peer realtime soccer game using WebRTC. Explored blockchain synchronization and smart contracts to prevent cheating in P2P games.
+                    </div>
+                </div>
+
+                <div class="project-card">
+                    <div class="project-title">📄 PDF Formatter with OpenCV</div>
+                    <div class="project-description">
+                        Flask webapp using OpenCV to split OneNote PDFs for better Gradescope formatting. Solved submission formatting issues for students and TAs.
+                    </div>
+                </div>
+
+                <div class="project-card">
+                    <div class="project-title">🤖 RAG System for Documents</div>
+                    <div class="project-description">
+                        Designed RAG system with entity graph representation, named entity resolution, and dynamic knowledge understanding over time.
+                    </div>
+                </div>
+
+                <div class="project-card">
+                    <div class="project-title">🏆 CyberPatriot Champion</div>
+                    <div class="project-description">
+                        2-time National Champion, team MVP and Captain. Started 20th-ranked CTF team in US (PentaHex). Led cybersecurity competitions and education.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills" class="section">
+        <div class="container">
+            <h2 class="section-title">Skills & Technologies</h2>
+            <div class="skills-container">
+                <div class="skill-category">
+                    <h3>💻 Programming</h3>
+                    <div class="skill-tags">
+                        <span class="skill-tag">Go</span>
+                        <span class="skill-tag">JavaScript/TypeScript</span>
+                        <span class="skill-tag">Python</span>
+                        <span class="skill-tag">Java</span>
+                        <span class="skill-tag">C/C++</span>
+                        <span class="skill-tag">Bash</span>
+                        <span class="skill-tag">x64 Assembly</span>
+                    </div>
+                </div>
+                <div class="skill-category">
+                    <h3>🛠️ Technologies</h3>
+                    <div class="skill-tags">
+                        <span class="skill-tag">React</span>
+                        <span class="skill-tag">WebRTC</span>
+                        <span class="skill-tag">Apache Flink</span>
+                        <span class="skill-tag">Docker</span>
+                        <span class="skill-tag">Kubernetes</span>
+                        <span class="skill-tag">OpenCV</span>
+                        <span class="skill-tag">Flask</span>
+                    </div>
+                </div>
+                <div class="skill-category">
+                    <h3>🔒 Security</h3>
+                    <div class="skill-tags">
+                        <span class="skill-tag">Cybersecurity</span>
+                        <span class="skill-tag">Threat Detection</span>
+                        <span class="skill-tag">CTF</span>
+                        <span class="skill-tag">Penetration Testing</span>
+                        <span class="skill-tag">Vulnerability Assessment</span>
+                    </div>
+                </div>
+                <div class="skill-category">
+                    <h3>🎯 Specialties</h3>
+                    <div class="skill-tags">
+                        <span class="skill-tag">AI Safety</span>
+                        <span class="skill-tag">Educational Games</span>
+                        <span class="skill-tag">Distributed Systems</span>
+                        <span class="skill-tag">Observability</span>
+                        <span class="skill-tag">Leadership</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Achievements Section -->
+    <section id="achievements" class="section" style="background: var(--light-gray);">
+        <div class="container">
+            <h2 class="section-title">Achievements & Recognition</h2>
+            <div class="projects-grid">
+                <div class="project-card">
+                    <div class="project-title">🏆 2x CyberPatriot National Champion</div>
+                    <div class="project-description">
+                        High School National Champion (2019-20), Middle School National Champion (2015-16). Team Captain and MVP with 4x National Finalist appearances.
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="project-title">🎮 National STEM Video Game Challenge Winner</div>
+                    <div class="project-description">
+                        Won Games for Change category out of 3000+ entries with Cyber Champion educational cybersecurity game.
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="project-title">🏛️ 3x Congressional App Challenge Winner</div>
+                    <div class="project-description">
+                        2016 (Cyber Champion), 2017 (PentaHex CTF), 2018 (World of Engineers). Later served as Congressional App Challenge Ambassador.
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="project-title">🧠 AIME Qualifier (2x)</div>
+                    <div class="project-description">
+                        Qualified for American Invitational Mathematics Examination in 2016 and 2018, demonstrating strong mathematical problem-solving skills.
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="project-title">🎓 Perfect Test Scores</div>
+                    <div class="project-description">
+                        ACT: 36, SAT: 1570, SAT Subject Tests: 800 (Math II, Physics, Chemistry). National Merit Scholar recognition.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <a href="https://linkedin.com/in/pranavpatil1" class="footer-link">LinkedIn</a>
+                <a href="https://github.com/pranavpatil1" class="footer-link">GitHub</a>
+                <a href="/games/" class="footer-link">My Games</a>
+            </div>
+            <p>&copy; 2025 Pranav Patil. Built with AI.</p>
+        </div>
+    </footer>
+
+    <script>
+        $(document).ready(function() {
+            // Smooth scrolling for navigation links
+            $('a[href^="#"]').on('click', function(event) {
+                var target = $(this.getAttribute('href'));
+                if (target.length) {
+                    event.preventDefault();
+                    $('html, body').stop().animate({
+                        scrollTop: target.offset().top - 80
+                    }, 1000);
+                }
+            });
+
+            // Add click handlers for experience cards with links
+            $('.experience-card[data-link]').on('click', function() {
+                var link = $(this).data('link');
+                if (link) {
+                    window.open(link, '_blank');
+                }
+            });
+
+            // Parallax effect for header
+            $(window).scroll(function() {
+                var scrolled = $(this).scrollTop();
+                var rate = scrolled * -0.5;
+                $('.header::before').css('transform', 'translate3d(0, ' + rate + 'px, 0)');
+            });
+
+            // Fade in animations
+            $(window).scroll(function() {
+                $('.experience-card, .project-card').each(function() {
+                    var elementTop = $(this).offset().top;
+                    var elementBottom = elementTop + $(this).outerHeight();
+                    var viewportTop = $(window).scrollTop();
+                    var viewportBottom = viewportTop + $(window).height();
+
+                    if (elementBottom > viewportTop && elementTop < viewportBottom) {
+                        $(this).addClass('visible');
+                    }
+                });
+            });
+
+            // Add some interactive hover effects
+            $('.experience-card').hover(
+                function() {
+                    $(this).find('.company-icon').css('transform', 'scale(1.1)');
+                },
+                function() {
+                    $(this).find('.company-icon').css('transform', 'scale(1)');
+                }
+            );
+        });
+    </script>
+    
+    <script>
+        // Supabase configuration - replace with your actual values
+        const SUPABASE_URL = 'https://hsutdnzstxllbptqvzjh.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhzdXRkbnpzdHhsbGJwdHF2empoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkxMDg5MDIsImV4cCI6MjA2NDY4NDkwMn0.S_15Mi0n0IomIar7hMSuPDcyt-K_VyQcGqDfrnPiL8E';
+        
+        class HighFiveCounter {
+            constructor() {
+                this.btn = document.getElementById('highFiveBtn');
+                this.counter = document.getElementById('counter');
+                this.init();
+            }
+            
+            async init() {
+                await this.loadCount();
+                this.btn.addEventListener('click', () => this.highFive());
+            }
+            
+            async loadCount() {
+                try {
+                    const response = await fetch(`${SUPABASE_URL}/rest/v1/high_fives?select=count`, {
+                        headers: {
+                            'apikey': SUPABASE_ANON_KEY,
+                            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                        }
+                    });
+                    
+                    const data = await response.json();
+                    const count = data.length > 0 ? data[0].count : 0;
+                    this.updateDisplay(count);
+                } catch (error) {
+                    console.error('Error loading count:', error);
+                    this.counter.textContent = 'Error loading count';
+                }
+            }
+            
+            async highFive() {
+                this.btn.classList.add('loading');
+                
+                try {
+                    // Get current count
+                    const getResponse = await fetch(`${SUPABASE_URL}/rest/v1/high_fives?select=count`, {
+                        headers: {
+                            'apikey': SUPABASE_ANON_KEY,
+                            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                        }
+                    });
+                    
+                    const currentData = await getResponse.json();
+                    let newCount = 1;
+                    
+                    if (currentData.length > 0) {
+                        // Update existing record
+                        newCount = currentData[0].count + 1;
+                        await fetch(`${SUPABASE_URL}/rest/v1/high_fives?id=eq.1`, {
+                            method: 'PATCH',
+                            headers: {
+                                'apikey': SUPABASE_ANON_KEY,
+                                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                                'Content-Type': 'application/json',
+                                'Prefer': 'return=minimal'
+                            },
+                            body: JSON.stringify({ count: newCount })
+                        });
+                    } else {
+                        // Create first record
+                        await fetch(`${SUPABASE_URL}/rest/v1/high_fives`, {
+                            method: 'POST',
+                            headers: {
+                                'apikey': SUPABASE_ANON_KEY,
+                                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                                'Content-Type': 'application/json',
+                                'Prefer': 'return=minimal'
+                            },
+                            body: JSON.stringify({ id: 1, count: 1 })
+                        });
+                    }
+                    
+                    this.updateDisplay(newCount);
+                    this.animateHighFive();
+                    
+                } catch (error) {
+                    console.error('Error updating count:', error);
+                    this.counter.textContent = 'Error updating count';
+                } finally {
+                    this.btn.classList.remove('loading');
+                }
+            }
+            
+            updateDisplay(count) {
+                this.counter.textContent = `${count} high fives so far!`;
+            }
+            
+            animateHighFive() {
+                this.btn.style.transform = 'scale(1.2) rotate(10deg)';
+                setTimeout(() => {
+                    this.btn.style.transform = '';
+                }, 200);
+            }
+        }
+        
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new HighFiveCounter();
+        });
+    </script>
+</body>
 </html>

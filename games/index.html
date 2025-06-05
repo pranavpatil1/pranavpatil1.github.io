@@ -1,0 +1,193 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Gaming Genius</title>
+		
+		<meta property="og:image" content="https://games.pranavpatil.com/photos/cyberchampion.PNG">
+		<meta property="og:title" content="Play fun games at Gaming Genius">
+		<meta property="og:description" content="Gaming Genius has tower defense games, platformers, endless runners, and educational games about cybersecurity or engineering.">
+		
+		<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+		
+		<script>
+			function setup() {
+				var rawFile = new XMLHttpRequest();
+				var allText = "";
+				rawFile.open("GET", "game_list.txt", false);
+				rawFile.onreadystatechange = function ()
+				{
+					if(rawFile.readyState === 4)
+					{
+						if(rawFile.status === 200 || rawFile.status == 0)
+						{
+							allText = rawFile.responseText;
+						}
+					}
+				}
+				rawFile.send(null);
+				var data = allText.split('\n');
+				var gallery = document.getElementById("gallery");
+				
+				/*
+				OKOK this is what this implements
+				<a href="/link">
+				<div class="column">
+					<div class="content">
+					  <img src="/photos/cyberchampion.PNG" alt="Cyber" style="width:100%">
+					  <h3 class="label">My Work</h3>
+					  <p>Lorem ipsum dolor sit amet, tempor prodesset eos.</p>
+					</div>
+				  </div>
+				 </a>
+				 */
+				for (var i = 0; i < data.length; i ++) {
+					var subdata = data[i].split(';');
+					var link = document.createElement("a");
+					var col = document.createElement("div");
+					var cont = document.createElement("div");
+					var image = document.createElement("img");
+					var label = document.createElement("h3");
+					var desc = document.createElement("p");
+					
+					link.href = subdata[3];
+					col.className = 'column';
+					cont.className = 'content';
+					image.src = subdata[4];
+					image.alt = subdata[0];
+					image.style='width:100%';
+					image.className = 'images';
+					label.innerHTML = subdata[0];
+					label.className = 'label';
+					desc.innerHTML = subdata[1];
+					
+					col.appendChild(cont);
+					link.appendChild(image);
+					cont.appendChild(link);
+					cont.appendChild(label);
+					cont.appendChild(desc);
+					
+					gallery.appendChild(col);
+				}
+			}
+			window.onload = setup;
+		</script>
+		<style>
+			body {
+				text-align: center;
+				align-self: center;
+				padding: 20px;
+			}
+			.images:hover {
+				filter: brightness(50%);
+				transition-duration: 0.4s;
+			}
+			.loader {
+				position: fixed;
+				left: 0px;
+				top: 0px;
+				width: 100%;
+				height: 100%;
+				z-index: 9998;
+				background: 50% 50% no-repeat rgb(1, 1, 1);
+			}
+			.dude {
+				position: fixed;
+				left: 0px;
+				top: 30%;
+				width: 100%;
+				height: 100%;
+				z-index: 9999;
+				background: url(photos/G-gif.gif) 50% 50% no-repeat;
+			}
+			
+			* {
+				box-sizing: border-box;
+			}
+			#gallery {
+				width: 80%;
+				margin-left: 10%;
+				margin-right: 10%;
+			}
+
+			/* Add padding BETWEEN each column */
+			#gallery,
+			#gallery > .column {
+				padding: 8px;
+			}
+
+			/* Create four equal columns that floats next to each other */
+			.column {
+				float: left;
+				width: 33.33%;
+			}
+
+			/* Clear floats after rows */ 
+			#gallery:after {
+				content: "";
+				display: table;
+				clear: both;
+			}
+
+			/* Content */
+			.content {
+				background-color: #e0e0e0;
+				border: 8px solid darkgreen;
+				border-radius: 15px;
+				padding: 15px;
+			}
+			.images {
+				border-radius: 7px;
+			}
+			p,h3 {
+				margin: 5px;
+			}
+			h3 {
+				margin-top: 15px;
+			}
+			/* Responsive layout - makes a two column-layout instead of four columns */
+			@media screen and (max-width: 900px) {
+				.column {
+					width: 50%;
+				}
+			}
+
+			/* Responsive layout - makes the two columns stack on top of each other instead of next to each other */
+			@media screen and (max-width: 600px) {
+				.column {
+					width: 100%;
+				}
+			}
+			
+			@media only screen and (max-device-width: 480px) {
+				.column {
+					width: 100%;
+				}
+			}
+		</style>
+	</head>
+	<body oncontextmenu="return false">
+		<script> 
+			$(function(){
+				$("#header").load("/games/header.html");
+				$("#footer").load("/games/footer.html");
+			});
+		</script>
+		<script type="text/javascript">
+			$(window).load(function() {
+				$(".loader").fadeOut("slow");
+				$(".dude").fadeOut("slow");
+			})
+		</script>
+		<div class="loader"></div>
+		<div class="dude"></div>
+		<div id="header"></div>
+		<h2>Play games!</h2>
+		
+		<div id="gallery"></div>
+		
+		<div id="footer"></div>
+		
+	</body>
+</html>
