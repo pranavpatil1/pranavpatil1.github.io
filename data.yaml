@@ -1,0 +1,138 @@
+experience:
+  - post_id: "exp_observe_2025"
+    position: "Codepoint Fellow - Observe, Inc."
+    company: "Sutter Hill Ventures Portfolio"
+    date: "Feb 2025 - Present"
+    description: "Building next-generation observability platform to help customers analyze massive datasets at scale. Optimized distributed systems across Go/C++/TypeScript services, reducing data ingestion time by 20% and improving query performance for enterprise customers."
+    link: "https://www.observeinc.com"
+    icon: "O"
+    tags: ["Go", "C++", "TypeScript", "Distributed Systems", "Observability", "Performance Optimization"]
+
+  - post_id: "exp_sensei_2024"
+    position: "Codepoint Fellow - Sensei"
+    company: "Sutter Hill Ventures Portfolio"
+    date: "Oct 2024 - Jan 2025"
+    description: "Developed AI-powered sales intelligence platform in a team of 6 engineers. Built responsive frontend from scratch using Vercel, Remix, React, and TypeScript, focusing on performance optimization and maintainable architecture for enterprise sales teams."
+    link: "https://senseiagent.com"
+    icon: "S"
+    tags: ["React", "Remix", "TypeScript", "Vercel", "AI", "Frontend Development", "Team Leadership"]
+
+  - post_id: "exp_stripe_2023"
+    position: "Software Engineering Intern"
+    company: "Stripe"
+    date: "Jun 2023 - Sep 2023"
+    description: "Worked on Apiori, Stripe's critical PII preprocessing system handling 50M+ daily payment transactions. Successfully consolidated 3 similar endpoints and led cross-team migration efforts, improving system efficiency and reducing maintenance overhead."
+    link: "https://stripe.com"
+    icon: "S"
+    tags: ["Python", "Distributed Systems", "API Design", "Data Processing", "Cross-team Collaboration"]
+
+  - post_id: "exp_salesforce_2021"
+    position: "Security Engineering Intern"
+    company: "Salesforce"
+    date: "Jun 2021 - Sep 2022"
+    description: "Developed advanced threat detection systems in the Security team. Built custom Python filters for Kafka streams, explored Apache Flink for real-time security analytics, and created automation tools that enhanced the company's cybersecurity posture."
+    link: "https://salesforce.com"
+    icon: "SF"
+    tags: ["Python", "Kafka", "Apache Flink", "Cybersecurity", "Threat Detection", "Security Automation"]
+
+projects:
+  - post_id: "proj_cyber_champion"
+    title: "🎮 Cyber Champion"
+    description: "Award-winning educational cybersecurity game that won the National STEM Video Game Challenge (Games for Change category) and 2017 Congressional App Challenge. Teaches online safety through interactive platformer gameplay, reaching 6000+ students through Udemy courses."
+    link: "/games/cyber-champion.html"
+    tags: ["Game Development", "Education", "Cybersecurity", "JavaScript", "HTML5"]
+
+  - post_id: "proj_world_engineers"
+    title: "🌍 World of Engineers"
+    description: "Educational game encouraging kids to pursue engineering careers by showcasing real-world impact. Won Congressional App Challenge with strategic thinking gameplay that demonstrates how engineering solves everyday problems."
+    link: "/games/engineering.html"
+    tags: ["Game Development", "Education", "JavaScript", "HTML5"]
+
+  - post_id: "proj_pentahex_ctf"
+    title: "🏆 PentaHex CTF Team"
+    description: "Founded and led PentaHex, a top-20 ranked high school CTF team in the US. Created educational resources and tutorials that helped students learn cybersecurity through Capture The Flag competitions. Team consistently ranked in top 200 globally."
+    link: "https://ctftime.org/team/39346/"
+    tags: ["Cybersecurity", "CTF", "Team Leadership", "Education", "Python"]
+
+  - post_id: "proj_pdf_formatter"
+    title: "📄 PDF Formatter with OpenCV"
+    description: "Flask webapp using OpenCV to intelligently split OneNote PDFs for better Gradescope formatting. Solved submission formatting issues for hundreds of students and TAs at Caltech, improving academic workflow efficiency."
+    link: "https://github.com/pranavpatil1/pdf-splitter-vertical"
+    tags: ["Python", "OpenCV", "Flask", "Computer Vision", "Web Development"]
+
+  - post_id: "proj_blockchain_games"
+    title: "⚽ Blockchain P2P Games"
+    description: "Built peer-to-peer realtime soccer game using WebRTC for low-latency multiplayer. Explored blockchain synchronization and smart contracts to prevent cheating in decentralized gaming environments."
+    tags: ["WebRTC", "Blockchain", "JavaScript", "P2P", "Game Development", "Smart Contracts"]
+
+  - post_id: "proj_rag_system"
+    title: "🤖 RAG System for Documents"
+    description: "Designed advanced RAG system with entity graph representation, named entity resolution, and dynamic knowledge understanding over time. Implemented for improved document analysis and information retrieval."
+    tags: ["AI", "RAG", "Python", "NLP", "Knowledge Graphs", "Document Analysis"]
+
+skills:
+  programming_languages:
+    - "Go"
+    - "JavaScript/TypeScript"
+    - "Python"
+    - "Java"
+    - "C/C++"
+    - "Bash"
+    - "x64 Assembly"
+  
+  technologies_frameworks:
+    - "React"
+    - "Remix"
+    - "WebRTC"
+    - "Apache Flink"
+    - "Docker"
+    - "Kubernetes"
+    - "OpenCV"
+    - "Flask"
+  
+  cybersecurity:
+    - "Threat Detection"
+    - "CTF Competitions"
+    - "Penetration Testing"
+    - "Vulnerability Assessment"
+    - "Security Automation"
+    - "Incident Response"
+  
+  specializations:
+    - "AI Safety"
+    - "Educational Technology"
+    - "Distributed Systems"
+    - "Observability"
+    - "Team Leadership"
+    - "Game Development"
+
+achievements:
+  - post_id: "ach_cyberpatriot_champion"
+    title: "🏆 2x CyberPatriot National Champion"
+    description: "High School National Champion (2019-20) as team captain of CyberAegis Strange Quark II, and Middle School National Champion (2015-16). Led Del Norte High School to multiple national finals with 4x National Finalist appearances and team MVP recognition."
+    date: "2015-16, 2019-20"
+    category: "Competition"
+
+  - post_id: "ach_stem_game_winner"
+    title: "🎮 National STEM Video Game Challenge Winner"
+    description: "Won Games for Change category out of 3000+ entries with Cyber Champion educational cybersecurity game. Recognized by Joan Ganz Cooney Center for innovative approach to cybersecurity education through gaming."
+    date: "2017"
+    category: "Competition"
+
+  - post_id: "ach_congressional_app"
+    title: "🏛️ 3x Congressional App Challenge Winner"
+    description: "2016 (Cyber Champion), 2017 (PentaHex CTF), 2018 (World of Engineers)."
+    date: "2016-2018"
+    category: "Competition"
+
+  - post_id: "ach_caltech_graduate"
+    title: "🎓 Caltech Computer Science Graduate"
+    description: "Bachelor's in Computer Science from California Institute of Technology (2020-2024). Specialized in complexity theory and distributed systems/operating systems."
+    date: "2024"
+    category: "Education"
+
+  - post_id: "ach_cybersecurity_educator"
+    title: "👨‍🏫 Cybersecurity Educator"
+    description: "Created Udemy courses reaching 12000+ students worldwide. Taught cybersecurity classes at local elementary schools using self-developed games and curricula. Mentored dozens of students in CTF competitions."
+    date: "2016-Present"
+    category: "Education"

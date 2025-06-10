@@ -1,0 +1,134 @@
+<!-- Header -->
+<section class="header">
+    <div class="container">
+        <div class="profile-photo">
+            <img src="/photos/pranav.png" alt="Pranav Patil" class="profile-image">
+        </div>
+        <h1>Pranav Patil</h1>
+        <p class="subtitle">Caltech CS '24 • Sutter Hill Ventures Fellow</p>
+        <p class="bio">My career has span cybersecurity, systems work, and AI. I'm passionate about the positive impact AI can have on individuals if designed safely. Some of my favorite personal projects are my educational video games, my online course (12K students), and some funny code pranks!</p>
+    </div>
+    <button id="highFiveBtn" class="nav-high-five-btn">
+        <span id="counter">Loading...</span>
+    </button>
+</section>
+
+<!-- Navigation -->
+<nav class="nav">
+    <div class="container">
+        <ul>
+            <li><a href="#experience">Experience</a></li>
+            <li><a href="#projects">Projects</a></li>
+            <li><a href="#skills">Skills</a></li>
+            <li><a href="#achievements">Achievements</a></li>
+        </ul>
+    </div>
+</nav>
+
+<!-- Experience Section -->
+<section id="experience" class="section">
+    <div class="container">
+        <h2 class="section-title">Professional Experience</h2>
+        <div class="experience-grid" id="experience-container">
+            <!-- Experience cards will be generated dynamically -->
+        </div>
+    </div>
+</section>
+
+<!-- Projects Section -->
+<section id="projects" class="section" style="background: var(--light-gray);">
+    <div class="container">
+        <h2 class="section-title">Featured Projects & Games</h2>
+        <div class="projects-grid" id="projects-container">
+            <!-- Project cards will be generated dynamically -->
+        </div>
+    </div>
+</section>
+
+<!-- Skills Section -->
+<section id="skills" class="section">
+    <div class="container">
+        <h2 class="section-title">Technical Skills & Expertise</h2>
+        <div class="skills-container" id="skills-container">
+            <!-- Skills will be generated dynamically -->
+        </div>
+    </div>
+</section>
+
+<!-- Achievements Section -->
+<section id="achievements" class="section" style="background: var(--light-gray);">
+    <div class="container">
+        <h2 class="section-title">Awards & Recognition</h2>
+        <div class="projects-grid" id="achievements-container">
+            <!-- Achievements will be generated dynamically -->
+        </div>
+    </div>
+</section>
+
+<script>
+// Default view specific JavaScript
+$(document).ready(function() {
+    // Load data and initialize page
+    loadPortfolioData().then(data => {
+        if (data) {
+            generateExperienceSection(data.experience);
+            generateProjectsSection(data.projects);
+            generateSkillsSection(data.skills);
+            generateAchievementsSection(data.achievements);
+        }
+    }).catch(error => {
+        console.error('Error loading portfolio data:', error);
+    });
+
+    // Smooth scrolling for navigation links
+    $('a[href^="#"]').on('click', function(event) {
+        var target = $(this.getAttribute('href'));
+        if (target.length) {
+            event.preventDefault();
+            $('html, body').stop().animate({
+                scrollTop: target.offset().top - 80
+            }, 1000);
+        }
+    });
+
+    // Parallax effect for header
+    $(window).scroll(function() {
+        var scrolled = $(this).scrollTop();
+        var rate = scrolled * -0.5;
+        $('.header::before').css('transform', 'translate3d(0, ' + rate + 'px, 0)');
+    });
+
+    // Fade in animations for dynamically generated content
+    $(window).scroll(function() {
+        $('.experience-card, .project-card').each(function() {
+            var elementTop = $(this).offset().top;
+            var elementBottom = elementTop + $(this).outerHeight();
+            var viewportTop = $(window).scrollTop();
+            var viewportBottom = viewportTop + $(window).height();
+
+            if (elementBottom > viewportTop && elementTop < viewportBottom) {
+                $(this).addClass('visible');
+            }
+        });
+    });
+});
+
+// Generate achievements section
+function generateAchievementsSection(achievements) {
+    const container = $('#achievements-container');
+    container.empty();
+
+    achievements.forEach(achievement => {
+        const achievementCard = $(`
+            <div class="project-card">
+                <div class="project-title">${achievement.title}</div>
+                <div class="project-description">
+                    ${achievement.description}
+                </div>
+            </div>
+        `);
+
+        container.append(achievementCard);
+    });
+}
+</script>

@@ -6,6 +6,7 @@
     <title>Pranav Patil - Cybersecurity, Systems, and AI</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://unpkg.com/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
     <style>
         :root {
             --primary-color: #2c3e50;
@@ -107,9 +108,6 @@
             background: white;
             padding: 20px 0;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            position: sticky;
-            top: 0;
-            z-index: 100;
         }
 
         .nav ul {
@@ -421,248 +419,152 @@
             object-fit: cover;
             border-radius: 50%;
         }
+
+        /* Main Layout */
+        .main-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background: var(--primary-color);
+            color: white;
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 30px 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 15px;
+            border: 3px solid var(--highlight-color);
+        }
+
+        .sidebar-header h3 {
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .sidebar-nav {
+            padding: 20px 0;
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .sidebar-item.active {
+            background: rgba(231, 126, 34, 0.2);
+            color: white;
+            border-left-color: var(--highlight-color);
+        }
+
+        .sidebar-icon {
+            font-size: 1.2rem;
+            margin-right: 12px;
+            width: 24px;
+            text-align: center;
+        }
+
+        .sidebar-label {
+            font-weight: 500;
+        }
+
+        /* Content Area */
+        .content-area {
+            flex: 1;
+            margin-left: 250px;
+            background: white;
+            min-height: 100vh;
+        }
+
+        #view-container {
+            width: 100%;
+            min-height: 100vh;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 200px;
+            }
+
+            .content-area {
+                margin-left: 200px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+
+            .content-area {
+                margin-left: 0;
+            }
+
+            .main-layout {
+                flex-direction: column;
+            }
+        }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <section class="header">
-        <div class="container">
-            <div class="profile-photo">
-                <img src="/photos/pranav.png" alt="Pranav Patil" class="profile-image">
+    <!-- Main Layout -->
+    <div class="main-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="/photos/pranav.png" alt="Pranav Patil" class="sidebar-avatar">
+                <h3>Pranav Patil</h3>
             </div>
-            <h1>Pranav Patil</h1>
-            <p class="subtitle">Caltech CS '24 • Sutter Hill Ventures Fellow</p>
-            <p class="bio">My career has span cybersecurity, systems work, and AI. I'm passionate about the positive impact AI can have on individuals if designed safely. Some of my favorite personal projects are my educational video games, my online course (12K students), and some funny code pranks!</p>
-        </div>
-        <button id="highFiveBtn" class="nav-high-five-btn">
-            <span id="counter">Loading...</span>
-        </button>
-    </section>
+            <nav class="sidebar-nav">
+                <a href="#linkedin" class="sidebar-item" data-view="default">
+                    <span class="sidebar-icon">💼</span>
+                    <span class="sidebar-label">LinkedIn</span>
+                </a>
+                <a href="#twitter" class="sidebar-item active" data-view="twitter">
+                    <span class="sidebar-icon">🐦</span>
+                    <span class="sidebar-label">Twitter</span>
+                </a>
+            </nav>
+        </aside>
 
-    <!-- Navigation -->
-    <nav class="nav">
-        <div class="container">
-            <ul>
-                <li><a href="#experience">Experience</a></li>
-                <li><a href="#projects">Projects</a></li>
-                <li><a href="#skills">Skills</a></li>
-                <li><a href="#achievements">Achievements</a></li>
-            </ul>
-        </div>
-    </nav>
-
-    <!-- Experience Section -->
-    <section id="experience" class="section">
-        <div class="container">
-            <h2 class="section-title">Professional Experience</h2>
-            <div class="experience-grid">
-                <div class="experience-card" data-link="https://www.observe.com">
-                    <div class="card-header">
-                        <div class="company-icon">O</div>
-                        <div>
-                            <div class="card-title">Codepoint Fellow - Observe, Inc.</div>
-                            <div class="card-company">Sutter Hill Ventures Portfolio</div>
-                        </div>
-                    </div>
-                    <div class="card-duration">Feb 2025 - Present</div>
-                    <div class="card-description">
-                        Building next-generation observability platform to help customers analyze massive datasets at scale. Optimized distributed systems across Go/C++/TypeScript services, reducing data ingestion time by 20% and improving query performance for enterprise customers.
-                    </div>
-                </div>
-
-                <div class="experience-card" data-link="https://www.sensei.com">
-                    <div class="card-header">
-                        <div class="company-icon">S</div>
-                        <div>
-                            <div class="card-title">Codepoint Fellow - Sensei</div>
-                            <div class="card-company">Sutter Hill Ventures Portfolio</div>
-                        </div>
-                    </div>
-                    <div class="card-duration">Oct 2024 - Jan 2025</div>
-                    <div class="card-description">
-                        Developed AI-powered sales intelligence platform in a team of 6 engineers. Built responsive frontend from scratch using Vercel, Remix, React, and TypeScript, focusing on performance optimization and maintainable architecture for enterprise sales teams.
-                    </div>
-                </div>
-
-                <div class="experience-card" data-link="https://stripe.com">
-                    <div class="card-header">
-                        <div class="company-icon">S</div>
-                        <div>
-                            <div class="card-title">Software Engineering Intern</div>
-                            <div class="card-company">Stripe</div>
-                        </div>
-                    </div>
-                    <div class="card-duration">Jun 2023 - Sep 2023</div>
-                    <div class="card-description">
-                        Worked on Apiori, Stripe's critical PII preprocessing system handling 50M+ daily payment transactions. Successfully consolidated 3 similar endpoints and led cross-team migration efforts, improving system efficiency and reducing maintenance overhead.
-                    </div>
-                </div>
-
-                <div class="experience-card" data-link="https://salesforce.com">
-                    <div class="card-header">
-                        <div class="company-icon">SF</div>
-                        <div>
-                            <div class="card-title">Security Engineering Intern</div>
-                            <div class="card-company">Salesforce</div>
-                        </div>
-                    </div>
-                    <div class="card-duration">Jun 2021 - Sep 2022</div>
-                    <div class="card-description">
-                        Developed advanced threat detection systems in the Security team. Built custom Python filters for Kafka streams, explored Apache Flink for real-time security analytics, and created automation tools that enhanced the company's cybersecurity posture.
-                    </div>
-                </div>
+        <!-- Content Area -->
+        <main class="content-area">
+            <div id="view-container">
+                <!-- Views will be loaded here -->
             </div>
-        </div>
-    </section>
-
-    <!-- Projects Section -->
-    <section id="projects" class="section" style="background: var(--light-gray);">
-        <div class="container">
-            <h2 class="section-title">Featured Projects & Games</h2>
-            <div class="projects-grid">
-                <div class="project-card" onclick="window.open('/games/cyber-champion.html', '_blank')">
-                    <div class="project-title">🎮 Cyber Champion</div>
-                    <div class="project-description">
-                        Award-winning educational cybersecurity game that won the National STEM Video Game Challenge (Games for Change category) and 2017 Congressional App Challenge. Teaches online safety through interactive platformer gameplay, reaching 6000+ students through Udemy courses.
-                    </div>
-                    <a href="/games/cyber-champion.html" class="project-link" target="_blank">Play Game →</a>
-                </div>
-
-                <div class="project-card" onclick="window.open('/games/engineering.html', '_blank')">
-                    <div class="project-title">🌍 World of Engineers</div>
-                    <div class="project-description">
-                        Educational game encouraging kids to pursue engineering careers by showcasing real-world impact. Won Congressional App Challenge with strategic thinking gameplay that demonstrates how engineering solves everyday problems.
-                    </div>
-                    <a href="/games/engineering.html" class="project-link" target="_blank">View Games →</a>
-                </div>
-
-                <div class="project-card" onclick="window.open('https://ctftime.org/team/39346/', '_blank')">
-                    <div class="project-title">🏆 PentaHex CTF Team</div>
-                    <div class="project-description">
-                        Founded and led PentaHex, a top-20 ranked high school CTF team in the US. Created educational resources and tutorials that helped students learn cybersecurity through Capture The Flag competitions. Team consistently ranked in top 200 globally.
-                    </div>
-                    <a href="https://ctftime.org/team/39346/" class="project-link" target="_blank">View Team →</a>
-                </div>
-
-                <div class="project-card" onclick="window.open('https://github.com/pranavpatil1/pdf-splitter-vertical', '_blank')">
-                    <div class="project-title">📄 PDF Formatter with OpenCV</div>
-                    <div class="project-description">
-                        Flask webapp using OpenCV to intelligently split OneNote PDFs for better Gradescope formatting. Solved submission formatting issues for hundreds of students and TAs at Caltech, improving academic workflow efficiency.
-                    </div>
-                    <a href="https://github.com/pranavpatil1/pdf-splitter-vertical" class="project-link" target="_blank">View Code →</a>
-                </div>
-
-                <div class="project-card">
-                    <div class="project-title">⚽ Blockchain P2P Games</div>
-                    <div class="project-description">
-                        Built peer-to-peer realtime soccer game using WebRTC for low-latency multiplayer. Explored blockchain synchronization and smart contracts to prevent cheating in decentralized gaming environments.
-                    </div>
-                </div>
-
-                <div class="project-card">
-                    <div class="project-title">🤖 RAG System for Documents</div>
-                    <div class="project-description">
-                        Designed advanced RAG system with entity graph representation, named entity resolution, and dynamic knowledge understanding over time. Implemented for improved document analysis and information retrieval.
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Skills Section -->
-    <section id="skills" class="section">
-        <div class="container">
-            <h2 class="section-title">Technical Skills & Expertise</h2>
-            <div class="skills-container">
-                <div class="skill-category">
-                    <h3>💻 Programming Languages</h3>
-                    <div class="skill-tags">
-                        <span class="skill-tag">Go</span>
-                        <span class="skill-tag">JavaScript/TypeScript</span>
-                        <span class="skill-tag">Python</span>
-                        <span class="skill-tag">Java</span>
-                        <span class="skill-tag">C/C++</span>
-                        <span class="skill-tag">Bash</span>
-                        <span class="skill-tag">x64 Assembly</span>
-                    </div>
-                </div>
-                <div class="skill-category">
-                    <h3>🛠️ Technologies & Frameworks</h3>
-                    <div class="skill-tags">
-                        <span class="skill-tag">React</span>
-                        <span class="skill-tag">Remix</span>
-                        <span class="skill-tag">WebRTC</span>
-                        <span class="skill-tag">Apache Flink</span>
-                        <span class="skill-tag">Docker</span>
-                        <span class="skill-tag">Kubernetes</span>
-                        <span class="skill-tag">OpenCV</span>
-                        <span class="skill-tag">Flask</span>
-                    </div>
-                </div>
-                <div class="skill-category">
-                    <h3>🔒 Cybersecurity</h3>
-                    <div class="skill-tags">
-                        <span class="skill-tag">Threat Detection</span>
-                        <span class="skill-tag">CTF Competitions</span>
-                        <span class="skill-tag">Penetration Testing</span>
-                        <span class="skill-tag">Vulnerability Assessment</span>
-                        <span class="skill-tag">Security Automation</span>
-                        <span class="skill-tag">Incident Response</span>
-                    </div>
-                </div>
-                <div class="skill-category">
-                    <h3>🎯 Specializations</h3>
-                    <div class="skill-tags">
-                        <span class="skill-tag">AI Safety</span>
-                        <span class="skill-tag">Educational Technology</span>
-                        <span class="skill-tag">Distributed Systems</span>
-                        <span class="skill-tag">Observability</span>
-                        <span class="skill-tag">Team Leadership</span>
-                        <span class="skill-tag">Game Development</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Achievements Section -->
-    <section id="achievements" class="section" style="background: var(--light-gray);">
-        <div class="container">
-            <h2 class="section-title">Awards & Recognition</h2>
-            <div class="projects-grid">
-                <div class="project-card">
-                    <div class="project-title">🏆 2x CyberPatriot National Champion</div>
-                    <div class="project-description">
-                        High School National Champion (2019-20) as team captain of CyberAegis Strange Quark II, and Middle School National Champion (2015-16). Led Del Norte High School to multiple national finals with 4x National Finalist appearances and team MVP recognition.
-                    </div>
-                </div>
-                <div class="project-card">
-                    <div class="project-title">🎮 National STEM Video Game Challenge Winner</div>
-                    <div class="project-description">
-                        Won Games for Change category out of 3000+ entries with Cyber Champion educational cybersecurity game. Recognized by Joan Ganz Cooney Center for innovative approach to cybersecurity education through gaming.
-                    </div>
-                </div>
-                <div class="project-card">
-                    <div class="project-title">🏛️ 3x Congressional App Challenge Winner</div>
-                    <div class="project-description">
-                        2016 (Cyber Champion), 2017 (PentaHex CTF), 2018 (World of Engineers).
-                    </div>
-                </div>
-                <div class="project-card">
-                    <div class="project-title">🎓 Caltech Computer Science Graduate</div>
-                    <div class="project-description">
-                        Bachelor's in Computer Science from California Institute of Technology (2020-2024). Specialized in complexity theory and distributed systems/operating systems.
-                    </div>
-                </div>
-                <div class="project-card">
-                    <div class="project-title">👨‍🏫 Cybersecurity Educator</div>
-                    <div class="project-description">
-                        Created Udemy courses reaching 12000+ students worldwide. Taught cybersecurity classes at local elementary schools using self-developed games and curricula. Mentored dozens of students in CTF competitions.
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+        </main>
+    </div>
 
     <!-- Footer -->
     <footer class="footer">
@@ -679,66 +581,179 @@
     </footer>
 
     <script>
-        $(document).ready(function() {
-            // Smooth scrolling for navigation links
-            $('a[href^="#"]').on('click', function(event) {
-                var target = $(this.getAttribute('href'));
-                if (target.length) {
-                    event.preventDefault();
-                    $('html, body').stop().animate({
-                        scrollTop: target.offset().top - 80
-                    }, 1000);
+        // Global data variable
+        let portfolioData = null;
+
+        // Load and parse YAML data
+        async function loadPortfolioData() {
+            try {
+                const response = await fetch('./data.yaml');
+                const yamlText = await response.text();
+                portfolioData = (window.yamlParser || jsyaml).load(yamlText);
+                return portfolioData;
+            } catch (error) {
+                console.error('Error loading portfolio data:', error);
+                return null;
+            }
+        }
+
+        // Generate experience section
+        function generateExperienceSection(experiences) {
+            const container = $('#experience-container');
+            container.empty();
+
+            experiences.forEach(exp => {
+                const experienceCard = $(`
+                    <div class="experience-card" data-link="${exp.link || ''}">
+                        <div class="card-header">
+                            <div class="company-icon">${exp.icon}</div>
+                            <div>
+                                <div class="card-title">${exp.position}</div>
+                                <div class="card-company">${exp.company}</div>
+                            </div>
+                        </div>
+                        <div class="card-duration">${exp.date}</div>
+                        <div class="card-description">
+                            ${exp.description}
+                        </div>
+                    </div>
+                `);
+
+                // Add click handler if link exists
+                if (exp.link) {
+                    experienceCard.on('click', function() {
+                        window.open(exp.link, '_blank');
+                    });
                 }
-            });
 
-            // Add click handlers for experience cards with links
-            $('.experience-card[data-link]').on('click', function() {
-                var link = $(this).data('link');
-                if (link) {
-                    window.open(link, '_blank');
-                }
-            });
-
-            // Parallax effect for header
-            $(window).scroll(function() {
-                var scrolled = $(this).scrollTop();
-                var rate = scrolled * -0.5;
-                $('.header::before').css('transform', 'translate3d(0, ' + rate + 'px, 0)');
-            });
-
-            // Fade in animations
-            $(window).scroll(function() {
-                $('.experience-card, .project-card').each(function() {
-                    var elementTop = $(this).offset().top;
-                    var elementBottom = elementTop + $(this).outerHeight();
-                    var viewportTop = $(window).scrollTop();
-                    var viewportBottom = viewportTop + $(window).height();
-
-                    if (elementBottom > viewportTop && elementTop < viewportBottom) {
-                        $(this).addClass('visible');
+                // Add hover effect
+                experienceCard.hover(
+                    function() {
+                        $(this).find('.company-icon').css('transform', 'scale(1.1)');
+                    },
+                    function() {
+                        $(this).find('.company-icon').css('transform', 'scale(1)');
                     }
-                });
-            });
+                );
 
-            // Add some interactive hover effects
-            $('.experience-card').hover(
-                function() {
-                    $(this).find('.company-icon').css('transform', 'scale(1.1)');
-                },
-                function() {
-                    $(this).find('.company-icon').css('transform', 'scale(1)');
+                container.append(experienceCard);
+            });
+        }
+
+        // Generate projects section
+        function generateProjectsSection(projects) {
+            const container = $('#projects-container');
+            container.empty();
+
+            projects.forEach(project => {
+                const projectCard = $(`
+                    <div class="project-card">
+                        <div class="project-title">${project.title}</div>
+                        <div class="project-description">
+                            ${project.description}
+                        </div>
+                        ${project.link ? `<a href="${project.link}" class="project-link" target="_blank">View Project →</a>` : ''}
+                    </div>
+                `);
+
+                // Add click handler if link exists
+                if (project.link) {
+                    projectCard.on('click', function(e) {
+                        // Don't trigger if clicking on the link itself
+                        if (!$(e.target).hasClass('project-link')) {
+                            window.open(project.link, '_blank');
+                        }
+                    });
                 }
-            );
+
+                container.append(projectCard);
+            });
+        }
+
+        // Generate skills section
+        function generateSkillsSection(skills) {
+            const container = $('#skills-container');
+            container.empty();
+
+            // Define skill categories with icons and display names
+            const skillCategories = {
+                programming_languages: { icon: '💻', name: 'Programming Languages' },
+                technologies_frameworks: { icon: '🛠️', name: 'Technologies & Frameworks' },
+                cybersecurity: { icon: '🔒', name: 'Cybersecurity' },
+                specializations: { icon: '🎯', name: 'Specializations' }
+            };
+
+            // Generate each skill category
+            Object.keys(skillCategories).forEach(categoryKey => {
+                if (skills[categoryKey] && skills[categoryKey].length > 0) {
+                    const category = skillCategories[categoryKey];
+                    const skillCategory = $(`
+                        <div class="skill-category">
+                            <h3>${category.icon} ${category.name}</h3>
+                            <div class="skill-tags">
+                                ${skills[categoryKey].map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
+                            </div>
+                        </div>
+                    `);
+                    container.append(skillCategory);
+                }
+            });
+        }
+
+        // View management
+        let currentView = 'default';
+
+        async function loadView(viewName) {
+            try {
+                const response = await fetch(`./views/${viewName}.html`);
+                const html = await response.text();
+                $('#view-container').html(html);
+
+                // Update active sidebar item
+                $('.sidebar-item').removeClass('active');
+                $(`.sidebar-item[data-view="${viewName}"]`).addClass('active');
+
+                currentView = viewName;
+
+                // Execute any scripts in the loaded view
+                $('#view-container script').each(function() {
+                    eval($(this).text());
+                });
+
+                if (viewName === 'default') {
+                    // Initialize HighFiveCounter if elements exist
+                    if (document.getElementById('highFiveBtn') && document.getElementById('counter')) {
+                        new HighFiveCounter();
+                    }
+                }
+
+            } catch (error) {
+                console.error('Error loading view:', error);
+                $('#view-container').html('<div style="padding: 20px;">Error loading view</div>');
+            }
+        }
+
+        $(document).ready(function() {
+            // Load Twitter view first for easier testing
+            loadView('twitter');
+
+            // Handle sidebar navigation
+            $('.sidebar-item').on('click', function(e) {
+                e.preventDefault();
+                const viewName = $(this).data('view');
+                loadView(viewName);
+            });
         });
     </script>
     
     <script>
-        // Supabase configuration
-        const SUPABASE_URL = 'https://hsutdnzstxllbptqvzjh.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhzdXRkbnpzdHhsbGJwdHF2empoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkxMDg5MDIsImV4cCI6MjA2NDY4NDkwMn0.S_15Mi0n0IomIar7hMSuPDcyt-K_VyQcGqDfrnPiL8E';
+        // Supabase configuration - make globally available
+        window.SUPABASE_URL = 'https://hsutdnzstxllbptqvzjh.supabase.co';
+        window.SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhzdXRkbnpzdHhsbGJwdHF2empoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkxMDg5MDIsImV4cCI6MjA2NDY4NDkwMn0.S_15Mi0n0IomIar7hMSuPDcyt-K_VyQcGqDfrnPiL8E';
         
         class HighFiveCounter {
             constructor() {
+                console.log("creating high five counter");
                 this.btn = document.getElementById('highFiveBtn');
                 this.counter = document.getElementById('counter');
                 this.init();
@@ -751,10 +766,10 @@
             
             async loadCount() {
                 try {
-                    const response = await fetch(`${SUPABASE_URL}/rest/v1/high_fives?select=count`, {
+                    const response = await fetch(`${window.SUPABASE_URL}/rest/v1/high_fives?select=count`, {
                         headers: {
-                            'apikey': SUPABASE_ANON_KEY,
-                            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                            'apikey': window.SUPABASE_ANON_KEY,
+                            'Authorization': `Bearer ${window.SUPABASE_ANON_KEY}`
                         }
                     });
                     
@@ -772,10 +787,10 @@
                 
                 try {
                     // Get current count
-                    const getResponse = await fetch(`${SUPABASE_URL}/rest/v1/high_fives?select=count`, {
+                    const getResponse = await fetch(`${window.SUPABASE_URL}/rest/v1/high_fives?select=count`, {
                         headers: {
-                            'apikey': SUPABASE_ANON_KEY,
-                            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                            'apikey': window.SUPABASE_ANON_KEY,
+                            'Authorization': `Bearer ${window.SUPABASE_ANON_KEY}`
                         }
                     });
                     
@@ -785,11 +800,11 @@
                     if (currentData.length > 0) {
                         // Update existing record
                         newCount = currentData[0].count + 1;
-                        await fetch(`${SUPABASE_URL}/rest/v1/high_fives?id=eq.1`, {
+                        await fetch(`${window.SUPABASE_URL}/rest/v1/high_fives?id=eq.1`, {
                             method: 'PATCH',
                             headers: {
-                                'apikey': SUPABASE_ANON_KEY,
-                                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                                'apikey': window.SUPABASE_ANON_KEY,
+                                'Authorization': `Bearer ${window.SUPABASE_ANON_KEY}`,
                                 'Content-Type': 'application/json',
                                 'Prefer': 'return=minimal'
                             },
@@ -797,11 +812,11 @@
                         });
                     } else {
                         // Create first record
-                        await fetch(`${SUPABASE_URL}/rest/v1/high_fives`, {
+                        await fetch(`${window.SUPABASE_URL}/rest/v1/high_fives`, {
                             method: 'POST',
                             headers: {
-                                'apikey': SUPABASE_ANON_KEY,
-                                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                                'apikey': window.SUPABASE_ANON_KEY,
+                                'Authorization': `Bearer ${window.SUPABASE_ANON_KEY}`,
                                 'Content-Type': 'application/json',
                                 'Prefer': 'return=minimal'
                             },
@@ -834,7 +849,10 @@
         
         // Initialize when page loads
         document.addEventListener('DOMContentLoaded', () => {
-            new HighFiveCounter();
+            // Only initialize HighFiveCounter if the elements exist
+            if (document.getElementById('highFiveBtn') && document.getElementById('counter')) {
+                new HighFiveCounter();
+            }
         });
     </script>
 </body>

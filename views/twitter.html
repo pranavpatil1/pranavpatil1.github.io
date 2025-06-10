@@ -1,0 +1,792 @@
+<!-- Twitter-like Timeline View -->
+<div class="twitter-container">
+    <div class="twitter-header">
+        <div class="twitter-profile">
+            <img src="/photos/pranav.png" alt="Pranav Patil" class="twitter-avatar">
+            <div class="twitter-profile-info">
+                <h2>Pranav Patil</h2>
+                <p class="twitter-handle">@pranavpatil1</p>
+                <p class="twitter-bio">Caltech CS '24 • Sutter Hill Ventures Fellow • Building the future of AI safety</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="twitter-timeline" id="twitter-timeline">
+        <!-- Timeline posts will be generated dynamically -->
+    </div>
+</div>
+
+<style>
+.twitter-container {
+    max-width: 600px;
+    margin: 0 auto;
+    background: white;
+    min-height: 100vh;
+}
+
+.twitter-header {
+    padding: 20px;
+    border-bottom: 1px solid #e1e8ed;
+    background: white;
+}
+
+.twitter-profile {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.twitter-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.twitter-profile-info h2 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #14171a;
+}
+
+.twitter-handle {
+    margin: 0;
+    color: #657786;
+    font-size: 0.9rem;
+}
+
+.twitter-bio {
+    margin: 5px 0 0 0;
+    color: #14171a;
+    font-size: 0.9rem;
+}
+
+.twitter-timeline {
+    background: white;
+}
+
+.twitter-post {
+    padding: 15px 20px;
+    border-bottom: 1px solid #e1e8ed;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.twitter-post:hover {
+    background-color: #f7f9fa;
+}
+
+.twitter-post-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.twitter-post-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.twitter-post-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.twitter-post-name {
+    font-weight: 700;
+    color: #14171a;
+    font-size: 0.9rem;
+}
+
+.twitter-post-handle {
+    color: #657786;
+    font-size: 0.9rem;
+}
+
+.twitter-post-date {
+    color: #657786;
+    font-size: 0.9rem;
+}
+
+.twitter-post-content {
+    color: #14171a;
+    line-height: 1.4;
+    margin-bottom: 10px;
+}
+
+.twitter-post-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 8px;
+}
+
+.twitter-tag {
+    background: #1da1f2;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    text-decoration: none;
+}
+
+.twitter-tag:hover {
+    background: #0d8bd9;
+    color: white;
+}
+
+.twitter-post-link {
+    margin-top: 10px;
+    padding: 8px 0;
+}
+
+.twitter-post-link a {
+    color: #1da1f2;
+    text-decoration: none;
+    font-size: 14px;
+    word-break: break-all;
+}
+
+.twitter-post-link a:hover {
+    text-decoration: underline;
+}
+
+.twitter-post-actions {
+    display: flex;
+    justify-content: space-between;
+    max-width: 300px;
+    margin-top: 10px;
+    color: #657786;
+    font-size: 0.8rem;
+}
+
+.twitter-action {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 20px;
+    transition: background-color 0.2s;
+}
+
+.twitter-action:hover {
+    background-color: rgba(29, 161, 242, 0.1);
+    color: #1da1f2;
+}
+
+.twitter-action.liked {
+    color: #e0245e;
+}
+
+.twitter-action.loading {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+/* Comment Interface */
+.comment-section {
+    border-top: 1px solid #e1e8ed;
+    margin-top: 10px;
+    padding-top: 10px;
+}
+
+.comment-input-container {
+    display: none;
+    padding: 10px 0;
+    border-bottom: 1px solid #e1e8ed;
+}
+
+.comment-input-form {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+}
+
+.comment-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #1da1f2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+.comment-input-fields {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.comment-name-input {
+    border: 1px solid #e1e8ed;
+    border-radius: 20px;
+    padding: 8px 12px;
+    font-size: 14px;
+    outline: none;
+    width: 150px;
+}
+
+.comment-name-input:focus {
+    border-color: #1da1f2;
+}
+
+.comment-text-input {
+    border: 1px solid #e1e8ed;
+    border-radius: 20px;
+    padding: 8px 12px;
+    font-size: 14px;
+    outline: none;
+    resize: none;
+    min-height: 40px;
+}
+
+.comment-text-input:focus {
+    border-color: #1da1f2;
+}
+
+.comment-submit-btn {
+    background: #1da1f2;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    align-self: flex-start;
+}
+
+.comment-submit-btn:hover {
+    background: #0d8bd9;
+}
+
+.comment-submit-btn:disabled {
+    background: #aab8c2;
+    cursor: not-allowed;
+}
+
+/* Existing Comments */
+.comments-list {
+    margin-top: 10px;
+}
+
+.comment-item {
+    display: flex;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid #f7f9fa;
+}
+
+.comment-item:last-child {
+    border-bottom: none;
+}
+
+.comment-content {
+    flex: 1;
+}
+
+.comment-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.comment-author {
+    font-weight: 600;
+    color: #14171a;
+    font-size: 14px;
+}
+
+.comment-time {
+    color: #657786;
+    font-size: 12px;
+}
+
+.comment-text {
+    color: #14171a;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.twitter-post-type {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.type-experience {
+    background: #e8f5e8;
+    color: #2d5a2d;
+}
+
+.type-project {
+    background: #e8f0ff;
+    color: #1a365d;
+}
+
+.type-achievement {
+    background: #fff3cd;
+    color: #856404;
+}
+</style>
+
+<script>
+// Twitter view specific JavaScript
+$(document).ready(function() {
+    loadPortfolioData().then(data => {
+        if (data) {
+            generateTwitterTimeline(data);
+        }
+    }).catch(error => {
+        console.error('Error loading portfolio data:', error);
+    });
+});
+
+function generateTwitterTimeline(data) {
+    const timeline = $('#twitter-timeline');
+    timeline.empty();
+    
+    // Combine all data with timestamps for chronological ordering
+    const allItems = [];
+    
+    // Add experience items
+    if (data.experience) {
+        data.experience.forEach(exp => {
+            allItems.push({
+                type: 'experience',
+                post_id: exp.post_id,
+                date: exp.date,
+                title: exp.position,
+                company: exp.company,
+                content: exp.description,
+                tags: exp.tags || [],
+                link: exp.link,
+                sortDate: parseDateForSorting(exp.date)
+            });
+        });
+    }
+    
+    // Add project items
+    if (data.projects) {
+        data.projects.forEach(project => {
+            allItems.push({
+                type: 'project',
+                post_id: project.post_id,
+                date: 'Recent', // Projects don't have specific dates
+                title: project.title,
+                content: project.description,
+                tags: project.tags || [],
+                link: project.link,
+                sortDate: new Date('2024-01-01') // Default recent date for projects
+            });
+        });
+    }
+    
+    // Add achievement items
+    if (data.achievements) {
+        data.achievements.forEach(achievement => {
+            allItems.push({
+                type: 'achievement',
+                post_id: achievement.post_id,
+                date: achievement.date,
+                title: achievement.title,
+                content: achievement.description,
+                tags: [achievement.category],
+                sortDate: parseDateForSorting(achievement.date)
+            });
+        });
+    }
+    
+    // Sort by date (most recent first)
+    allItems.sort((a, b) => b.sortDate - a.sortDate);
+    
+    // Generate posts
+    allItems.forEach(item => {
+        const post = createTwitterPost(item);
+        timeline.append(post);
+    });
+
+    // Load like counts and comments after posts are created
+    setTimeout(() => {
+        loadLikeCounts();
+        loadAllComments();
+    }, 100);
+}
+
+function createTwitterPost(item) {
+    const typeClass = `type-${item.type}`;
+    const typeLabel = item.type.charAt(0).toUpperCase() + item.type.slice(1);
+
+    const post = $(`
+        <div class="twitter-post">
+            <div class="twitter-post-header">
+                <img src="/photos/pranav.png" alt="Pranav Patil" class="twitter-post-avatar">
+                <div class="twitter-post-info">
+                    <span class="twitter-post-name">Pranav Patil</span>
+                    <span class="twitter-post-handle">@pranavpatil1</span>
+                    <span class="twitter-post-date">• ${item.date}</span>
+                </div>
+            </div>
+            <div class="twitter-post-type ${typeClass}">${typeLabel}</div>
+            <div class="twitter-post-content">
+                <strong>${item.title}</strong>${item.company ? ` at ${item.company}` : ''}
+                <br><br>
+                ${item.content}
+            </div>
+            <div class="twitter-post-tags">
+                ${item.tags.map(tag => `<span class="twitter-tag">#${tag.replace(/\s+/g, '')}</span>`).join('')}
+            </div>
+            ${item.link ? `<div class="twitter-post-link"><a href="${item.link}" target="_blank">🔗 ${item.link}</a></div>` : ''}
+            <div class="twitter-post-actions">
+                <div class="twitter-action reply-btn" data-post-id="${item.post_id}">💬 Reply</div>
+                <div class="twitter-action">🔄 Retweet</div>
+                <div class="twitter-action like-btn" data-post-id="${item.post_id}">❤️ <span class="like-count">0</span></div>
+                <div class="twitter-action share-btn" data-post-id="${item.post_id}">📤 Share</div>
+            </div>
+
+            <!-- Comment Section -->
+            <div class="comment-section" data-post-id="${item.post_id}">
+                <!-- Comment Input (hidden by default) -->
+                <div class="comment-input-container">
+                    <div class="comment-input-form">
+                        <div class="comment-avatar">👤</div>
+                        <div class="comment-input-fields">
+                            <input type="text" class="comment-name-input" placeholder="Your name" maxlength="50">
+                            <textarea class="comment-text-input" placeholder="Tweet your reply" maxlength="280"></textarea>
+                            <button class="comment-submit-btn">Reply</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Existing Comments -->
+                <div class="comments-list">
+                    <!-- Comments will be loaded here -->
+                </div>
+            </div>
+        </div>
+    `);
+
+    // Add action button handlers
+    post.find('.share-btn').on('click', function(e) {
+        e.stopPropagation();
+        shareToTwitter(item);
+    });
+
+    post.find('.like-btn').on('click', function(e) {
+        e.stopPropagation();
+        likePost(item.post_id, $(this));
+    });
+
+    post.find('.reply-btn').on('click', function(e) {
+        e.stopPropagation();
+        toggleReplyInput(item.post_id);
+    });
+
+    // Handle comment submission
+    post.find('.comment-submit-btn').on('click', function(e) {
+        e.stopPropagation();
+        submitComment(item.post_id, post);
+    });
+
+    return post;
+}
+
+function parseDateForSorting(dateStr) {
+    // Handle various date formats
+    if (dateStr.includes('Present')) {
+        return new Date(); // Current date for ongoing items
+    }
+
+    if (dateStr.includes('-')) {
+        // Handle ranges like "2023 - 2024" or "Jun 2023 - Sep 2023"
+        const parts = dateStr.split('-');
+        const endDate = parts[parts.length - 1].trim();
+        if (endDate === 'Present') {
+            return new Date();
+        }
+        return new Date(endDate);
+    }
+
+    // Single date
+    return new Date(dateStr);
+}
+
+// Supabase configuration is available from parent window
+
+// Twitter share functionality
+function shareToTwitter(item) {
+    const tweetText = `${item.title}${item.company ? ` at ${item.company}` : ''}\n\n${item.content.substring(0, 200)}${item.content.length > 200 ? '...' : ''}\n\n#PranavPatil #TechCareer`;
+    const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
+    window.open(tweetUrl, '_blank', 'width=550,height=420');
+}
+
+// Like functionality
+async function likePost(postId, buttonElement) {
+    try {
+        buttonElement.addClass('loading');
+
+        // Get current like count
+        const getResponse = await fetch(`${window.SUPABASE_URL}/rest/v1/post_likes?post_id=eq.${postId}&select=like_count`, {
+            headers: {
+                'apikey': window.SUPABASE_ANON_KEY,
+                'Authorization': `Bearer ${window.SUPABASE_ANON_KEY}`
+            }
+        });
+
+        const currentData = await getResponse.json();
+        let newCount = 1;
+
+        if (currentData.length > 0) {
+            // Update existing record
+            newCount = currentData[0].like_count + 1;
+            await fetch(`${window.SUPABASE_URL}/rest/v1/post_likes?post_id=eq.${postId}`, {
+                method: 'PATCH',
+                headers: {
+                    'apikey': window.SUPABASE_ANON_KEY,
+                    'Authorization': `Bearer ${window.SUPABASE_ANON_KEY}`,
+                    'Content-Type': 'application/json',
+                    'Prefer': 'return=minimal'
+                },
+                body: JSON.stringify({
+                    like_count: newCount,
+                    updated_at: new Date().toISOString()
+                })
+            });
+        } else {
+            // Create first record
+            await fetch(`${window.SUPABASE_URL}/rest/v1/post_likes`, {
+                method: 'POST',
+                headers: {
+                    'apikey': window.SUPABASE_ANON_KEY,
+                    'Authorization': `Bearer ${window.SUPABASE_ANON_KEY}`,
+                    'Content-Type': 'application/json',
+                    'Prefer': 'return=minimal'
+                },
+                body: JSON.stringify({
+                    post_id: postId,
+                    like_count: 1
+                })
+            });
+        }
+
+        // Update UI
+        buttonElement.find('.like-count').text(newCount);
+        buttonElement.addClass('liked');
+
+    } catch (error) {
+        console.error('Error liking post:', error);
+    } finally {
+        buttonElement.removeClass('loading');
+    }
+}
+
+// Reply/Comment functionality
+function toggleReplyInput(postId) {
+    // First, close all other open reply inputs
+    $('.comment-input-container:visible').not(`[data-post-id="${postId}"] .comment-input-container`).slideUp();
+
+    // Then toggle the specific post's reply input
+    const commentSection = $(`.comment-section[data-post-id="${postId}"]`);
+    const inputContainer = commentSection.find('.comment-input-container');
+
+    if (inputContainer.is(':visible')) {
+        inputContainer.slideUp();
+    } else {
+        inputContainer.slideDown();
+        // Focus on name input
+        setTimeout(() => {
+            inputContainer.find('.comment-name-input').focus();
+        }, 300);
+    }
+}
+
+async function submitComment(postId, postElement) {
+    const commentSection = postElement.find('.comment-section');
+    const nameInput = commentSection.find('.comment-name-input');
+    const textInput = commentSection.find('.comment-text-input');
+    const submitBtn = commentSection.find('.comment-submit-btn');
+
+    const authorName = nameInput.val().trim() || 'Anonymous';
+    const commentText = textInput.val().trim();
+
+    if (!commentText) {
+        alert('Please enter a comment');
+        return;
+    }
+
+    if (!postId) {
+        alert('Error: Post ID is missing');
+        console.error('Post ID is null or undefined');
+        return;
+    }
+
+    try {
+        submitBtn.prop('disabled', true).text('Posting...');
+
+        const response = await fetch(`${window.SUPABASE_URL}/rest/v1/post_comments`, {
+            method: 'POST',
+            headers: {
+                'apikey': window.SUPABASE_ANON_KEY,
+                'Authorization': `Bearer ${window.SUPABASE_ANON_KEY}`,
+                'Content-Type': 'application/json',
+                'Prefer': 'return=minimal'
+            },
+            body: JSON.stringify({
+                post_id: postId,
+                comment_text: commentText,
+                author_name: authorName
+            })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.text();
+            console.error('Supabase error:', errorData);
+            throw new Error(`HTTP ${response.status}: ${errorData}`);
+        }
+
+        // Clear inputs
+        nameInput.val('');
+        textInput.val('');
+
+        // Hide input container
+        commentSection.find('.comment-input-container').slideUp();
+
+        // Reload comments for this post
+        loadCommentsForPost(postId);
+
+    } catch (error) {
+        console.error('Error adding comment:', error);
+        alert('Error adding comment. Please try again.');
+    } finally {
+        submitBtn.prop('disabled', false).text('Reply');
+    }
+}
+
+// Load like counts when page loads
+async function loadLikeCounts() {
+    try {
+        const response = await fetch(`${window.SUPABASE_URL}/rest/v1/post_likes?select=post_id,like_count`, {
+            headers: {
+                'apikey': window.SUPABASE_ANON_KEY,
+                'Authorization': `Bearer ${window.SUPABASE_ANON_KEY}`
+            }
+        });
+
+        const likesData = await response.json();
+
+        // Update like counts in UI
+        likesData.forEach(like => {
+            $(`.like-btn[data-post-id="${like.post_id}"] .like-count`).text(like.like_count);
+        });
+
+    } catch (error) {
+        console.error('Error loading like counts:', error);
+    }
+}
+
+// Generate random emoji for profile pictures
+function getRandomEmoji() {
+    const emojis = ['😀', '😃', '😄', '😁', '😆', '😅', '🤣', '😂', '🙂', '🙃', '😉', '😊', '😇', '🥰', '😍', '🤩', '😘', '😗', '😚', '😙', '😋', '😛', '😜', '🤪', '😝', '🤑', '🤗', '🤭', '🤫', '🤔', '🤐', '🤨', '😐', '😑', '😶', '😏', '😒', '🙄', '😬', '🤥', '😌', '😔', '😪', '🤤', '😴', '😷', '🤒', '🤕', '🤢', '🤮', '🤧', '🥵', '🥶', '🥴', '😵', '🤯', '🤠', '🥳', '😎', '🤓', '🧐'];
+    return emojis[Math.floor(Math.random() * emojis.length)];
+}
+
+// Load comments for all posts
+async function loadAllComments() {
+    try {
+        const response = await fetch(`${window.SUPABASE_URL}/rest/v1/post_comments?select=*&order=created_at.asc`, {
+            headers: {
+                'apikey': window.SUPABASE_ANON_KEY,
+                'Authorization': `Bearer ${window.SUPABASE_ANON_KEY}`
+            }
+        });
+
+        const comments = await response.json();
+
+        // Group comments by post_id
+        const commentsByPost = {};
+        comments.forEach(comment => {
+            if (!commentsByPost[comment.post_id]) {
+                commentsByPost[comment.post_id] = [];
+            }
+            commentsByPost[comment.post_id].push(comment);
+        });
+
+        // Display comments for each post
+        Object.keys(commentsByPost).forEach(postId => {
+            displayCommentsForPost(postId, commentsByPost[postId]);
+        });
+
+    } catch (error) {
+        console.error('Error loading comments:', error);
+    }
+}
+
+// Load comments for a specific post
+async function loadCommentsForPost(postId) {
+    try {
+        const response = await fetch(`${window.SUPABASE_URL}/rest/v1/post_comments?post_id=eq.${postId}&select=*&order=created_at.asc`, {
+            headers: {
+                'apikey': window.SUPABASE_ANON_KEY,
+                'Authorization': `Bearer ${window.SUPABASE_ANON_KEY}`
+            }
+        });
+
+        const comments = await response.json();
+        displayCommentsForPost(postId, comments);
+
+    } catch (error) {
+        console.error('Error loading comments for post:', error);
+    }
+}
+
+// Display comments for a post
+function displayCommentsForPost(postId, comments) {
+    const commentsList = $(`.comment-section[data-post-id="${postId}"] .comments-list`);
+    commentsList.empty();
+
+    comments.forEach(comment => {
+        const timeAgo = getTimeAgo(new Date(comment.created_at));
+        const emoji = getRandomEmoji();
+
+        const commentElement = $(`
+            <div class="comment-item">
+                <div class="comment-avatar">${emoji}</div>
+                <div class="comment-content">
+                    <div class="comment-header">
+                        <span class="comment-author">${comment.author_name}</span>
+                        <span class="comment-time">${timeAgo}</span>
+                    </div>
+                    <div class="comment-text">${comment.comment_text}</div>
+                </div>
+            </div>
+        `);
+
+        commentsList.append(commentElement);
+    });
+}
+
+// Helper function to get time ago
+function getTimeAgo(date) {
+    const now = new Date();
+    const diffInSeconds = Math.floor((now - date) / 1000);
+
+    if (diffInSeconds < 60) return `${diffInSeconds}s`;
+    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m`;
+    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h`;
+    return `${Math.floor(diffInSeconds / 86400)}d`;
+}
+</script>
